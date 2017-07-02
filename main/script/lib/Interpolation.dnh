@@ -1,0 +1,170 @@
+//Interpolation function and interpolated movement library by Dark Kitsune / Ran / Darkwalker
+
+let LINEAR = 0;
+let ACCELERATION = 1;
+let DECELERATION = 2;
+let SMOOTH = 3;
+let SMOOTHER = 4;
+let OVERSHOOT = 5;
+let OVERSHOOT_MINOR = 6;
+let OVERSHOOT_MAJOR = 7;
+
+let tweens = [];
+
+function Linear(a,b,x)
+{
+	return a + x * (b-a);
+}
+
+function Smoothstep(a,b,x)
+{
+	return a + x * x * (3 - 2 * x) * (b - a);
+}
+
+function Smootherstep(a,b,x)
+{
+	return a + x * x * x * (x * (x * 6 - 15) + 10) * (b - a);
+}
+
+function Acceleration(a,b,x)
+{
+	let v = x * x;
+	return (b * v) + (a * (1 - v));
+}
+
+function Deceleration(a,b,x)
+{
+	let v = 1 - (1 - x) * (1 - x);
+	return (b * v) + (a * (1 - v));
+}
+
+function Overshoot(a,b,x,magnitude)
+{
+	x = Deceleration(0,1,x);
+	return a + x * (b-a) * (1 + sin(x * 180) * magnitude);
+}
+
+task MoveLinear(object,x,y,time)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Linear(px,x,i / time),Linear(py,y,i / time), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveOvershoot(object,x,y,time,magnitude)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Overshoot(px,x,i / time,magnitude),Overshoot(py,y,i / time,magnitude), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveSmooth(object,x,y,time)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Smoothstep(px,x,i / time),Smoothstep(py,y,i / time), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveSmoother(object,x,y,time)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Smootherstep(px,x,i / time),Smootherstep(py,y,i / time), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveAcceleration(object,x,y,time)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Acceleration(px,x,i / time),Acceleration(py,y,i / time), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveDeceleration(object,x,y,time)
+{
+	let px = ObjRender_GetX(object);
+	let py = ObjRender_GetY(object);
+	let hash = IntToString(px)~IntToString(py);
+	Obj_SetValue(object,"interhash",hash);
+	let i = 0;
+	while (!Obj_IsDeleted(object) && Obj_GetValue(object,"interhash") == hash && i < time) {
+		i++;
+		ObjRender_SetPosition(object,Deceleration(px,x,i / time),Deceleration(py,y,i / time), 0);
+		yield;
+	}
+	ObjRender_SetPosition(object,round(x),round(y), 0);
+}
+
+task MoveCancel(object)
+{
+	Obj_SetValue(object,"interhash","");
+}
+
+function Interpolate(a,b,x,method)
+{
+	alternative (method)
+	case (LINEAR) {
+		return Linear(a,b,x);
+	}
+	case (SMOOTH) {
+		return Smoothstep(a,b,x);
+	}
+	case (SMOOTHER) {
+		return Smootherstep(a,b,x);
+	}
+	case (ACCELERATION) {
+		return Acceleration(a,b,x);
+	}
+	case (DECELERATION) {
+		return Deceleration(a,b,x);
+	}
+	case (OVERSHOOT_MINOR) {
+		return Overshoot(a,b,x,0.7);
+	}
+	case (OVERSHOOT) {
+		return Overshoot(a,b,x,1.0);
+	}
+	case (OVERSHOOT_MAJOR) {
+		return Overshoot(a,b,x,1.5);
+	}
+}
+
