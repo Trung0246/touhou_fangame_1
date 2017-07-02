@@ -1,6 +1,6 @@
 //Auto-convert from Shift_JIS to UTF-8 by Github may break this file...
 
-package.script.main = script/ExRumia/ExRumia_Package_Main.txt
+package.script.main = script/main/script/system/package.dnh
 
 window.title = "Touhou test"
 
