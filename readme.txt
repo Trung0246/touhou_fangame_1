@@ -10,5 +10,5 @@ This is Touhou fangame made by us:
 
 -Trung0246: programmer, texture packer, create spell cards, and mantainer of this repository
 
-All resource, script library use from 3rd source made by:
--DarkKitsune, Snow,...
+Danmakufu engine, image and sound, script library use from 3rd source made by:
+-mkm, DarkKitsune, Snow,...
