@@ -4,7 +4,7 @@ This is Touhou fangame made by us:
 
 -frogmask: composer, who made background music and sound effect for us
 
--Badz: programmer, who wrote system shit and menu stuff, have to idea how to describe him
+-Badz: programmer, who wrote system shit and menu stuff, have no idea how to describe him
 
 -Lollipop: programmer, create spell cards, who don't know how to use github, so give him time, (may add more things here)
 
