@@ -3,13 +3,12 @@
 #Text["Text Test"]
 
 @Initialize {
-
 	DisplayTitle;
 }
 
 
 @MainLoop {
-  yield;
+	yield;
 }
 
 @Finalize {
@@ -27,48 +26,52 @@ let OPTION_MUSICROOM = 5;
 let OPTION_OPTIONS = 6; //lol
 let OPTION_QUIT = 7;
 
+//Variables
+let screenW = GetScreenWidth();
+let screenH = GetScreenHeight();
 
-task DisplayTitle{
+
+task DisplayTitle {
 
 	//Create all objects
-	let dir = GetModuleDirectory() ~ "script/main/img/system";
-	
+	let dir = GetModuleDirectory() ~"script/main/img/system";
+
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
-	Obj_SetRenderPriorityI(titleImg,20);
-	ObjPrim_SetTexture(titleImg, dir ~ "/menus.png");
+	Obj_SetRenderPriorityI(titleImg, 20);
+	ObjPrim_SetTexture(titleImg, dir~"/menus.png");
 	ObjSprite2D_SetSourceRect(titleImg, 0, 0, 1000, 750);
- 	ObjSprite2D_SetDestRect(titleImg, 0, 0, 1000, 750);
-	ObjRender_SetScaleX(titleImg, 640 / 1000);
-	ObjRender_SetScaleY(titleImg, 480 / 750);
+	ObjSprite2D_SetDestRect(titleImg, 0, 0, 1000, 750);
+	ObjRender_SetScaleX(titleImg, screenW / 1000);
+	ObjRender_SetScaleY(titleImg, screenH / 750);
 
 	let objWheelFake = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheelFake, 21);
-	ObjPrim_SetTexture(objWheelFake, dir ~ "/spokes.png");
+	ObjPrim_SetTexture(objWheelFake, dir~"/spokes.png");
 	ObjSprite2D_SetSourceRect(objWheelFake, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheelFake);
-	ObjRender_SetScaleX(objWheelFake, 480 / 656);
-	ObjRender_SetScaleY(objWheelFake, 480 / 656);
-	ObjRender_SetY(objWheelFake,240);
-	
+	ObjRender_SetScaleX(objWheelFake, screenH / 656);
+	ObjRender_SetScaleY(objWheelFake, screenH / 656);
+	ObjRender_SetY(objWheelFake, 240);
+
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheel, 22);
-	ObjPrim_SetTexture(objWheel, dir ~ "/spokes2.png");
+	ObjPrim_SetTexture(objWheel, dir~"/spokes2.png");
 	ObjSprite2D_SetSourceRect(objWheel, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheel);
-	ObjRender_SetScaleX(objWheel, 480 / 656);
-	ObjRender_SetScaleY(objWheel, 480 / 656);
-	ObjRender_SetY(objWheel,240);
-	ObjRender_SetAlpha(objWheel,0);
+	ObjRender_SetScaleX(objWheel, screenH / 656);
+	ObjRender_SetScaleY(objWheel, screenH / 656);
+	ObjRender_SetY(objWheel, 240);
+	ObjRender_SetAlpha(objWheel, 0);
 
 	//Launch the wheel animation intro
-	WheelFade(objWheelFake,objWheel);
-	
+	WheelFade(objWheelFake, objWheel);
+
 	wait(100);
 
 	//Start actually responding to controls
 	handleMenu;
 
-	task handleMenu{
+	task handleMenu {
 		//Wheel angle handling stuff you probably shouldn't mess with
 		let destAngle = 0;
 		let currAngle = 0;
@@ -78,41 +81,40 @@ task DisplayTitle{
 
 		//Launch the wheel spin handler
 		wheelSpin;
-		
+
 		//Listen to controls
-		loop{
+		loop {
 			//Actual actions
 			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
 				alternative(selected)
-				case(OPTION_QUIT){
+				case (OPTION_QUIT) {
 					ClosePackage();
 				}
 			}
-			
+
 			//Movement
 			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
-				selected = (selected + 1)%8;
+				selected = (selected + 1) % 8;
 				destAngle += 45;
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
-				selected = (selected - 1)%8;
+				selected = (selected - 1) % 8;
 				destAngle -= 45;
 			}
 			yield;
 		}
 
 		//Makes the wheel spin depending on the option selected
-		task wheelSpin{
-			ObjRender_SetAngleZ(objWheel,0);
-			loop{
+		task wheelSpin {
+			ObjRender_SetAngleZ(objWheel, 0);
+			loop {
 				currAngle = ObjRender_GetAngleZ(objWheel);
-				if(currAngle != destAngle){
-					let displace = (destAngle - currAngle)/7;
-					if(absolute(displace) > 0.01){
-						ObjRender_SetAngleZ(objWheel,ObjRender_GetAngleZ(objWheel)+displace);
-					}
-					else{
-						ObjRender_SetAngleZ(objWheel,destAngle);
+				if (currAngle != destAngle) {
+					let displace = (destAngle - currAngle) / 7;
+					if (absolute(displace) > 0.01) {
+						ObjRender_SetAngleZ(objWheel, ObjRender_GetAngleZ(objWheel) + displace);
+					} else {
+						ObjRender_SetAngleZ(objWheel, destAngle);
 					}
 				}
 				yield;
@@ -123,49 +125,49 @@ task DisplayTitle{
 }
 
 //Wheel intro task
-task WheelFade(objFake,objReal){
+task WheelFade(objFake, objReal) {
 	MoveFromSide;
 	MaxSpeedSpin;
 	FadeIn;
 
 	//Moving-from-left part
-	task MoveFromSide{
-		descent(i in 0..60){
-			ObjRender_SetX(objFake,640+i);
-			ObjRender_SetX(objReal,640+i);
+	task MoveFromSide {
+		descent(i in 0. .60) {
+			ObjRender_SetX(objFake, screenW + i);
+			ObjRender_SetX(objReal, screenW + i);
 			yield;
 		}
 	}
-	
+
 	//Spinning part
-	task MaxSpeedSpin{
+	task MaxSpeedSpin {
 		//offsets so it lands precisely on Game Start at the end of the spin
-		ObjRender_SetAngleZ(objFake,235);
-		ObjRender_SetAngleZ(objReal,235);
+		ObjRender_SetAngleZ(objFake, 235);
+		ObjRender_SetAngleZ(objReal, 235);
 
 		let spd = 10;
 		PleaseSlowDown;
 
-		loop(90){
-			ObjRender_SetAngleZ(objFake,ObjRender_GetAngleZ(objFake)-spd);
-			ObjRender_SetAngleZ(objReal,ObjRender_GetAngleZ(objReal)-spd);
+		loop(90) {
+			ObjRender_SetAngleZ(objFake, ObjRender_GetAngleZ(objFake) - spd);
+			ObjRender_SetAngleZ(objReal, ObjRender_GetAngleZ(objReal) - spd);
 			yield;
 		}
 
-		task PleaseSlowDown{
+		task PleaseSlowDown {
 			wait(30);
-			descent(i in 0..60){
-				spd = i/6;
+			descent(i in 0. .60) {
+				spd = i / 6;
 				yield;
 			}
 		}
 	}
 
 	//"Make the options appear" part
-	task FadeIn{
+	task FadeIn {
 		wait(30);
-		ascent(i in 0..65){
-			ObjRender_SetAlpha(objReal,i*4);
+		ascent(i in 0. .65) {
+			ObjRender_SetAlpha(objReal, i * 4);
 			yield;
 		}
 		Obj_Delete(objFake);
@@ -173,10 +175,12 @@ task WheelFade(objFake,objReal){
 }
 
 //Change wheel color task
-task effectRainbow (obj) {
-  //Planning to use this in future
+task effectRainbow(obj) {
+	//Planning to use this in future
 }
 
-function wait(n){
-	loop(n){yield;}
+function wait(n) {
+	loop(n) {
+		yield;
+	}
 }
