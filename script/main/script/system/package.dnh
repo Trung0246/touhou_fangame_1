@@ -93,11 +93,11 @@ task DisplayTitle {
 			}
 
 			//Movement
-			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
 				selected = (selected + 1) % 8;
 				destAngle += 45;
 			}
-			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
 				selected = (selected - 1) % 8;
 				destAngle -= 45;
 			}
