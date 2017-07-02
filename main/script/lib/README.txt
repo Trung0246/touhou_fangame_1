@@ -1,1 +1,3 @@
 This folder should only contain library script...
+
+Notes: do not use SnowFunc.dnh unless I found out what version is that script
