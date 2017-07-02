@@ -34,11 +34,11 @@ let screenH = GetScreenHeight();
 task DisplayTitle {
 
 	//Create all objects
-	let dir = GetModuleDirectory() ~"script/main/img/system";
+	let dir = GetModuleDirectory() ~ "script/main/img/system";
 
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(titleImg, 20);
-	ObjPrim_SetTexture(titleImg, dir~"/menus.png");
+	ObjPrim_SetTexture(titleImg, dir ~ "/menus.png");
 	ObjSprite2D_SetSourceRect(titleImg, 0, 0, 1000, 750);
 	ObjSprite2D_SetDestRect(titleImg, 0, 0, 1000, 750);
 	ObjRender_SetScaleX(titleImg, screenW / 1000);
@@ -46,7 +46,7 @@ task DisplayTitle {
 
 	let objWheelFake = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheelFake, 21);
-	ObjPrim_SetTexture(objWheelFake, dir~"/spokes.png");
+	ObjPrim_SetTexture(objWheelFake, dir ~ "/spokes.png");
 	ObjSprite2D_SetSourceRect(objWheelFake, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheelFake);
 	ObjRender_SetScaleX(objWheelFake, screenH / 656);
@@ -55,7 +55,7 @@ task DisplayTitle {
 
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheel, 22);
-	ObjPrim_SetTexture(objWheel, dir~"/spokes2.png");
+	ObjPrim_SetTexture(objWheel, dir ~ "/spokes2.png");
 	ObjSprite2D_SetSourceRect(objWheel, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheel);
 	ObjRender_SetScaleX(objWheel, screenH / 656);
