@@ -132,7 +132,7 @@ task WheelFade(objFake, objReal) {
 
 	//Moving-from-left part
 	task MoveFromSide {
-		descent(i in 0. .60) {
+		descent(i in 0..60) {
 			ObjRender_SetX(objFake, screenW + i);
 			ObjRender_SetX(objReal, screenW + i);
 			yield;
@@ -156,7 +156,7 @@ task WheelFade(objFake, objReal) {
 
 		task PleaseSlowDown {
 			wait(30);
-			descent(i in 0. .60) {
+			descent(i in 0..60) {
 				spd = i / 6;
 				yield;
 			}
@@ -166,7 +166,7 @@ task WheelFade(objFake, objReal) {
 	//"Make the options appear" part
 	task FadeIn {
 		wait(30);
-		ascent(i in 0. .65) {
+		ascent(i in 0..65) {
 			ObjRender_SetAlpha(objReal, i * 4);
 			yield;
 		}
