@@ -1,6 +1,6 @@
 local {
-let CSD = GetCurrentScriptDirectory();
-let path = CSD ~ "Shotdata.dnh";
+let CSD = GetModuleDirectory();
+let path = CSD ~ "/script/main/img/bullet/DarkShotdata.dnh";
 LoadEnemyShotData(path);
 }
 let BEAM_GRAY = 1;
