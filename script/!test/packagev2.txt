@@ -18,6 +18,7 @@
 
 
 //Constants! Please use those to refer to options!
+let OPTION_MAIN = -1;
 let OPTION_STARTGAME = 0;
 let OPTION_EXTRA = 1;
 let OPTION_PRACTICE = 2;
@@ -47,7 +48,7 @@ task DisplayTitle{
 	ObjSprite2D_SetDestCenter(objWheelFake);
 	ObjRender_SetScaleX(objWheelFake, 480 / 656);
 	ObjRender_SetScaleY(objWheelFake, 480 / 656);
-	ObjRender_SetY(objWheelFake,240);
+	ObjRender_SetY(objWheelFake,300);
 	
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheel, 22);
@@ -56,35 +57,40 @@ task DisplayTitle{
 	ObjSprite2D_SetDestCenter(objWheel);
 	ObjRender_SetScaleX(objWheel, 480 / 656);
 	ObjRender_SetScaleY(objWheel, 480 / 656);
-	ObjRender_SetY(objWheel,240);
+	ObjRender_SetY(objWheel,300);
 	ObjRender_SetAlpha(objWheel,0);
 
 	//Launch the wheel animation intro
 	WheelFade(objWheelFake,objWheel);
 	
 	wait(100);
+	//Wheel angle handling stuff you probably shouldn't mess with
+	let destAngle = 0;
+	let currAngle = 0;
+
+	//tracks currently selected menu
+	let currMenu = OPTION_MAIN;
 
 	//Start actually responding to controls
-	handleMenu;
+	MainMenu;
+	wheelSpin;
 
-	task handleMenu{
-		//Wheel angle handling stuff you probably shouldn't mess with
-		let destAngle = 0;
-		let currAngle = 0;
-
+	task MainMenu{
 		//Currently selected option
 		let selected = 0;
 
-		//Launch the wheel spin handler
-		wheelSpin;
-		
 		//Listen to controls
-		loop{
+		while(currMenu == OPTION_MAIN){
 			//Actual actions
 			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
 				alternative(selected)
 				case(OPTION_QUIT){
 					ClosePackage();
+				}
+				case(OPTION_STARTGAME){
+					currMenu = OPTION_STARTGAME;
+					fadeWheel;
+					DifficultyMenu;
 				}
 			}
 			
@@ -99,27 +105,164 @@ task DisplayTitle{
 			}
 			yield;
 		}
+	}
 
-		//Makes the wheel spin depending on the option selected
-		task wheelSpin{
-			ObjRender_SetAngleZ(objWheel,0);
-			loop{
-				currAngle = ObjRender_GetAngleZ(objWheel);
-				if(currAngle != destAngle){
-					let displace = (destAngle - currAngle)/7;
+	task DifficultyMenu{
+		//Currently selected option
+		let selected = 1;
+
+		//Angle of wheel as of when entering this menu
+		let origAngle = destAngle;
+
+		//Create the menu objects
+		//512x155
+		let options = [0,0,0,0];
+		ascent(i in 0..4){
+			let option = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(option,dir ~ "system/difficulty.png");
+			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
+			ObjSprite2D_SetDestCenter(option);
+			ObjRender_SetPosition(option,220,500,1);
+			options[i] = option;
+		}
+
+		let currPos = 40;
+		let destPos = 40;
+		moveOptions;
+		SelectOption;
+		
+		wait(5);
+
+		//Listen to controls
+		while(currMenu == OPTION_STARTGAME){
+			//Actual actions
+			//if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				
+			//}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				destAngle = origAngle;
+				DeleteOptions;
+				currMenu = OPTION_MAIN;
+				fadeWheel;
+				MainMenu;
+			}
+			
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%4;
+				SelectOption;
+				destAngle += 45;
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%4;
+				SelectOption;
+				destAngle -= 45;
+			}
+			yield;
+		}
+
+		task SelectOption{
+			ascent(i in 0..4){
+				ObjSprite2D_SetSourceRect(options[i],512,i*160,1024,(i+1)*160);
+			}
+			ObjSprite2D_SetSourceRect(options[selected],0,selected*160,512,(selected+1)*160);
+			
+			destPos = 240-selected*200;
+		}
+
+		task moveOptions{
+			moveOtherOptions;
+			while(!Obj_IsDeleted(options[0])){
+				currPos = ObjRender_GetY(options[0]);
+				if(currPos != destPos){
+					let displace = (destPos - currPos)/7;
 					if(absolute(displace) > 0.01){
-						ObjRender_SetAngleZ(objWheel,ObjRender_GetAngleZ(objWheel)+displace);
+						ObjRender_SetY(options[0],ObjRender_GetY(options[0])+displace);
 					}
 					else{
-						ObjRender_SetAngleZ(objWheel,destAngle);
+						ObjRender_SetY(options[0],destPos);
 					}
 				}
+				yield;
+			}
+
+			task moveOtherOptions{
+				while(!Obj_IsDeleted(options[0])){
+					ascent(i in 1..4){
+						ObjRender_SetY(options[i],ObjRender_GetY(options[0])+i*200);
+					}
+					yield;
+				}
+			}
+
+		}
+		
+
+		task DeleteOptions{
+			descent(i in 0..32){
+				ascent(j in 0..4){
+					ObjRender_SetAlpha(options[j],i*4);
+				}
+				yield;
+			}
+			ascent(i in 0..4){
+				Obj_Delete(options[i]);
+			}
+		}
+	}
+
+
+	//Makes the wheel spin depending on the option selected
+	task wheelSpin{
+		fakeWheelSpin;
+		ObjRender_SetAngleZ(objWheel,0);
+		loop{
+			currAngle = ObjRender_GetAngleZ(objWheel);
+			if(currAngle != destAngle){
+				let displace = (destAngle - currAngle)/7;
+				if(absolute(displace) > 0.01){
+					ObjRender_SetAngleZ(objWheel,ObjRender_GetAngleZ(objWheel)+displace);
+				}
+				else{
+					ObjRender_SetAngleZ(objWheel,destAngle);
+				}
+			}
+			yield;
+		}
+
+		task fakeWheelSpin{
+			loop{
+				ObjRender_SetAngleZ(objWheelFake,ObjRender_GetAngleZ(objWheel));
 				yield;
 			}
 		}
 	}
 
+	let cancelFade;	
+
+	task fadeWheel{
+		cancelFade = true;
+		yield;
+		cancelFade = false;
+		if(currMenu != OPTION_MAIN){
+			ObjRender_SetAlpha(objWheelFake,255);
+			descent(i in 0..65){
+				if(cancelFade){break;}
+				ObjRender_SetAlpha(objWheel,i*4);
+				yield;
+			}
+		}
+		else{
+			ascent(i in 0..65){
+				if(cancelFade){break;}
+				ObjRender_SetAlpha(objWheel,i*4);
+				yield;
+			}
+			ObjRender_SetAlpha(objWheelFake,0);
+		}
+	}
 }
+
 
 //Wheel intro task
 task WheelFade(objFake,objReal){
@@ -167,7 +310,7 @@ task WheelFade(objFake,objReal){
 			ObjRender_SetAlpha(objReal,i*4);
 			yield;
 		}
-		Obj_Delete(objFake);
+		ObjRender_SetAlpha(objFake,0);
 	}
 }
 
