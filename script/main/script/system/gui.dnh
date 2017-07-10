@@ -19,13 +19,7 @@ let digitPath = dir ~ "ascii/ascii.png";
 	UpdateCurrentFpsAndMs();
 	UpdateReplayFps();
 }
-task test() {
-	while (true) {
-		SetCommonData("player_life_piece", GetCommonData("player_life_piece", 0) + 0.0025);
-		yield
-	}
-}
-test();
+
 @MainLoop {
 	yield;
 }
