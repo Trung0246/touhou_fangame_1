@@ -1,16 +1,18 @@
 This is Touhou fangame made by us:
 
--Malik: artist, who use SAI to draw character and gave us some ideas
+-Malik: portrait, menu and background artist, plus character designer
 
--frogmask: composer, who made background music and sound effect for us
+-Airi: sprite artist, also designed one character
 
--Badz: programmer, who wrote system shit and menu stuff, have no idea how to describe him
+-frogmask: composer and dialogue writer (also helped with character design)
 
--Lollipop: programmer, create spell cards, who don't know how to use github, so give him time, (may add more things here)
+-Badz: programmer, responsible for menus and danmaku
 
--Trung0246: programmer, texture packer, create spell cards, and mantainer of this repository
+-Trung0246: programmer, responsible for game system and danmaku, and mantainer of this repository
 
--Ciryes: tester, once a programmer, but being overwhelmed by TODO lists, poor him :(
+-Lollipop: programmer, who did... something
+
+-Ciryes: sponsor, tester
 
 Danmakufu engine, image and sound, script library use from 3rd source made by:
 -mkm, DarkKitsune, Snow,...
