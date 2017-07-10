@@ -16,6 +16,7 @@ let digitPath = dir ~ "ascii/ascii.png";
 	UpdatePlayerSpell();
 	//UpdateBossLife();
 	//UpdateBossTimer();
+	//UpdateBossXPos();
 	UpdateCurrentFpsAndMs();
 	UpdateReplayFps();
 }
@@ -25,16 +26,22 @@ let digitPath = dir ~ "ascii/ascii.png";
 }
 
 @Event {
-	alternative(GetEventType())
+	alternative (GetEventType())
+	case (EV_START_BOSS_STEP) {
+		UpdateBossXPos();
+	}
+	case (EV_END_BOSS_STEP) {
+		
+	}
 	case(EV_START_BOSS_SPELL) {
 		/*let path = dir ~ "Default_System_MagicCircle.txt";
 		let id = LoadScript(path);
 		StartScript(id);*/
 	}
 	case(EV_GAIN_SPELL) {
-		/*let objScene = GetEnemyBossSceneObjectID();
+		let objScene = GetEnemyBossSceneObjectID();
 		let score = ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE);
-		TGainSpell(score);*/
+		//TGainSpell(score);
 	}
 	case (EV_PLAYER_SPELL) {
 		let tempSpell = GetCommonData("player_spell", 0);
@@ -102,10 +109,10 @@ task InitLine {
 	];
 	ascent (i in 0..7) {
 		let count = i * 2;
-		ObjSpriteList2D_SetSourceRect(obj, 680, 727, 749, 749);
+		ObjSpriteList2D_SetSourceRect(obj, 680, 726, 749, 749);
 		ObjSpriteList2D_SetDestRect(obj, arrayXY[i * 2], arrayXY[i * 2 + 1], arrayXY[i * 2] + arrayTexture[i * 4 + 3], arrayXY[i * 2 + 1] + 2);
 		ObjRender_SetColor(obj, arrayTexture[i * 4], arrayTexture[i * 4 + 1], arrayTexture[i * 4 + 2]);
-		ObjRender_SetAlpha(obj, 180);
+		ObjRender_SetAlpha(obj, 300);
 		ObjSpriteList2D_AddVertex(obj);
 	}
 }
@@ -249,8 +256,6 @@ task UpdatePower {
 	ObjRender_SetY(obj, 225 - 46 + 3);
 	ObjRender_SetColor(obj, 219, 127, 70); //221 111 42
 
-	SetCommonData("player_power", 0);
-
 	while (true) {
 		//The definition of "Black magic fuckery"
 		SetPlayerPower(GetCommonData("player_power", 0));
@@ -345,6 +350,7 @@ task UpdatePlayerLife {
 	ObjRender_SetScaleX(obj, 0.7);
 	ObjRender_SetScaleY(obj, 0.7);
 
+	//May remove these after we added Init function at start of the game...
 	SetCommonData("player_life", 2);
 	SetCommonData("player_life_max", 8); //8, cap of original life
 	SetCommonData("player_life_piece", 0);
@@ -420,6 +426,7 @@ task UpdatePlayerSpell {
 	ObjRender_SetScaleX(obj, 0.7);
 	ObjRender_SetScaleY(obj, 0.7);
 
+	//May remove these after we added Init function at start of the game...
 	SetCommonData("player_spell", 3);
 	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
 	SetCommonData("player_spell_piece", 0);
@@ -482,6 +489,26 @@ task UpdateBossLife {
 }
 task UpdateBossTimer {
 	//Have no idea, maybe later in game
+}
+let objBossMark = ObjPrim_Create(OBJ_SPRITE_2D);
+ObjPrim_SetTexture(objBossMark, guiPath);
+Obj_SetRenderPriority(objBossMark, 0.1);
+ObjSprite2D_SetSourceRect(objBossMark, 680, 726, 749, 749);
+ObjSprite2D_SetDestRect(objBossMark, 0, 0, 70, 16);
+ObjRender_SetColor(objBossMark, 255, 0, 0);
+ObjRender_SetAlpha(objBossMark, 0);
+ObjRender_SetY(objBossMark, 480 - 16);
+task UpdateBossXPos {
+  ObjRender_SetAlpha(objBossMark, 170);
+	while (GetEventType() != EV_END_BOSS_STEP) {
+		let tempObj = GetCommonData("enemy_boss", -1);
+		if (Obj_IsDeleted(tempObj)) {
+			ObjRender_SetAlpha(objBossMark, 0);
+			return;
+		}
+		ObjRender_SetX(objBossMark, ObjRender_GetX(tempObj) - 3);
+		yield;
+	}
 }
 task UpdateCurrentFpsAndMs {
 	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -661,4 +688,42 @@ function NumberToArray(let number, let haveComma) {
 		}
 		yield;
 	}
-}*/
+}
+
+task TGainSpell(score)
+{
+	let objText = ObjText_Create();
+	ObjText_SetText(objText, "Spell Card Bonus!");
+	ObjText_SetFontSize(objText, 32);
+	ObjText_SetFontBold(objText, true);
+	ObjText_SetFontColorTop(objText, 255, 255, 255);
+	ObjText_SetFontColorBottom(objText, 128, 128, 255);
+	ObjText_SetFontBorderType(objText, BORDER_FULL);
+	ObjText_SetFontBorderColor(objText,255, 255, 255);
+	ObjText_SetFontBorderWidth(objText, 1);
+	Obj_SetRenderPriority(objText, 0.6);
+	ObjRender_SetX(objText, 32);
+	ObjRender_SetY(objText, 98);
+
+	let strScore = "+" ~ IntToString(score);
+	let objScore = ObjText_Create();
+	ObjText_SetText(objScore, strScore);
+	ObjText_SetFontSize(objScore, 32);
+	ObjText_SetFontBold(objScore, true);
+	ObjText_SetFontColorTop(objScore, 255, 255, 255);
+	ObjText_SetFontColorBottom(objScore, 255, 128, 128);
+	ObjText_SetFontBorderType(objScore, BORDER_FULL);
+	ObjText_SetFontBorderColor(objScore,255, 255, 255);
+	ObjText_SetFontBorderWidth(objScore, 1);
+	Obj_SetRenderPriority(objScore, 0.6);
+	ObjRender_SetX(objScore, 180);
+	ObjRender_SetY(objScore, 140);
+
+	loop(120)
+	{
+		yield;
+	}
+	Obj_Delete(objText);
+	Obj_Delete(objScore);
+}
+*/
