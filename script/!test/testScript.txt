@@ -1,0 +1,46 @@
+#東方弾幕風[Stage]
+#ScriptVersion[3]
+#Title["Stage test"]
+#Text["Stage text"]
+#Image["./ExRumia(星符「ミッドナイトレヴァリエ」).jpg"]
+#Background["script/default_system/Default_Background_IceMountain.txt"]
+#System["./systemTest.txt"]
+ 
+@Initialize
+{
+    TStage();
+}
+ 
+@MainLoop
+{
+    yield;
+}
+ 
+@Finalize
+{
+}
+ 
+ 
+task TStage
+{
+    let dir = GetCurrentScriptDirectory();
+ 
+    //ボス再生
+    let path = dir ~ "ExRumia_Plural.txt";
+    let idScript = LoadScriptInThread(path);
+    loop(60){yield;}//1秒くらいあれば、コンパイル完了すると思われる。
+    StartScript(idScript);
+ 
+    //敵ボスシーンが終了するまで待機
+    while(!IsCloseScript(idScript) && GetPlayerState() != STATE_END)
+    {
+        yield;
+    }
+ 
+    //～～～敵の出現やボスの出現を繰り返す。
+ 
+    loop(240){yield;}
+ 
+    //ステージ終了
+    CloseStgScene();
+}
