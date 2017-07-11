@@ -32,10 +32,10 @@ let OPTION_QUIT = 7;
 task DisplayTitle{
 
 	//Create all objects
-	let dir = GetCurrentScriptDirectory() ~ "../../img";
+	let dir = "script/main/img";
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(titleImg,20);
-	ObjPrim_SetTexture(titleImg, dir ~ "/system/menus.png");
+	ObjPrim_SetTexture(titleImg, dir ~ "/system/menus2.png");
 	ObjSprite2D_SetSourceRect(titleImg, 0, 0, 1000, 750);
  	ObjSprite2D_SetDestRect(titleImg, 0, 0, 1000, 750);
 	ObjRender_SetScaleX(titleImg, 640 / 1000);
@@ -52,7 +52,7 @@ task DisplayTitle{
 	
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheel, 22);
-	ObjPrim_SetTexture(objWheel, dir ~ "/system/spokes2.png");
+	ObjPrim_SetTexture(objWheel, dir ~ "/system/spokes5.png");
 	ObjSprite2D_SetSourceRect(objWheel, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheel);
 	ObjRender_SetScaleX(objWheel, 480 / 656);
@@ -74,7 +74,7 @@ task DisplayTitle{
 	//Start actually responding to controls
 	MainMenu;
 	wheelSpin;
-	WriteLog(dir);
+
 	task MainMenu{
 		//Currently selected option
 		let selected = 0;
