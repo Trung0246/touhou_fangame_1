@@ -65,7 +65,8 @@ task InitFrame {
 
 	let frame = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
   ObjPrim_SetTexture(frame,guiPath);
-  Obj_SetRenderPriority(frame,0);
+  Obj_SetRenderPriority(frame,0.1);
+  ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
   //left
   ObjSpriteList2D_SetSourceRect(frame,0,0,47,703);
   ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
@@ -124,7 +125,7 @@ task UpdateHiScore {
 	ObjSprite2D_SetDestRect(objScore, 0, 0, 104, 26);
 	ObjRender_SetScaleX(objScore, 0.75);
 	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 225);
+	ObjRender_SetX(objScore, 640 - 220);
 	ObjRender_SetY(objScore, 40);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -137,18 +138,20 @@ task UpdateHiScore {
 		let number = 2000000000; //Temporary, will try to get high score here
 		number = min(number, 2000000000); //2147483647, cap of int, rounded
 		let listNum = NumberToArray(number, true);
+		let commaCount = 0;
 
 		ObjSpriteList2D_ClearVertexCount(obj);
-		ascent(i in 0 .. length(listNum)) {
+		descent (i in 0 .. length(listNum)) {
 			let num = listNum[i];
-			ObjRender_SetX(obj, 640 - 16 - (length(listNum) - 1 - i) * 12);
+			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ",") {
 				ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-				ObjRender_SetX(obj, ObjRender_GetX(obj) + 2.5);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0 + 5, 16 + commaCount * 5, 16 + 5);
+				ObjRender_SetX(obj, ObjRender_GetX(obj) + 6);
+				commaCount ++;
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0, 16 + commaCount * 5, 16);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -163,7 +166,7 @@ task UpdateScore {
 	ObjSprite2D_SetDestRect(objScore, 0, 0, 104, 26);
 	ObjRender_SetScaleX(objScore, 0.75);
 	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 225);
+	ObjRender_SetX(objScore, 640 - 220);
 	ObjRender_SetY(objScore, 62.5);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -179,18 +182,20 @@ task UpdateScore {
 		}
 		number = min(number, 2000000000); //2147483647, cap of int, rounded
 		let listNum = NumberToArray(number, true);
+		let commaCount = 0;
 
 		ObjSpriteList2D_ClearVertexCount(obj);
-		ascent(i in 0 .. length(listNum)) {
+		descent (i in 0 .. length(listNum)) {
 			let num = listNum[i];
-			ObjRender_SetX(obj, 640 - 16 - (length(listNum) - 1 - i) * 12);
+			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ",") {
 				ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-				ObjRender_SetX(obj, ObjRender_GetX(obj) + 2.5);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0 + 5, 16 + commaCount * 5, 16 + 5);
+				ObjRender_SetX(obj, ObjRender_GetX(obj) + 6);
+				commaCount ++;
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0, 16 + commaCount * 5, 16);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -221,18 +226,20 @@ task UpdateGraze {
 		}
 		number = min(number, 500000); //500000, cap of Touhou 16
 		let listNum = NumberToArray(number, true);
+		let commaCount = 0;
 
 		ObjSpriteList2D_ClearVertexCount(obj);
-		ascent(i in 0 .. length(listNum)) {
+		descent (i in 0 .. length(listNum)) {
 			let num = listNum[i];
 			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ",") {
 				ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1); //176, 191 for period
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-				ObjRender_SetX(obj, ObjRender_GetX(obj) + 2.5);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0 + 5, 16 + commaCount * 5, 16 + 5);
+				ObjRender_SetX(obj, ObjRender_GetX(obj) + 6);
+				commaCount ++;
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0, 16 + commaCount * 5, 16);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -309,23 +316,25 @@ task UpdatePoint {
 
 	while (true) {
 		let number = 0;
-		if (GetCommonData("player_point", 0) > 999999) {
-			SetCommonData("player_point", 999999); //999999, because I feel this is balanced
+		if (GetCommonData("player_point", 0) > 50000000) {
+			SetCommonData("player_point", 50000000); //50000000, because I feel this is balanced
 		}
 		number = GetCommonData("player_point", 0); 
 		let listNum = NumberToArray(number, true);
+		let commaCount = 0;
 
 		ObjSpriteList2D_ClearVertexCount(obj);
-		ascent(i in 0 .. length(listNum)) {
+		descent (i in 0 .. length(listNum)) {
 			let num = listNum[i];
 			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ",") {
 				ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1); //176, 191 for comma, current one is period
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-				ObjRender_SetX(obj, ObjRender_GetX(obj) + 2.5);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0 + 5, 16 + commaCount * 5, 16 + 5);
+				ObjRender_SetX(obj, ObjRender_GetX(obj) + 6);
+				commaCount ++;
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetDestRect(obj, 0 + commaCount * 5, 0, 16 + commaCount * 5, 16);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -560,12 +569,16 @@ task UpdateCurrentFpsAndMs {
 		preTime = time;*/
 
 		//Render fps and ms
+		if (GetKeyState(KEY_LCONTROL) == 3) {
+			//Fast mode
+			fps = GetCurrentFps();
+		}
 		if (GetCurrentFps() <= fpsRate) {
 			 tempFpsRate = 0;
 		}
 		if (tempFpsRate <= 0) {
 			tempFpsRate = fpsRate;
-			fps = min(fps, 60); //60, cap of fps, obviously
+			//fps = min(fps, 60); //60, cap of fps, obviously
 			listNum = NumberToArray(fps, true);
 
 			ObjSpriteList2D_ClearVertexCount(objFps);
@@ -606,6 +619,7 @@ task UpdateCurrentFpsAndMs {
 	}
 }
 task UpdateReplayFps {
+	//Too lazy to change comma here... As it not important...
 	if (!IsReplay()) {
 		return;
 	}
@@ -727,3 +741,65 @@ task TGainSpell(score)
 	Obj_Delete(objScore);
 }
 */
+
+/*let objScore = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+	let X2 = 375 + 1;
+	let Y2 = 26 * 0 + 1;
+	let SIZE_X2 = 375 + 104;
+	let SIZE_Y2 = (26 * 1) - 1;
+	let ox = 0;
+	let oy = 0;
+	ObjPrim_SetTexture(objScore, guiPath);
+	ObjRender_SetBlendType(objScore, BLEND_ALPHA);
+	Obj_SetRenderPriorityI(objScore, 0.1);
+	ObjPrim_SetPrimitiveType(objScore, PRIMITIVE_TRIANGLEFAN);
+	ObjPrim_SetVertexCount(objScore, 4);
+	ObjPrim_SetVertexPosition(objScore, 0, -SIZE_X2 / 2, -SIZE_Y2, 0);
+	ObjPrim_SetVertexPosition(objScore, 1, SIZE_X2 / 2, -SIZE_Y2, 0);
+	ObjPrim_SetVertexPosition(objScore, 2, SIZE_X2 / 2, 0, 0);
+	ObjPrim_SetVertexPosition(objScore, 3, -SIZE_X2 / 2, 0, 0);
+	ObjPrim_SetVertexUVT(objScore, 0, X2, Y2);
+	ObjPrim_SetVertexUVT(objScore, 1, X2 + SIZE_X2, Y2);
+	ObjPrim_SetVertexUVT(objScore, 2, X2 + SIZE_X2, Y2 + SIZE_Y2);
+	ObjPrim_SetVertexUVT(objScore, 3, X2, Y2 + SIZE_Y2);
+
+	ObjRender_SetPosition(objScore, ox, oy + (1 - 255 / 40) * SIZE_Y2, 0);
+
+	
+	SetCommonData("AlphaCount", 0);
+	let startsw = 0;
+	task add_picture(ox, oy, X1, Y1, SIZE_X, SIZE_Y, TEXTURE)
+	{
+		let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+		
+		ObjPrim_SetTexture(obj, TEXTURE);
+		ObjRender_SetBlendType(obj, BLEND_ALPHA);
+		Obj_SetRenderPriorityI(obj, 0.1);
+		ObjPrim_SetPrimitiveType(obj, PRIMITIVE_TRIANGLEFAN);
+		ObjPrim_SetVertexCount(obj, 4);
+		ObjPrim_SetVertexPosition(obj, 0,  -SIZE_X/2 * 0.75, -SIZE_Y/2 * 0.75,0);
+		ObjPrim_SetVertexPosition(obj, 1,   SIZE_X/2 * 0.75, -SIZE_Y/2 * 0.75,0);
+		ObjPrim_SetVertexPosition(obj, 2,   SIZE_X/2 * 0.75,  SIZE_Y/2 * 0.75,0);
+		ObjPrim_SetVertexPosition(obj, 3,  -SIZE_X/2 * 0.75,  SIZE_Y/2 * 0.75,0);
+		ObjPrim_SetVertexUVT(obj, 0, X1, Y1);
+		ObjPrim_SetVertexUVT(obj, 1, X1+SIZE_X, Y1);
+		ObjPrim_SetVertexUVT(obj, 2, X1+SIZE_X, Y1+SIZE_Y);
+		ObjPrim_SetVertexUVT(obj, 3, X1, Y1+SIZE_Y);
+		ObjRender_SetPosition(obj, ox, oy,0);
+
+		while(true)
+		{
+			if(startsw==0){
+				ObjRender_SetAlpha(obj,255);
+				ObjRender_SetColor(obj,255-GetCommonData("AlphaCount",0)*255/40,255-GetCommonData("AlphaCount",0)*255/40,255-GetCommonData("AlphaCount",0)*255/40);
+			}else{
+				ObjRender_SetAlpha(obj,0);
+				ObjRender_SetColor(obj,255,255,255);
+			}
+			ObjRender_SetPosition(obj, ox, oy, 0);
+			Obj_SetRenderPriorityI(obj, 0.1);
+			yield;
+		}
+		Obj_Delete(obj);
+	};
+	add_picture(640 - 220 + 104 / 2, 40 + 26 / 2, 375 + 1, 26 * 0 + 1, 104, 26, guiPath);*/
