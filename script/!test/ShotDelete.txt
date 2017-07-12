@@ -23,7 +23,7 @@ yield;
 
 task DeleteFX(shot, position){
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "./system/bullet-delete-anim.png");
+	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png");
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
 	ascent(i in 0..4){
