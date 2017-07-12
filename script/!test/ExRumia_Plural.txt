@@ -1,8 +1,8 @@
-ï»¿#æ±æ–¹å¼¾å¹•é¢¨[Plural]
+#“Œ•û’e–‹•—[Plural]
 #ScriptVersion[3]
-#Title["Exãƒ«ãƒ¼ãƒŸã‚¢ã‚¹ã‚¯ãƒªãƒ—ãƒˆé€£ç¶šå†ç”Ÿ"]
-#Text["Exãƒ«ãƒ¼ãƒŸã‚¢ã‚¹ãƒšãƒ«ã‚«ãƒ¼ãƒ‰"]
-#Image["./ExRumia(æ˜Ÿç¬¦ã€ŒãƒŸãƒƒãƒ‰ãƒŠã‚¤ãƒˆãƒ¬ãƒ´ã‚¡ãƒªã‚¨ã€).jpg"]
+#Title["Exƒ‹[ƒ~ƒAƒXƒNƒŠƒvƒg˜A‘±Ä¶"]
+#Text["Exƒ‹[ƒ~ƒAƒXƒyƒ‹ƒJ[ƒh"]
+#Image["./ExRumia(¯•„uƒ~ƒbƒhƒiƒCƒgƒŒƒ”ƒ@ƒŠƒGv).jpg"]
 #Background["script/default_system/Default_Background_IceMountain.txt"]
 #BGM["./Test.ogg"]
 
@@ -26,20 +26,20 @@ task TPlural
 {
 	let dir = GetCurrentScriptDirectory();
 
-	//é€šå¸¸ã¯ãƒœã‚¹ã‚·ãƒ¼ãƒ³ã‚’1ã¤ã ã‘ä½œæˆã—ã¾ã™ã€‚
+	//’Êí‚Íƒ{ƒXƒV[ƒ“‚ğ1‚Â‚¾‚¯ì¬‚µ‚Ü‚·B
 	let obj = ObjEnemyBossScene_Create();
 	ObjEnemyBossScene_Add(obj, 0, dir ~ "ExRumia01.txt");
 	ObjEnemyBossScene_Add(obj, 0, dir ~ "ExRumiaSpell01.txt");
 	ObjEnemyBossScene_LoadInThread(obj);
 	ObjEnemyBossScene_Regist(obj);
 
-	//æ•µãƒœã‚¹ã‚·ãƒ¼ãƒ³ãŒçµ‚äº†ã™ã‚‹ã¾ã§å¾…æ©Ÿ
+	//“Gƒ{ƒXƒV[ƒ“‚ªI—¹‚·‚é‚Ü‚Å‘Ò‹@
 	while(!Obj_IsDeleted(obj))
 	{
 		yield;
 	}
 
-    //ã‚¹ã‚¯ãƒªãƒ—ãƒˆçµ‚äº†
+    //ƒXƒNƒŠƒvƒgI—¹
 	CloseScript(GetOwnScriptID());
 }
 
