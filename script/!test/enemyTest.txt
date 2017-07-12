@@ -171,20 +171,26 @@ task StageEnemy(x,y,type,extra){
 		let n = 0;
 		let continueRain = true;
 		RainSpiral;
-		while(ObjMove_GetX(enemy) < extra[0]){yield;}
-		Obj_SetValue(enemy,"Anim",0);
-		while(angle%60 >= 5){yield;}
-		continueRain = false;
-		wait(180);
-		ObjMove_SetAngle(enemy,270);
-		ObjMove_SetAcceleration(enemy,0.05);
-		ObjMove_SetMaxSpeed(enemy,3);
-		wait(120);
-		Obj_Delete(enemy);
+		while(ObjMove_GetX(enemy) < extra[0] && !Obj_IsDeleted(enemy)){yield;}
+		if(!Obj_IsDeleted(enemy)){
+			Obj_SetValue(enemy,"Anim",0);
+			while(angle%60 >= 5){yield;}
+			continueRain = false;
+			wait(180);
+			ObjMove_SetAngle(enemy,270);
+			ObjMove_SetAcceleration(enemy,0.05);
+			ObjMove_SetMaxSpeed(enemy,3);
+			wait(120);
+			Obj_Delete(enemy);
+		}
 
 		task RainSpiral{
 			while(continueRain){
 				loop(4){
+					if(Obj_IsDeleted(enemy)){
+						continueRain = false;
+						break;
+					}
 					ascent(j in 0..6){
 						let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*40,ObjMove_GetY(enemy)+sin(angle+j*60)*40,0,90,DS_RICE_S_BLUE,15);
 						ObjShot_SetDeleteFrame(trail,0);
@@ -192,6 +198,7 @@ task StageEnemy(x,y,type,extra){
 					angle += 5;
 					wait(2);
 				}
+				if(Obj_IsDeleted(enemy)){break;}
 				ascent(j in 0..3){
 					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,15);
 					ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
