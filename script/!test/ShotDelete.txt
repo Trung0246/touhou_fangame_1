@@ -26,6 +26,35 @@ task DeleteFX(shot, position){
 	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png");
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
+	let objId = ObjShot_GetImageID(shot);
+	if (objId < 256) {
+		let modColor = objId % 8;
+		alternative (modColor)
+		case (1) {
+			ObjRender_SetColor(that, 255, 0, 0);
+		}
+		case (2) {
+			ObjRender_SetColor(that, 255, 255 / 2, 0);
+		}
+		case (3) {
+			ObjRender_SetColor(that, 255, 255, 0);
+		}
+		case (4) {
+			ObjRender_SetColor(that, 0, 255, 0);
+		}
+		case (5) {
+			ObjRender_SetColor(that, 0, 255, 255);
+		}
+		case (6) {
+			ObjRender_SetColor(that, 0, 0, 255);
+		}
+		case (7) {
+			ObjRender_SetColor(that, 255, 0, 255);
+		}
+		case (0) {
+			ObjRender_SetColor(that, 0, 0, 0);
+		}
+	}
 	ascent(i in 0..4){
 		ObjSprite2D_SetSourceRect(that, 64 * i, 0, 64 * (i + 1), 64);
 		ObjSprite2D_SetDestCenter(that);
