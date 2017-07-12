@@ -1,0 +1,40 @@
+@Initialize{
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_IMMEDIATE,true); //18
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_TO_ITEM,true); //19
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_FADE,true); //20
+}
+
+@MainLoop{
+yield;
+}
+
+@Event{
+	alternative(GetEventType)
+	case(EV_DELETE_SHOT_IMMEDIATE){
+		DeleteFX(GetEventArgument(0),GetEventArgument(1));
+	}
+	case(EV_DELETE_SHOT_TO_ITEM){
+		DeleteFX(GetEventArgument(0),GetEventArgument(1));
+	}
+	case(EV_DELETE_SHOT_FADE){
+		DeleteFX(GetEventArgument(0),GetEventArgument(1));
+	}
+}
+
+task DeleteFX(shot, position){
+	let that = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png");
+	ObjRender_SetPosition(that, position[0], position[1], 0);
+	ObjRender_SetAngleZ(that, rand(0, 360));
+	ascent(i in 0..4){
+		ObjSprite2D_SetSourceRect(that, 64 * i, 0, 64 * (i + 1), 64);
+		ObjSprite2D_SetDestCenter(that);
+		loop(2){yield;}
+	}
+	ascent(i in 0..4){
+		ObjSprite2D_SetSourceRect(that, 64 * i, 64, 64 * (i + 1), 128);
+		ObjSprite2D_SetDestCenter(that);
+		loop(2){yield;}
+	}
+	Obj_Delete(that);
+}
