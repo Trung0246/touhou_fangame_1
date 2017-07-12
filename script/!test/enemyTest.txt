@@ -10,6 +10,7 @@
 
 @Initialize
 {
+    StartShotScript(GetCurrentScriptDirectory() ~ "./ShotDelete.txt");
     TStage();
 }
  
@@ -193,14 +194,14 @@ task StageEnemy(x,y,type,extra){
 					}
 					ascent(j in 0..6){
 						let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*40,ObjMove_GetY(enemy)+sin(angle+j*60)*40,0,90,DS_RICE_S_BLUE,15);
-						ObjShot_SetDeleteFrame(trail,0);
+						InstaDelete(trail);
 					}
 					angle += 5;
 					wait(2);
 				}
 				if(Obj_IsDeleted(enemy)){break;}
 				ascent(j in 0..3){
-					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,15);
+					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,10);
 					ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
 				}
 				n++;
@@ -209,16 +210,21 @@ task StageEnemy(x,y,type,extra){
 				if(Obj_IsDeleted(enemy)){break;}
 				ascent(j in 0..6){
 					let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),0,90,DS_RICE_S_BLUE,15);
-					ObjShot_SetDeleteFrame(trail,0);
+					InstaDelete(trail);
 				}
 				if(i%5 == 0){
 					ascent(j in 0..6){
-						let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),rand(2,3),90,DS_RICE_S_BLUE,15);
+						let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),rand(2,3),90,DS_RICE_S_BLUE,10);
 						ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
 					}
 				}
 				yield;
 			}
+		}
+
+		task InstaDelete(shot){
+			wait(ObjShot_GetDelay(shot)-1);
+			Obj_Delete(shot);
 		}
 	}
 
