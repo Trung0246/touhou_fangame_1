@@ -67,25 +67,25 @@ task InitFrame {
 	//563, 23 //bottom
 
 	let frame = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-  ObjPrim_SetTexture(frame,guiPath);
-  Obj_SetRenderPriority(frame,0.1);
-  ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
-  //left
-  ObjSpriteList2D_SetSourceRect(frame,0,0,47,703);
-  ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
-  ObjSpriteList2D_AddVertex(frame);
-  //top
-  ObjSpriteList2D_SetSourceRect(frame,0,703,562,727);
-  ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
-  ObjSpriteList2D_AddVertex(frame);
-  //bottom
-  ObjSpriteList2D_SetSourceRect(frame,0,726,562,750);
-  ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
-  ObjSpriteList2D_AddVertex(frame);
-  //right
-  ObjSpriteList2D_SetSourceRect(frame,47,0,375,703);
-  ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
-  ObjSpriteList2D_AddVertex(frame);
+	ObjPrim_SetTexture(frame,guiPath);
+	Obj_SetRenderPriority(frame,0.1);
+	ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
+	//left
+	ObjSpriteList2D_SetSourceRect(frame,0,0,47,703);
+	ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
+	ObjSpriteList2D_AddVertex(frame);
+	//top
+	ObjSpriteList2D_SetSourceRect(frame,0,703,562,727);
+	ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
+	ObjSpriteList2D_AddVertex(frame);
+	//bottom
+	ObjSpriteList2D_SetSourceRect(frame,0,726,562,750);
+	ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
+	ObjSpriteList2D_AddVertex(frame);
+	//right
+	ObjSpriteList2D_SetSourceRect(frame,47,0,375,703);
+	ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
+	ObjSpriteList2D_AddVertex(frame);
 }
 task InitLine {
 	//7 lines
@@ -506,17 +506,17 @@ task UpdateBossXPos (obj) {
 	let objBossMark = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(objBossMark, guiPath);
 	Obj_SetRenderPriority(objBossMark, 0.1);
-	ObjSprite2D_SetSourceRect(objBossMark, 680, 726, 749, 749);
-	ObjSprite2D_SetDestRect(objBossMark, 0, 0, 70, 16);
+	ObjSprite2D_SetSourceRect(objBossMark, 683, 726, 746, 749); //The right one
+	ObjSprite2D_SetDestRect(objBossMark, 0, 0, 64, 16);
 	ObjRender_SetColor(objBossMark, 255, 0, 0);
 	ObjRender_SetY(objBossMark, 480 - 16);
-  ObjRender_SetAlpha(objBossMark, 170);
+	ObjRender_SetAlpha(objBossMark, 170);
 	while (GetEventType() != EV_END_BOSS_STEP) {
 		if (Obj_IsDeleted(obj)) {
 			ObjRender_SetAlpha(objBossMark, 0);
 			return;
 		}
-		ObjRender_SetX(objBossMark, ObjRender_GetX(obj) - 3);
+		ObjRender_SetX(objBossMark, ObjMove_GetX(obj));
 		yield;
 	}
 }
