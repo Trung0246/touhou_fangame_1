@@ -23,6 +23,7 @@
 }
  
 let FAIRY_TEST = 1;
+let FAIRY_RAIN = 2;
  
 task TStage
 {
@@ -32,15 +33,8 @@ task TStage
 		}
 		wait(10);
 	}
-
-/*	let fairy = ObjEnemy_Create(OBJ_ENEMY);
-	ObjEnemy_Regist(fairy);
-	ObjMove_SetPosition(fairy,192,120);
-	AnimateSmallFairy(fairy,floor(rand(0,6)));
-	wait(60);
-	Obj_SetValue(fairy,"Anim",1);
-	wait(240);
-	Obj_SetValue(fairy,"Anim",0);*/
+	wait(420);
+	StageEnemy(-50,180,FAIRY_RAIN,[224,120,1]);
 }
 
 
@@ -89,6 +83,46 @@ task AnimateSmallFairy(obj,color) {
 	}
 }
 
+task AnimateBigFairy(obj,color) {
+	Obj_SetValue(obj,"Anim",0);
+	ObjPrim_SetTexture(obj,GetCurrentScriptDirectory() ~ "./system/RainDrop_Fairies.png");
+	ObjSprite2D_SetDestRect(obj,-24,-24,24,24);
+	while(!Obj_IsDeleted(obj)){
+		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..4){
+				if(Obj_GetValueD(obj,"Anim",0) != 0 || Obj_IsDeleted(obj)){break;}
+				ObjSprite2D_SetSourceRect(obj,i*48,color*48,(i+1)*48,(color+1)*48);
+				wait(10);
+			}
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 1){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",2);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+			ObjSprite2D_SetSourceRect(obj,192,color*48,240,(color+1)*48);
+			wait(10);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 3){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+			while(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+				ascent(i in 0..4){
+					if(Obj_GetValueD(obj,"Anim",0) != 4 || Obj_IsDeleted(obj)){break;}
+					ObjSprite2D_SetSourceRect(obj,240+i*48,color*48,240+(i+1)*48,(color+1)*48);
+					wait(10);
+				}
+			}
+			ObjSprite2D_SetSourceRect(obj,192,color*48,240,(color+1)*48);
+			wait(10);
+			ObjRender_SetScaleX(obj,1);
+		}
+		yield;
+	}
+}
 
 task StageEnemy(x,y,type,extra){
 	let enemy = ObjEnemy_Create(OBJ_ENEMY);
@@ -126,6 +160,59 @@ task StageEnemy(x,y,type,extra){
 		ObjMove_SetMaxSpeed(enemy,3);
 		wait(120);
 		Obj_Delete(enemy);
+	}
+	case(FAIRY_RAIN){ //[destx,desty,dir]
+		AnimateBigFairy(enemy,1);
+		ObjEnemy_SetLife(enemy,200);
+		Obj_SetValue(enemy,"Anim",4);
+		ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+		extra[0] = extra[0] - 5;
+		let angle = rand(0,360);
+		let n = 0;
+		let continueRain = true;
+		RainSpiral;
+		while(ObjMove_GetX(enemy) < extra[0]){yield;}
+		Obj_SetValue(enemy,"Anim",0);
+		while(angle%60 >= 5){yield;}
+		continueRain = false;
+		wait(180);
+		ObjMove_SetAngle(enemy,270);
+		ObjMove_SetAcceleration(enemy,0.05);
+		ObjMove_SetMaxSpeed(enemy,3);
+		wait(120);
+		Obj_Delete(enemy);
+
+		task RainSpiral{
+			while(continueRain){
+				loop(4){
+					ascent(j in 0..6){
+						let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*40,ObjMove_GetY(enemy)+sin(angle+j*60)*40,0,90,DS_RICE_S_BLUE,15);
+						ObjShot_SetDeleteFrame(trail,0);
+					}
+					angle += 5;
+					wait(2);
+				}
+				ascent(j in 0..3){
+					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,15);
+					ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
+				}
+				n++;
+			}
+			ascent(i in 0..60){
+				if(Obj_IsDeleted(enemy)){break;}
+				ascent(j in 0..6){
+					let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),0,90,DS_RICE_S_BLUE,15);
+					ObjShot_SetDeleteFrame(trail,0);
+				}
+				if(i%5 == 0){
+					ascent(j in 0..6){
+						let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),rand(2,3),90,DS_RICE_S_BLUE,15);
+						ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
+					}
+				}
+				yield;
+			}
+		}
 	}
 
 	task Hitbox{
