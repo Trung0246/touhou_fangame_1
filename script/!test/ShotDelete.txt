@@ -1,0 +1,28 @@
+//This is based on a shot script from fellow project creator Badz (who based it on someone else's)
+//Credit to them
+@Initialize{
+	SetShotDeleteEventEnable(EV_DELETE_SHOT_IMMEDIATE,true);
+}
+
+@MainLoop{
+yield;
+}
+
+@Event{
+	alternative(GetEventType())
+		case(EV_DELETE_SHOT_IMMEDIATE){
+			DeleteFX(GetEventArgument(0),GetEventArgument(1));
+		}
+}
+
+task DeleteFX(shot, position){
+	let that = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "./system/bullet-delete-anim.png");
+	ObjRender_SetPosition(that, position[0], position[1], 0);
+	ascent(i in 0..3){
+		ObjSprite2D_SetSourceRect(that, i*64, 0, i*64+64, 64);
+		ObjSprite2D_SetDestCenter(that);
+		loop(5){yield;}
+	}
+	Obj_Delete(that);
+}
