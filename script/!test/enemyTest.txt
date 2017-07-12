@@ -1,0 +1,141 @@
+#東方弾幕風[Stage]
+#ScriptVersion[3]
+#Title["Enemy test"]
+#Text["Stage text"]
+#Image["./ExRumia(星符「ミッドナイトレヴァリエ」).jpg"]
+//#Background["script/default_system/Default_Background_IceMountain.txt"]
+#System["./systemTest.txt"]
+ 
+#include"script/default_system/Default_ShotConst.txt"
+
+@Initialize
+{
+    TStage();
+}
+ 
+@MainLoop
+{
+    yield;
+}
+ 
+@Finalize
+{
+}
+ 
+let FAIRY_TEST = 1;
+ 
+task TStage
+{
+	ascent(i in 0..3){
+		ascent(j in 0..2){
+			StageEnemy(100+j*184,-50,FAIRY_TEST,[284-j*184,100+i*32,i%2+2]);
+		}
+		wait(10);
+	}
+
+/*	let fairy = ObjEnemy_Create(OBJ_ENEMY);
+	ObjEnemy_Regist(fairy);
+	ObjMove_SetPosition(fairy,192,120);
+	AnimateSmallFairy(fairy,floor(rand(0,6)));
+	wait(60);
+	Obj_SetValue(fairy,"Anim",1);
+	wait(240);
+	Obj_SetValue(fairy,"Anim",0);*/
+}
+
+
+task AnimateSmallFairy(obj,color) {
+	Obj_SetValue(obj,"Anim",0);
+	ObjPrim_SetTexture(obj,GetCurrentScriptDirectory() ~ "./system/Tiny_Fairies.png");
+	ObjSprite2D_SetDestRect(obj,-16,-16,16,16);
+	while(!Obj_IsDeleted(obj)){
+		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..4){
+				if(Obj_GetValueD(obj,"Anim",0) != 0 || Obj_IsDeleted(obj)){break;}
+				ObjSprite2D_SetSourceRect(obj,i*32,color*32,(i+1)*32,(color+1)*32);
+				wait(10);
+			}
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 1){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",2);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..5){
+				ObjSprite2D_SetSourceRect(obj,128+i*32,color*32,128+(i+1)*32,(color+1)*32);
+				wait(10);
+			}
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 3){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+			while(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+				ascent(i in 0..3){
+					if(Obj_GetValueD(obj,"Anim",0) != 4 || Obj_IsDeleted(obj)){break;}
+					ObjSprite2D_SetSourceRect(obj,288+i*32,color*32,288+(i+1)*32,(color+1)*32);
+					wait(10);
+				}
+			}
+			descent(i in 0..5){
+				ObjSprite2D_SetSourceRect(obj,128+i*32,color*32,128+(i+1)*32,(color+1)*32);
+				wait(10);
+			}
+			ObjRender_SetScaleX(obj,1);
+		}
+		yield;
+	}
+}
+
+
+task StageEnemy(x,y,type,extra){
+	let enemy = ObjEnemy_Create(OBJ_ENEMY);
+	ObjEnemy_Regist(enemy);
+	ObjMove_SetPosition(enemy,x,y);
+	Hitbox;
+	alternative(type)
+	case(FAIRY_TEST){ //[xdest,ydest,color]
+		AnimateSmallFairy(enemy,extra[2]);
+		ObjEnemy_SetLife(enemy,100);
+		ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+		if(extra[0] > x){Obj_SetValue(enemy,"Anim",4);}
+		else{Obj_SetValue(enemy,"Anim",3);}
+		wait(60);
+		Obj_SetValue(enemy,"Anim",0);
+		wait(40);
+		loop(5){
+			ascent(i in -5..6){
+				if(Obj_IsDeleted(enemy)){break;}
+				let shot = CreateShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*8),DS_SCALE_BLUE-absolute(i)%2,10);
+				ObjMove_AddPatternB2(shot,180,NO_CHANGE,NO_CHANGE,0,0.05,NO_CHANGE,5);
+			}
+			wait(50);
+		}
+		wait(60);
+		if(ObjMove_GetX(enemy) < 192){
+			Obj_SetValue(enemy,"Anim",1);
+			ObjMove_SetAngle(enemy,220);
+		}
+		else{
+			Obj_SetValue(enemy,"Anim",2);
+			ObjMove_SetAngle(enemy,-40);
+		}
+		ObjMove_SetAcceleration(enemy,0.05);
+		ObjMove_SetMaxSpeed(enemy,3);
+		wait(120);
+		Obj_Delete(enemy);
+	}
+
+	task Hitbox{
+		while(!Obj_IsDeleted(enemy)){
+			ObjEnemy_SetIntersectionCircleToShot(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),16);
+			ObjEnemy_SetIntersectionCircleToPlayer(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),12);
+			yield;
+			if(ObjEnemy_GetInfo(enemy,INFO_LIFE) <= 0){Obj_Delete(enemy);}
+		}
+	}
+}
+
+function wait(n){loop(n){yield;}}
