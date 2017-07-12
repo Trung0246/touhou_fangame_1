@@ -5,56 +5,29 @@
 }
 
 @MainLoop{
-yield;
+  yield;
 }
 
 @Event{
 	alternative(GetEventType)
-	case(EV_DELETE_SHOT_IMMEDIATE){
-		DeleteFX(GetEventArgument(0),GetEventArgument(1));
-	}
-	case(EV_DELETE_SHOT_TO_ITEM){
-		DeleteFX(GetEventArgument(0),GetEventArgument(1));
-	}
-	case(EV_DELETE_SHOT_FADE){
-		DeleteFX(GetEventArgument(0),GetEventArgument(1));
-	}
+		case(EV_DELETE_SHOT_IMMEDIATE){
+			DeleteFX(GetEventArgument(0),GetEventArgument(1));
+		}
+		case(EV_DELETE_SHOT_TO_ITEM){
+			DeleteFX(GetEventArgument(0),GetEventArgument(1));
+		}
+		case(EV_DELETE_SHOT_FADE){
+			DeleteFX(GetEventArgument(0),GetEventArgument(1));
+		}
 }
 
 task DeleteFX(shot, position){
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(that,GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png");
+	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png");
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
-	let objId = ObjShot_GetImageID(shot);
-	if (objId < 256) {
-		let modColor = objId % 8;
-		alternative (modColor)
-		case (1) {
-			ObjRender_SetColor(that, 255, 0, 0);
-		}
-		case (2) {
-			ObjRender_SetColor(that, 255, 255 / 2, 0);
-		}
-		case (3) {
-			ObjRender_SetColor(that, 255, 255, 0);
-		}
-		case (4) {
-			ObjRender_SetColor(that, 0, 255, 0);
-		}
-		case (5) {
-			ObjRender_SetColor(that, 0, 255, 255);
-		}
-		case (6) {
-			ObjRender_SetColor(that, 0, 0, 255);
-		}
-		case (7) {
-			ObjRender_SetColor(that, 255, 0, 255);
-		}
-		case (0) {
-			ObjRender_SetColor(that, 0, 0, 0);
-		}
-	}
+	let color = GetShotDataInfoA1(ObjShot_GetImageID(shot), TARGET_ENEMY, INFO_DELAY_COLOR);
+	ObjRender_SetColor(that, color[0], color[1], color[2]);
 	ascent(i in 0..4){
 		ObjSprite2D_SetSourceRect(that, 64 * i, 0, 64 * (i + 1), 64);
 		ObjSprite2D_SetDestCenter(that);
