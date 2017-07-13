@@ -1,0 +1,98 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Stage 3 Spell Idea"]
+#Text["Saga Kuramu: Wicked Magical Contract"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(300);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(60);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss, 10, 10);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+task TMain {
+	while(!Obj_IsDeleted(objBoss)){
+		let x = 35;
+		let y = 20;
+		let time = 50;
+		loop(8){
+			loop(6){
+				CreateLetter(x, y, time); // Spawn the letters
+				time += 2;
+				x += 364/6;
+				wait(2);
+			}
+			x = 35;
+			y += 40;
+		}
+
+		task CreateLetter(x, y, time) { // This task creates the letters (which are all boxes but eventually they'd be different things)
+			let space = 10;
+			CreateIndvShot(x + space, y + space, time);
+			CreateIndvShot(x, y + space, time);
+			CreateIndvShot(x - space, y + space, time);
+			CreateIndvShot(x + space, y, time);
+			CreateIndvShot(x - space, y, time);
+			CreateIndvShot(x + space, y - space, time);
+			CreateIndvShot(x, y - space, time);
+			CreateIndvShot(x - space, y - space, time);
+
+			task CreateIndvShot(x, y, time) {
+				let obj1 = CreateShotA1(x,y,0,90,DS_BILL_ORANGE,20);
+				ObjMove_AddPatternA1(obj1,200,NO_CHANGE,rand(0,360));
+				ObjMove_AddPatternA2(obj1,360-time,1,NO_CHANGE,0.05,0,2);
+			}
+
+			// for extra beauty points the letters could exploe into themselves and then fly out, which would require atan and I don't want to get involved with that.
+		}
+		wait(500);
+	}
+}
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
