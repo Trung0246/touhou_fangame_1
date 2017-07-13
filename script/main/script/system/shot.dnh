@@ -21,6 +21,9 @@
 		}
 }
 
+
+
+//ObjRender_SetBlendType(shot, BLEND_ADD_RGB);
 let path = GetModuleDirectory() ~ "/script/default_system/img/Default_Shot.png";
 
 task DeleteBulletFX(shot, position) {
@@ -28,7 +31,7 @@ task DeleteBulletFX(shot, position) {
 	let rect = GetShotDataInfoA1(imageId, TARGET_ENEMY, INFO_RECT);
 	let color = GetShotDataInfoA1(imageId, TARGET_ENEMY, INFO_DELAY_COLOR);
 	DeleteBulletFX_ZoomFade(shot, position, rect);
-	wait(5);
+	wait(4);
 	DeleteBulletFX_BreakFX(shot, position, color);
 }
 task DeleteBulletFX_ZoomFade(shot, position, rect) {
@@ -43,8 +46,8 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 	ObjRender_SetY(obj, position[1] + 16);
 	ObjRender_SetAngleZ(obj, ObjMove_GetAngle(shot) + 90);
 	ascent (i in 0..time) {
-		ObjRender_SetScaleX(obj, 1 + (i / time * 1));
-		ObjRender_SetScaleY(obj, 1 + (i / time * 1));
+		ObjRender_SetScaleX(obj, 1 + (i / time * 0.1));
+		ObjRender_SetScaleY(obj, 1 + (i / time * 0.1));
 		ObjRender_SetAlpha(obj, (255 - i / time * 255));
 		yield;
 	}
@@ -52,7 +55,7 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 }
 task DeleteBulletFX_BreakFX(shot, position, color) {
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png"); //TODO: Change file path
+	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png"); //TODO: change file path
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
 	ObjRender_SetColor(that, color[0], color[1], color[2]);
