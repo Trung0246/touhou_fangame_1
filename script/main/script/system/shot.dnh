@@ -21,13 +21,40 @@
 		}
 }
 
-task DeleteBulletFX(shot, position){
+let path = GetModuleDirectory() ~ "/script/default_system/img/Default_Shot.png";
+
+task DeleteBulletFX(shot, position) {
+	let imageId = ObjShot_GetImageID(shot);
+	let rect = GetShotDataInfoA1(imageId, TARGET_ENEMY, INFO_RECT);
+	let color = GetShotDataInfoA1(imageId, TARGET_ENEMY, INFO_DELAY_COLOR);
+	DeleteBulletFX_ZoomFade(shot, position, rect);
+	wait(5);
+	DeleteBulletFX_BreakFX(shot, position, color);
+}
+task DeleteBulletFX_ZoomFade(shot, position, rect) {
+	let time = 6;
+
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, path);
+	Obj_SetRenderPriority(obj, -1);
+	ObjSprite2D_SetSourceRect(obj, rect[0], rect[1], rect[2], rect[3]);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetX(obj, position[0] + 32);
+	ObjRender_SetY(obj, position[1] + 16);
+	ObjRender_SetAngleZ(obj, ObjMove_GetAngle(shot) + 90);
+	ascent (i in 0..time) {
+		ObjRender_SetScaleX(obj, 1 + (i / time * 1));
+		ObjRender_SetScaleY(obj, 1 + (i / time * 1));
+		ObjRender_SetAlpha(obj, (255 - i / time * 255));
+		yield;
+	}
+	Obj_Delete(obj);
+}
+task DeleteBulletFX_BreakFX(shot, position, color) {
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
-  //Will change file path later...
-	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/water-white.png");//"/system/bullet-delete-anim.png"
+	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png"); //TODO: Change file path
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
-	let color = GetShotDataInfoA1(ObjShot_GetImageID(shot), TARGET_ENEMY, INFO_DELAY_COLOR);
 	ObjRender_SetColor(that, color[0], color[1], color[2]);
 	ascent(i in 0..4){
 		ObjSprite2D_SetSourceRect(that, 64 * i, 0, 64 * (i + 1), 64);
