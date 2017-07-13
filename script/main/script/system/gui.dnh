@@ -4,7 +4,38 @@ let dir = GetModuleDirectory() ~ "script/main/img/";
 let guiPath = dir ~ "system/front00.png";
 let digitPath = dir ~ "ascii/ascii.png";
 
+function tempInit() {
+	//May remove these after we added Init function at start of the game...
+	CreateCommonDataArea("main");
+
+	let character = ["reimu", "marisa", "shou", "hecatia"];
+
+	ascent (i in 0 .. length(character)) {
+		SetAreaCommonData("main", character[i] ~ "_extra", false);
+		SetAreaCommonData("main", character[i] ~ "_phantasm", false);
+		SetAreaCommonData("main", character[i] ~ "_extra_practice", false);
+		SetAreaCommonData("main", character[i] ~ "_phantasm_practice", false);
+		ascent (j in 0..7) {
+			SetAreaCommonData("main", character[i] ~ "_practice_easy_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_practice_normal_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_practice_hard_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_practice_lunatic_stage_" ~ IntToString(j), false);
+		}
+	}
+
+	SetCommonData("player_point", 10000);
+
+	SetCommonData("player_life", 2);
+	SetCommonData("player_life_max", 8); //8, cap of original life
+	SetCommonData("player_life_piece", 0);
+
+	SetCommonData("player_spell", 3);
+	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
+	SetCommonData("player_spell_piece", 0);
+}
+
 @Initialize {
+	tempInit();
 	InitFrame();
 	InitLine();
 	UpdateHiScore();
@@ -67,25 +98,25 @@ task InitFrame {
 	//563, 23 //bottom
 
 	let frame = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(frame,guiPath);
-	Obj_SetRenderPriority(frame,0.1);
-	ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
-	//left
-	ObjSpriteList2D_SetSourceRect(frame,0,0,47,703);
-	ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
-	ObjSpriteList2D_AddVertex(frame);
-	//top
-	ObjSpriteList2D_SetSourceRect(frame,0,703,562,727);
-	ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
-	ObjSpriteList2D_AddVertex(frame);
-	//bottom
-	ObjSpriteList2D_SetSourceRect(frame,0,726,562,750);
-	ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
-	ObjSpriteList2D_AddVertex(frame);
-	//right
-	ObjSpriteList2D_SetSourceRect(frame,47,0,375,703);
-	ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
-	ObjSpriteList2D_AddVertex(frame);
+  ObjPrim_SetTexture(frame,guiPath);
+  Obj_SetRenderPriority(frame,0.1);
+  ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
+  //left
+  ObjSpriteList2D_SetSourceRect(frame,0,0,47,703);
+  ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
+  ObjSpriteList2D_AddVertex(frame);
+  //top
+  ObjSpriteList2D_SetSourceRect(frame,0,703,562,727);
+  ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
+  ObjSpriteList2D_AddVertex(frame);
+  //bottom
+  ObjSpriteList2D_SetSourceRect(frame,0,726,562,750);
+  ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
+  ObjSpriteList2D_AddVertex(frame);
+  //right
+  ObjSpriteList2D_SetSourceRect(frame,47,0,375,703);
+  ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
+  ObjSpriteList2D_AddVertex(frame);
 }
 task InitLine {
 	//7 lines
@@ -362,11 +393,6 @@ task UpdatePlayerLife {
 	ObjRender_SetScaleX(obj, 0.7);
 	ObjRender_SetScaleY(obj, 0.7);
 
-	//May remove these after we added Init function at start of the game...
-	SetCommonData("player_life", 2);
-	SetCommonData("player_life_max", 8); //8, cap of original life
-	SetCommonData("player_life_piece", 0);
-
 	while (true) {
 		while (GetCommonData("player_life_piece", 0) >= 1) {
 			SetCommonData("player_life_piece", GetCommonData("player_life_piece", 0) - 1);
@@ -375,7 +401,7 @@ task UpdatePlayerLife {
 			}
 		}
 		if (GetCommonData("player_life", 0) >= GetCommonData("player_life_max", 8)) {
-			SetCommonData("player_life", 8);
+			SetCommonData("player_life", GetCommonData("player_life_max", 8));
 			SetCommonData("player_life_piece", 0);
 		}
 
@@ -438,11 +464,6 @@ task UpdatePlayerSpell {
 	ObjRender_SetScaleX(obj, 0.7);
 	ObjRender_SetScaleY(obj, 0.7);
 
-	//May remove these after we added Init function at start of the game...
-	SetCommonData("player_spell", 3);
-	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
-	SetCommonData("player_spell_piece", 0);
-
 	while (true) {
 		while (GetCommonData("player_spell_piece", 0) >= 1) {
 			SetCommonData("player_spell_piece", GetCommonData("player_spell_piece", 0) - 1);
@@ -451,7 +472,7 @@ task UpdatePlayerSpell {
 			}
 		}
 		if (GetCommonData("player_spell", 0) >= GetCommonData("player_spell_max", 8)) {
-			SetCommonData("player_spell", 8);
+			SetCommonData("player_spell", GetCommonData("player_spell_max", 8));
 			SetCommonData("player_spell_piece", 0);
 		}
 
@@ -510,7 +531,7 @@ task UpdateBossXPos (obj) {
 	ObjSprite2D_SetDestRect(objBossMark, 0, 0, 64, 16);
 	ObjRender_SetColor(objBossMark, 255, 0, 0);
 	ObjRender_SetY(objBossMark, 480 - 16);
-	ObjRender_SetAlpha(objBossMark, 170);
+  ObjRender_SetAlpha(objBossMark, 170);
 	while (GetEventType() != EV_END_BOSS_STEP) {
 		if (Obj_IsDeleted(obj)) {
 			ObjRender_SetAlpha(objBossMark, 0);
@@ -665,142 +686,3 @@ function NumberToArray(let number, let haveComma) {
 	}
 	return res;
 }
-
-//Unused function
-/*function ArrayToString(let array) {
-	let res = "";
-	ascent (i in 0..length(array)) {
-		res = res ~ ToString(array[i]);
-	}
-	return res;
-}*/
-
-//Abadoned task, do not touch this if you know what to do
-
-/*task UpdateDigit(let number, let maxNum, let x, let y) {
-	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(obj, digitPath);
-	Obj_SetRenderPriority(obj, 0.1);
-	ObjRender_SetY(obj, y);//62.5 + 2
-
-	while (true) {
-		number = min(number, maxNum); //2147483647, cap of int
-		let listNum = NumberToArray(number, true);
-
-		ObjSpriteList2D_ClearVertexCount(obj);
-		ascent(i in 0 .. length(listNum)) {
-			let num = listNum[i];
-			ObjRender_SetX(obj, x - (length(listNum) - 1 - i) * 12); //640 - 20
-			if (ToString(num) == ",") {
-				ObjSpriteList2D_SetSourceRect(obj, 176, 144 + 1.4, 191, 159 + 1.4);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-				ObjRender_SetX(obj, ObjRender_GetX(obj) + 1.5);
-			} else {
-				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
-			}
-			ObjSpriteList2D_AddVertex(obj);
-		}
-		yield;
-	}
-}
-
-task TGainSpell(score)
-{
-	let objText = ObjText_Create();
-	ObjText_SetText(objText, "Spell Card Bonus!");
-	ObjText_SetFontSize(objText, 32);
-	ObjText_SetFontBold(objText, true);
-	ObjText_SetFontColorTop(objText, 255, 255, 255);
-	ObjText_SetFontColorBottom(objText, 128, 128, 255);
-	ObjText_SetFontBorderType(objText, BORDER_FULL);
-	ObjText_SetFontBorderColor(objText,255, 255, 255);
-	ObjText_SetFontBorderWidth(objText, 1);
-	Obj_SetRenderPriority(objText, 0.6);
-	ObjRender_SetX(objText, 32);
-	ObjRender_SetY(objText, 98);
-
-	let strScore = "+" ~ IntToString(score);
-	let objScore = ObjText_Create();
-	ObjText_SetText(objScore, strScore);
-	ObjText_SetFontSize(objScore, 32);
-	ObjText_SetFontBold(objScore, true);
-	ObjText_SetFontColorTop(objScore, 255, 255, 255);
-	ObjText_SetFontColorBottom(objScore, 255, 128, 128);
-	ObjText_SetFontBorderType(objScore, BORDER_FULL);
-	ObjText_SetFontBorderColor(objScore,255, 255, 255);
-	ObjText_SetFontBorderWidth(objScore, 1);
-	Obj_SetRenderPriority(objScore, 0.6);
-	ObjRender_SetX(objScore, 180);
-	ObjRender_SetY(objScore, 140);
-
-	loop(120)
-	{
-		yield;
-	}
-	Obj_Delete(objText);
-	Obj_Delete(objScore);
-}
-*/
-
-/*let objScore = ObjPrim_Create(OBJ_PRIMITIVE_2D);
-	let X2 = 375 + 1;
-	let Y2 = 26 * 0 + 1;
-	let SIZE_X2 = 375 + 104;
-	let SIZE_Y2 = (26 * 1) - 1;
-	let ox = 0;
-	let oy = 0;
-	ObjPrim_SetTexture(objScore, guiPath);
-	ObjRender_SetBlendType(objScore, BLEND_ALPHA);
-	Obj_SetRenderPriorityI(objScore, 0.1);
-	ObjPrim_SetPrimitiveType(objScore, PRIMITIVE_TRIANGLEFAN);
-	ObjPrim_SetVertexCount(objScore, 4);
-	ObjPrim_SetVertexPosition(objScore, 0, -SIZE_X2 / 2, -SIZE_Y2, 0);
-	ObjPrim_SetVertexPosition(objScore, 1, SIZE_X2 / 2, -SIZE_Y2, 0);
-	ObjPrim_SetVertexPosition(objScore, 2, SIZE_X2 / 2, 0, 0);
-	ObjPrim_SetVertexPosition(objScore, 3, -SIZE_X2 / 2, 0, 0);
-	ObjPrim_SetVertexUVT(objScore, 0, X2, Y2);
-	ObjPrim_SetVertexUVT(objScore, 1, X2 + SIZE_X2, Y2);
-	ObjPrim_SetVertexUVT(objScore, 2, X2 + SIZE_X2, Y2 + SIZE_Y2);
-	ObjPrim_SetVertexUVT(objScore, 3, X2, Y2 + SIZE_Y2);
-
-	ObjRender_SetPosition(objScore, ox, oy + (1 - 255 / 40) * SIZE_Y2, 0);
-
-	
-	SetCommonData("AlphaCount", 0);
-	let startsw = 0;
-	task add_picture(ox, oy, X1, Y1, SIZE_X, SIZE_Y, TEXTURE)
-	{
-		let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
-		
-		ObjPrim_SetTexture(obj, TEXTURE);
-		ObjRender_SetBlendType(obj, BLEND_ALPHA);
-		Obj_SetRenderPriorityI(obj, 0.1);
-		ObjPrim_SetPrimitiveType(obj, PRIMITIVE_TRIANGLEFAN);
-		ObjPrim_SetVertexCount(obj, 4);
-		ObjPrim_SetVertexPosition(obj, 0,  -SIZE_X/2 * 0.75, -SIZE_Y/2 * 0.75,0);
-		ObjPrim_SetVertexPosition(obj, 1,   SIZE_X/2 * 0.75, -SIZE_Y/2 * 0.75,0);
-		ObjPrim_SetVertexPosition(obj, 2,   SIZE_X/2 * 0.75,  SIZE_Y/2 * 0.75,0);
-		ObjPrim_SetVertexPosition(obj, 3,  -SIZE_X/2 * 0.75,  SIZE_Y/2 * 0.75,0);
-		ObjPrim_SetVertexUVT(obj, 0, X1, Y1);
-		ObjPrim_SetVertexUVT(obj, 1, X1+SIZE_X, Y1);
-		ObjPrim_SetVertexUVT(obj, 2, X1+SIZE_X, Y1+SIZE_Y);
-		ObjPrim_SetVertexUVT(obj, 3, X1, Y1+SIZE_Y);
-		ObjRender_SetPosition(obj, ox, oy,0);
-
-		while(true)
-		{
-			if(startsw==0){
-				ObjRender_SetAlpha(obj,255);
-				ObjRender_SetColor(obj,255-GetCommonData("AlphaCount",0)*255/40,255-GetCommonData("AlphaCount",0)*255/40,255-GetCommonData("AlphaCount",0)*255/40);
-			}else{
-				ObjRender_SetAlpha(obj,0);
-				ObjRender_SetColor(obj,255,255,255);
-			}
-			ObjRender_SetPosition(obj, ox, oy, 0);
-			Obj_SetRenderPriorityI(obj, 0.1);
-			yield;
-		}
-		Obj_Delete(obj);
-	};
-	add_picture(640 - 220 + 104 / 2, 40 + 26 / 2, 375 + 1, 26 * 0 + 1, 104, 26, guiPath);*/
