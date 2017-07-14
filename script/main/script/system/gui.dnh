@@ -15,14 +15,23 @@ function tempInit() {
 		SetAreaCommonData("main", character[i] ~ "_phantasm", false);
 		SetAreaCommonData("main", character[i] ~ "_extra_practice", false);
 		SetAreaCommonData("main", character[i] ~ "_phantasm_practice", false);
+		SetAreaCommonData("main", character[i] ~ "_easy_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_normal_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_hard_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_lunatic_hiscore", 0);
 		ascent (j in 0..7) {
 			SetAreaCommonData("main", character[i] ~ "_practice_easy_stage_" ~ IntToString(j), false);
 			SetAreaCommonData("main", character[i] ~ "_practice_normal_stage_" ~ IntToString(j), false);
 			SetAreaCommonData("main", character[i] ~ "_practice_hard_stage_" ~ IntToString(j), false);
 			SetAreaCommonData("main", character[i] ~ "_practice_lunatic_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_practice_easy_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_practice_normal_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_practice_hard_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_practice_lunatic_stage_" ~ IntToString(j) ~ "_hiscore", 0);
 		}
 	}
 
+	SetCommonData("player_power", 0);
 	SetCommonData("player_point", 10000);
 
 	SetCommonData("player_life", 2);
@@ -32,6 +41,12 @@ function tempInit() {
 	SetCommonData("player_spell", 3);
 	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
 	SetCommonData("player_spell_piece", 0);
+
+	SetCommonData("item_raindrop_red", 0);
+	SetCommonData("item_raindrop_green", 0);
+	SetCommonData("item_raindrop_blue", 0);
+
+	SetCommonData("item_raindrop_change", 1); //Additive amount when raindrop collected
 }
 
 @Initialize {
