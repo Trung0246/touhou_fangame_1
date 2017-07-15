@@ -6,7 +6,7 @@
 //#Background["script/default_system/Default_Background_IceMountain.txt"]
 #System["./systemTest.txt"]
  
-#include"script/default_system/Default_ShotConst.txt"
+#include"./Default_ShotConst.txt"
 
 @Initialize
 {
@@ -125,6 +125,41 @@ task AnimateBigFairy(obj,color) {
 	}
 }
 
+function CreateShotRaindrop(x,y,xspd,yspd,xaccel,yaccel,xmax,ymax,graphic,delay){
+	let raindrop = CreateShotB2(x,y,xspd,yspd,xaccel,yaccel,xmax,ymax,graphic,delay);
+	ObjShot_SetIntersectionEnable(raindrop,false);
+	ObjShot_SetSpellResist(raindrop,true);
+	CheckPlayerCollect(raindrop);
+	return raindrop;
+}
+
+task CheckPlayerCollect(raindrop){
+	let objPlayer = GetPlayerObjectID();
+	while(!Obj_IsDeleted(raindrop)){
+		let x = ObjMove_GetX(objPlayer) - ObjMove_GetX(raindrop);
+		let y = ObjMove_GetY(objPlayer) - ObjMove_GetY(raindrop);
+		if(x*x + y*y <= 576){
+			RaindropBehavior(ObjShot_GetImageID(raindrop));
+			ObjShot_SetDeleteFrame(raindrop,0);
+		}
+		yield;
+	}
+
+	task RaindropBehavior(type){
+		alternative(type)
+		case(RAINDROP_RED){
+			SetCommonData("raindrop_red",GetCommonData("raindrop_red",0)+1);
+		}
+		case(RAINDROP_BLUE){
+			SetCommonData("raindrop_blue",GetCommonData("raindrop_blue",0)+1);
+		}
+		case(RAINDROP_GREEN){
+			SetCommonData("raindrop_green",GetCommonData("raindrop_green",0)+1);
+		}
+		others{RaiseError("That is invalid you dork");}
+	}
+}
+
 task StageEnemy(x,y,type,extra){
 	let enemy = ObjEnemy_Create(OBJ_ENEMY);
 	ObjEnemy_Regist(enemy);
@@ -162,7 +197,7 @@ task StageEnemy(x,y,type,extra){
 		wait(120);
 		Obj_Delete(enemy);
 	}
-	case(FAIRY_RAIN){ //[destx,desty,dir]
+	case(FAIRY_RAIN){ //[destx,desty,dir] //todo: implement variable direction
 		AnimateBigFairy(enemy,1);
 		ObjEnemy_SetLife(enemy,200);
 		Obj_SetValue(enemy,"Anim",4);
@@ -233,8 +268,22 @@ task StageEnemy(x,y,type,extra){
 			ObjEnemy_SetIntersectionCircleToShot(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),16);
 			ObjEnemy_SetIntersectionCircleToPlayer(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),12);
 			yield;
-			if(ObjEnemy_GetInfo(enemy,INFO_LIFE) <= 0){Obj_Delete(enemy);}
+			if(ObjEnemy_GetInfo(enemy,INFO_LIFE) <= 0){
+				if(!Obj_IsDeleted(enemy)){
+					SpawnRaindrops(ObjMove_GetX(enemy),ObjMove_GetY(enemy));
+					Obj_Delete(enemy);
+				}
+			}
 		}
+	}
+
+	task SpawnRaindrops(xpos,ypos){
+		alternative(type)
+			case(FAIRY_TEST){
+				ascent(i in -1..2){
+					CreateShotRaindrop(xpos,ypos,cos(90+i*120)*0.2,sin(90+i*120),0,0.1,0,2,RAINDROP_RED-absolute(i)*2,5);
+				}
+			}
 	}
 }
 
