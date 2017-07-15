@@ -3,7 +3,7 @@
 //Constant
 let EV_OBJ_VISIBLE = EV_USER + 1;
 let EV_OBJ_RENDERPIORITY = EV_USER + 2;
-let EV_OBJ_TYPE = EV_USER + 3;
+//let EV_OBJ_TYPE = EV_USER + 3;
 let EV_OBJ_DELETE = EV_USER + 4;
 let EV_OBJ_RENDER_X = EV_USER + 5;
 let EV_OBJ_RENDER_Y = EV_USER + 6;
@@ -67,9 +67,24 @@ task Obj_Event (obj) {
 	while (!Obj_IsDeleted(obj)) {
 		let temp;
 		let temp2;
+		let temp3;
+		let temp4;
 		temp = Obj_IsVisible(obj);
 		if (is_visible != temp) {
-			NotifyEventAll(EV_OBJ_VISIBLE, [obj, is_visible, temp]);
+			let temp3 = [obj];
+			if (is_visible == true) {
+				temp4 = [1];
+			} else {
+				temp4 = [0];
+			}
+			temp3 = temp3 ~ temp4;
+			if (temp == true) {
+				temp4 = [1];
+			} else {
+				temp4 = [0];
+			}
+			temp3 = temp3 ~ temp4;
+			NotifyEventAll(EV_OBJ_VISIBLE, temp3);
 			is_visible = temp;
 		}
 		temp = Obj_GetRenderPriority(obj);
@@ -79,11 +94,11 @@ task Obj_Event (obj) {
 			render_piority = temp;
 			render_piority_i = temp2;
 		}
-		temp = Obj_GetType(obj);
+		/*temp = Obj_GetType(obj);
 		if (type != temp) {
 			NotifyEventAll(EV_OBJ_TYPE, [obj, type, temp]);
 			type = temp;
-		}
+		}*/
 		yield;
 	}
 	NotifyEventAll(EV_OBJ_DELETE, [obj]);
@@ -178,7 +193,7 @@ task ObjPrim_Event (obj) {
 			ascent (i in 0..count) {
 				let temp = ObjPrim_GetVertexPosition(obj, i);
 				if (pos[i][0] != temp[0] || pos[i][1] != temp[1] || pos[i][2] != temp[2]) {
-					NotifyEventAll(EV_OBJ_PRIM_VERTEXPOSITION, [obj, i, pos[i], temp]);
+					NotifyEventAll(EV_OBJ_PRIM_VERTEXPOSITION, [obj, i] ~ pos[i] ~ temp);
 					a();
 					break;
 				}
@@ -216,7 +231,7 @@ task ObjText_Event (obj) {
 		temp = ObjText_GetTextLengthCUL(obj);
 		ascent (i in 0..length(temp)) {
 			if (length_CUL[i] != temp[i]) {
-				NotifyEventAll(EV_OBJ_TEXT_TEXTLENGTHCUL, [obj, i, length_CUL[i], length_CUL, temp[i], temp]);
+				NotifyEventAll(EV_OBJ_TEXT_TEXTLENGTHCUL, [obj, i] ~ [length_CUL[i]] ~ length_CUL ~ [temp[i]] ~ temp);
 				length_CUL = temp;
 				temp_bool = true;
 				break;
@@ -249,6 +264,8 @@ task ObjShot_Event (obj) {
 	yield;
 	while (!Obj_IsDeleted(obj)) {
 		let temp;
+		let temp2;
+		let temp3;
 		temp = ObjShot_GetDamage(obj);
 		if (damage != temp) {
 			NotifyEventAll(EV_OBJ_SHOT_DAMAGE, [obj, damage, temp]);
@@ -266,7 +283,20 @@ task ObjShot_Event (obj) {
 		}
 		temp = ObjShot_IsSpellResist(obj);
 		if (is_spell_resist != temp) {
-			NotifyEventAll(EV_OBJ_SHOT_SPELLRESIST, [obj, is_spell_resist, temp]);
+			let temp2 = [obj];
+			if (is_spell_resist == true) {
+				temp3 = [1];
+			} else {
+				temp3 = [0];
+			}
+			temp2 = temp2 ~ temp3;
+			if (temp == true) {
+				temp3 = [1];
+			} else {
+				temp3 = [0];
+			}
+			temp2 = temp2 ~ temp3;
+			NotifyEventAll(EV_OBJ_SHOT_SPELLRESIST, temp2);
 			is_spell_resist = temp;
 		}
 		temp = ObjShot_GetImageID(obj);
@@ -277,7 +307,7 @@ task ObjShot_Event (obj) {
 		yield;
 	}
 }
-
+RaiseError();
 task ObjLaser_Event (obj) {
 	let length_ = ObjLaser_GetLength(obj);
 	yield;
@@ -392,9 +422,24 @@ task ObjSound_Event (obj) {
 	yield;
 	while (!Obj_IsDeleted(obj)) {
 		let temp;
+		let temp2;
+		let temp3;
 		temp = ObjSound_IsPlaying(obj);
 		if (is_playing != temp) {
-			NotifyEventAll(EV_OBJ_SOUND_PLAYING, [obj, is_playing, temp]);
+			let temp2 = [obj];
+			if (is_playing == true) {
+				temp3 = [1];
+			} else {
+				temp3 = [0];
+			}
+			temp2 = temp2 ~ temp3;
+			if (temp == true) {
+				temp3 = [1];
+			} else {
+				temp3 = [0];
+			}
+			temp2 = temp2 ~ temp3;
+			NotifyEventAll(EV_OBJ_SOUND_PLAYING, temp2);
 			is_playing = temp;
 		}
 	 	temp = ObjSound_GetVolumeRate(obj);
