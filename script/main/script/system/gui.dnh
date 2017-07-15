@@ -15,19 +15,23 @@ function tempInit() {
 		SetAreaCommonData("main", character[i] ~ "_phantasm", false);
 		SetAreaCommonData("main", character[i] ~ "_extra_practice", false);
 		SetAreaCommonData("main", character[i] ~ "_phantasm_practice", false);
+		SetAreaCommonData("main", character[i] ~ "_extra_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_phantasm_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_extra_practice_hiscore", 0);
+		SetAreaCommonData("main", character[i] ~ "_phantasm_practice_hiscore", 0);
 		SetAreaCommonData("main", character[i] ~ "_easy_hiscore", 0);
 		SetAreaCommonData("main", character[i] ~ "_normal_hiscore", 0);
 		SetAreaCommonData("main", character[i] ~ "_hard_hiscore", 0);
 		SetAreaCommonData("main", character[i] ~ "_lunatic_hiscore", 0);
-		ascent (j in 0..7) {
-			SetAreaCommonData("main", character[i] ~ "_practice_easy_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_practice_normal_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_practice_hard_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_practice_lunatic_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_practice_easy_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_practice_normal_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_practice_hard_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_practice_lunatic_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+		ascent (j in 0..6) {
+			SetAreaCommonData("main", character[i] ~ "_easy_practice_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_normal_practice_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_hard_practice_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_lunatic_practice_stage_" ~ IntToString(j), false);
+			SetAreaCommonData("main", character[i] ~ "_easy_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_normal_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_hard_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
+			SetAreaCommonData("main", character[i] ~ "_lunatic_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
 		}
 	}
 
@@ -184,8 +188,8 @@ task UpdateHiScore {
 	ObjRender_SetColor(obj, 180, 180, 180);
 
 	while (true) {
-		let number = 2000000000; //Temporary, will try to get high score here
-		number = min(number, 2000000000); //2147483647, cap of int, rounded
+		let number = 2147483647; //Temporary, will try to get high score here
+		number = min(number, 2147483647); //2147483647, cap of int, rounded 2000000000
 		let listNum = NumberToArray(number, true);
 		let commaCount = 0;
 
@@ -533,7 +537,77 @@ task UpdatePlayerSpell {
 	}
 }
 task UpdateBossLife {
+	/*let objScene = GetEnemyBossSceneObjectID();
+	let lastRemStep = -1;
+	let lifeRateRender = 0;
+	let asd = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+	ObjPrim_SetPrimitiveType(asd, PRIMITIVE_TRIANGLESTRIP);
+	ObjPrim_SetVertexCount(asd, 360 * 2 - 1);
+	ascent (i in 0..(360 * 2 - 1)) {
+		let dist = 75;
+		if (i % 2 != 0) {
+			dist -= 3;
+		}
+		let tempAngle = i / (360 * 2 - 4) * 360 - 90;
+		ObjPrim_SetVertexPosition(asd, i, cos(tempAngle) * dist + 100, sin(tempAngle) * dist + 100, 0);
+		ObjPrim_SetVertexColor(asd, i, 255, 0, 0);
+	}
+	ObjRender_SetBlendType(asd, 2);
+
+	let tempHp = 1;
+	function fucktest() {
+		ascent (i in 0..(360 * 2 - 1)) {
+			let dist = 75;
+			if (i % 2 != 0) {
+				dist -= 3;
+			}
+			let tempAngle = i / (360 * 2 - 4) * (tempHp * 360) - 90 + ((1 - tempHp) * 360);
+			ObjPrim_SetVertexPosition(asd, i, cos(tempAngle) * dist + 100, sin(tempAngle) * dist + 100, 0);
+		}
+	}
+	task changefuck() {
+		while (tempHp > 0) {
+			fucktest();
+			//loop(10){yield;}
+			yield;
+			tempHp -= 0.001;
+		}
+	}
+	changefuck();
 	//Have no idea, maybe later in game
+	let countRemStep = ObjEnemyBossScene_GetInfo(objScene, INFO_REMAIN_STEP_COUNT);
+	if(lastRemStep != countRemStep) {
+		lifeRateRender = 0;
+	}
+
+	let lifeTotalMax = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_MAX_LIFE);
+	let lifeTotal = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_LIFE);
+	let lifeRate = min(lifeTotal / lifeTotalMax, lifeRateRender);
+	ObjSpriteList2D_SetSourceRect(obj, 1, 1, 127, 11);
+	ObjSpriteList2D_SetDestRect(obj, 72, 8, 72 + 270 * lifeRate, 12);
+	ObjSpriteList2D_AddVertex(obj);
+
+	ObjSpriteList2D_SetSourceRect(obj, 132, 1, 137, 11);
+	let listLifeDiv = [0] ~ ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_LIFE_RATE_LIST);
+	ascent(iDiv in 0 .. length(listLifeDiv))
+	{
+		let rate = listLifeDiv[iDiv];
+		let x = 72 + 270 * (1-rate);
+		ObjSpriteList2D_SetDestRect(obj, x-1, 4, x + 1, 14);
+		ObjSpriteList2D_AddVertex(obj);
+	}
+
+	ObjSpriteList2D_SetSourceRect(obj, 1, 1, 127, 11);
+	ascent(iStep in 0 .. countRemStep) {
+		let remStepRate = 58 / countRemStep;
+		ObjSpriteList2D_SetDestRect(obj, 4 + iStep * remStepRate + 2, 8,
+			4 + (iStep + 1) * remStepRate, 12);
+		ObjSpriteList2D_AddVertex(obj);
+	}
+
+	lifeRateRender += 0.01;
+	lifeRateRender = min(lifeRateRender, 1);
+	lastRemStep = countRemStep;*/
 }
 task UpdateBossTimer {
 	//Have no idea, maybe later in game
@@ -701,3 +775,4 @@ function NumberToArray(let number, let haveComma) {
 	}
 	return res;
 }
+
