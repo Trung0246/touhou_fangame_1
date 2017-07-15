@@ -47,40 +47,120 @@ function wait(n){
 	loop(n){yield;}
 }
 
+function angleToPlayer(obj){
+	let toPlayer = atan2(GetPlayerY-ObjMove_GetY(obj),GetPlayerX-ObjMove_GetX(obj)); // Makes something aim towards the player
+	return toPlayer;
+}
+
 task TMain {
 	while(!Obj_IsDeleted(objBoss)){
-		let x = 35;
-		let y = 20;
+		let Tangles = [0,90,180,270];
+		let Tangles2;
+		let random;
+		let letterx = 35;
+		let lettery = 20;
 		let time = 50;
-		loop(8){
-			loop(6){
-				CreateLetter(x, y, time); // Spawn the letters
+		loop(7){
+			loop(5){			
+				Tangles2 = Tangles[round(rand(0,3))]; // Determines what direction the Ts go in
+
+				random = round(rand(1,3)); // Chooses what letter spawns
+				CreateLetter(letterx, lettery, time, random); // Spawn the letters
 				time += 2;
-				x += 364/6;
+				letterx += 364/5;
 				wait(2);
 			}
-			x = 35;
-			y += 40;
+			letterx = 35;
+			lettery += 60;
 		}
 
-		task CreateLetter(x, y, time) { // This task creates the letters (which are all boxes but eventually they'd be different things)
+		task CreateLetter(x, y, time, random) { // This task creates the letters
 			let space = 10;
-			CreateIndvShot(x + space, y + space, time);
-			CreateIndvShot(x, y + space, time);
-			CreateIndvShot(x - space, y + space, time);
-			CreateIndvShot(x + space, y, time);
-			CreateIndvShot(x - space, y, time);
-			CreateIndvShot(x + space, y - space, time);
-			CreateIndvShot(x, y - space, time);
-			CreateIndvShot(x - space, y - space, time);
 
-			task CreateIndvShot(x, y, time) {
-				let obj1 = CreateShotA1(x,y,0,90,DS_BILL_ORANGE,20);
-				ObjMove_AddPatternA1(obj1,200,NO_CHANGE,rand(0,360));
-				ObjMove_AddPatternA2(obj1,360-time,0.5,NO_CHANGE,0.05,0,2.5);
+			if(random == 1){ // O
+				CreateIndvShot(x + space*2, y - space*2, time);
+				CreateIndvShot(x + space, y - space*2, time);
+				CreateIndvShot(x, y - space*2, time);
+				CreateIndvShot(x - space, y - space*2, time);
+				CreateIndvShot(x - space*2, y - space*2, time);
+
+				CreateIndvShot(x + space*2, y - space, time);
+				CreateIndvShot(x - space*2, y - space, time);
+
+				CreateIndvShot(x + space*2, y, time);
+				CreateIndvShot(x - space*2, y, time);
+
+				CreateIndvShot(x + space*2, y + space, time);
+				CreateIndvShot(x - space*2, y + space, time);
+
+				CreateIndvShot(x + space*2, y + space*2, time);
+				CreateIndvShot(x + space, y + space*2, time);
+				CreateIndvShot(x, y + space*2, time);
+				CreateIndvShot(x - space, y + space*2, time);
+				CreateIndvShot(x - space*2, y + space*2, time);
 			}
 
-			// for extra beauty points the letters could explode into themselves and then fly out, which would require atan and I don't want to get involved with that.
+			if(random == 2){ // T
+				CreateIndvShot(x + space*2, y - space*2, time);
+				CreateIndvShot(x + space, y - space*2, time);
+				CreateIndvShot(x, y - space*2, time);
+				CreateIndvShot(x - space, y - space*2, time);
+				CreateIndvShot(x - space*2, y - space*2, time);
+				
+				CreateIndvShot(x, y - space, time);	
+
+				CreateIndvShot(x, y, time);	
+
+				CreateIndvShot(x, y + space, time);	
+
+				CreateIndvShot(x, y + space*2, time);
+			}
+
+			if(random == 3){ // A
+				CreateIndvShot(x + space*2, y - space*2, time);
+				CreateIndvShot(x + space, y - space*2, time);
+				CreateIndvShot(x, y - space*2, time);
+				CreateIndvShot(x - space, y - space*2, time);
+				CreateIndvShot(x - space*2, y - space*2, time);		
+				
+				CreateIndvShot(x + space*2, y - space, time);
+				CreateIndvShot(x - space*2, y - space, time);
+
+				CreateIndvShot(x + space*2, y, time);
+				CreateIndvShot(x + space, y, time);
+				CreateIndvShot(x, y, time);
+				CreateIndvShot(x - space, y, time);
+				CreateIndvShot(x - space*2, y, time);	
+
+				CreateIndvShot(x + space*2, y + space, time);
+				CreateIndvShot(x - space*2, y + space, time);
+
+				CreateIndvShot(x + space*2, y + space*2, time);
+				CreateIndvShot(x - space*2, y + space*2, time);		
+			}
+
+			task CreateIndvShot(x, y, time) {
+				let color;
+				if(random == 1){color = DS_BILL_ORANGE;}
+				if(random == 2){color = DS_BILL_RED;}
+				if(random == 3){color = DS_BILL_YELLOW;}
+
+				let Tcurve = rand(0,0.025);
+
+				let obj1 = CreateShotA1(x,y,0,90,color,20);
+				if(random == 1){ // O pattern
+					ObjMove_AddPatternA1(obj1,200,NO_CHANGE,angleToPlayer(obj1)+rand(-30,30));
+					ObjMove_AddPatternA2(obj1,360-time,0.25,NO_CHANGE,0.025,0.1,2);
+				}
+				if(random == 2){ // T pattern
+					ObjMove_AddPatternA1(obj1,200,NO_CHANGE,Tangles2);
+					ObjMove_AddPatternA2(obj1,360-time,1.5,NO_CHANGE,0,Tcurve,1.5);
+				}
+				if(random == 3){ // A pattern
+					ObjMove_AddPatternA1(obj1,200,NO_CHANGE,atan2(lettery-ObjMove_GetY(obj1),letterx-ObjMove_GetX(obj1)));
+					ObjMove_AddPatternA2(obj1,360-time,0.5,NO_CHANGE,0.05,0,2.5);
+				}
+			}
 		}
 		wait(500);
 	}
@@ -96,3 +176,9 @@ task TEnd {
 
 	CloseScript(GetOwnScriptID());
 }
+
+
+//O-oooooooooo aaaae-a-a-I-a-u
+//Jo-oooooooooooo aae-o-a-a-u-u-a
+//E-eee-ee-eee aaaae-a-e-I-e-a
+//Jo-ooo-oo-oo-oo eeeeo-a-aaa-aaaa
