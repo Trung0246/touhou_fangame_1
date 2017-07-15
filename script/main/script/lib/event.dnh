@@ -1,0 +1,493 @@
+//Made by Trung0246, version 1.1
+
+//Constant
+let EV_OBJ_VISIBLE = EV_USER + 1;
+let EV_OBJ_RENDERPIORITY = EV_USER + 2;
+let EV_OBJ_TYPE = EV_USER + 3;
+let EV_OBJ_DELETE = EV_USER + 4;
+let EV_OBJ_RENDER_X = EV_USER + 5;
+let EV_OBJ_RENDER_Y = EV_USER + 6;
+let EV_OBJ_RENDER_Z = EV_USER + 7;
+let EV_OBJ_RENDER_ANGLEX = EV_USER + 8;
+let EV_OBJ_RENDER_ANGLEY = EV_USER + 9;
+let EV_OBJ_RENDER_ANGLEZ = EV_USER + 10;
+let EV_OBJ_RENDER_SCALEX = EV_USER + 11;
+let EV_OBJ_RENDER_SCALEY = EV_USER + 12;
+let EV_OBJ_RENDER_SCALEZ = EV_USER + 13;
+let EV_OBJ_RENDER_BLEND = EV_USER + 14;
+let EV_OBJ_PRIM_NEW = EV_USER + 15;
+let EV_OBJ_PRIM_COUNT = EV_USER + 16;
+let EV_OBJ_PRIM_VERTEXPOSITION = EV_USER + 17;
+let EV_OBJ_MESH_NEW = EV_USER + 18;
+let EV_OBJ_TEXT_NEW = EV_USER + 19;
+let EV_OBJ_TEXT_TEXTLENGTHCUL = EV_USER + 20;
+let EV_OBJ_TEXT_TEXTLENGTHCU = EV_USER + 21;
+let EV_OBJ_TEXT_TEXTLENGTH = EV_USER + 22;
+let EV_OBJ_SHOT_NEW = EV_USER + 23;
+let EV_OBJ_SHOT_DAMAGE = EV_USER + 24;
+let EV_OBJ_SHOT_PENETRATION = EV_USER + 25;
+let EV_OBJ_SHOT_DELAY = EV_USER + 26;
+let EV_OBJ_SHOT_SPELLRESIST = EV_USER + 27;
+let EV_OBJ_SHOT_IMAGEID = EV_USER + 28;
+let EV_OBJ_LASER_LENGTH = EV_USER + 29;
+let EV_OBJ_STLASER_ANGLE = EV_USER + 30;
+let EV_OBJ_ENEMY_NEW = EV_USER + 31;
+let EV_OBJ_ENEMY_LIFE = EV_USER + 32;
+let EV_OBJ_ENEMY_DAMAGERATE_SHOT = EV_USER + 33;
+let EV_OBJ_ENEMY_DAMAGERATE_SPELL = EV_USER + 34;
+let EV_OBJ_SPELL_NEW = EV_USER + 35;
+let EV_OBJ_MOVE_X = EV_USER + 36;
+let EV_OBJ_MOVE_Y = EV_USER + 37;
+let EV_OBJ_MOVE_SPEED = EV_USER + 38;
+let EV_OBJ_MOVE_ANGLE = EV_USER + 39;
+let EV_OBJ_SOUND_NEW = EV_USER + 40;
+let EV_OBJ_SOUND_PLAYING = EV_USER + 41;
+let EV_OBJ_SOUND_VOLUMERATE = EV_USER + 42;
+let EV_OBJ_FILE_NEW = EV_USER + 43;
+let EV_OBJ_FILE_SIZE = EV_USER + 44;
+let EV_COMMON_DATA_NEW = EV_USER + 45;
+let EV_COMMON_DATA_CHANGE = EV_USER + 46;
+let EV_COMMON_DATA_DELETE = EV_USER + 47;
+let EV_COMMON_DATA_AREA_NEW = EV_USER + 48;
+let EV_COMMON_DATA_AREA_DELETE = EV_USER + 49;
+let EV_COMMON_DATA_AREA_KEY_NEW = EV_USER + 50;
+let EV_COMMON_DATA_AREA_KEY_CHANGE = EV_USER + 51;
+let EV_COMMON_DATA_AREA_KEY_DELETE = EV_USER + 52;
+
+let COMMON_DATA_DEFAULT = "qweiunfajdsnfifowinciomxmfnewioufqcixofmxfzmcmxxqzed";
+let CURRRENT_EV_COUNT = EV_USER + 53;
+//Near the first gate, find the first crate, on top of freedom poles is your goal, boost yourself such and such, but not too much
+//Main library
+task Obj_Event (obj) {
+	let is_visible = Obj_IsVisible(obj);
+	let render_piority = Obj_GetRenderPriority(obj);
+	let render_piority_i = Obj_GetRenderPriorityI(obj);
+	let type = Obj_GetType(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		let temp2;
+		temp = Obj_IsVisible(obj);
+		if (is_visible != temp) {
+			NotifyEventAll(EV_OBJ_VISIBLE, [obj, is_visible, temp]);
+			is_visible = temp;
+		}
+		temp = Obj_GetRenderPriority(obj);
+		if (render_piority != temp) {
+			temp2 = Obj_GetRenderPriorityI(obj);
+			NotifyEventAll(EV_OBJ_RENDERPIORITY, [obj, render_piority, temp, render_piority_i, temp2]);
+			render_piority = temp;
+			render_piority_i = temp2;
+		}
+		temp = Obj_GetType(obj);
+		if (type != temp) {
+			NotifyEventAll(EV_OBJ_TYPE, [obj, type, temp]);
+			type = temp;
+		}
+		yield;
+	}
+	NotifyEventAll(EV_OBJ_DELETE, [obj]);
+}
+
+task ObjRender_Event (obj) {
+	let x = ObjRender_GetX(obj);
+	let y = ObjRender_GetY(obj);
+	let z = ObjRender_GetZ(obj);
+	let x_angle = ObjRender_GetAngleX(obj);
+	let y_angle = ObjRender_GetAngleY(obj);
+	let z_angle = ObjRender_GetAngleZ(obj);
+	let x_scale = ObjRender_GetScaleX(obj);
+	let y_scale = ObjRender_GetScaleY(obj);
+	let z_scale = ObjRender_GetScaleZ(obj);
+	let blend = ObjRender_GetBlendType(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjRender_GetX(obj);
+		if (x != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_X, [obj, x, temp]);
+			x = temp;
+		}
+		temp = ObjRender_GetY(obj);
+		if (y != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_Y, [obj, y, temp]);
+			y = temp;
+		}
+		temp = ObjRender_GetZ(obj);
+		if (z != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_Z, [obj, z, temp]);
+			z = temp;
+		}
+		temp = ObjRender_GetAngleX(obj);
+		if (x_angle != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_ANGLEX, [obj, x_angle, temp]);
+			x_angle = temp;
+		}
+		temp = ObjRender_GetAngleY(obj);
+		if (y_angle != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_ANGLEY, [obj, y_angle, temp]);
+			y_angle = temp;
+		}
+		temp = ObjRender_GetAngleZ(obj);
+		if (z_angle != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_ANGLEZ, [obj, z_angle, temp]);
+			z_angle = temp;
+		}
+		temp = ObjRender_GetScaleX(obj);
+		if (x_scale != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_SCALEX, [obj, x_scale, temp]);
+			x_scale = temp;
+		}
+		temp = ObjRender_GetScaleY(obj);
+		if (y_scale != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_SCALEY, [obj, y_scale, temp]);
+			y_scale = temp;
+		}
+		temp = ObjRender_GetScaleZ(obj);
+		if (z_scale != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_SCALEZ, [obj, z_scale, temp]);
+			z_scale = temp;
+		}
+		temp = ObjRender_GetBlendType(obj);
+		if (blend != temp) {
+			NotifyEventAll(EV_OBJ_RENDER_BLEND, [obj, blend, temp]);
+			blend = temp;
+		}
+		yield;
+	}
+}
+
+task ObjShader_Event (obj) {
+	//May not need
+}
+
+task ObjPrim_Event (obj) {
+	NotifyEventAll(EV_OBJ_PRIM_NEW, [obj]);
+	let count = ObjPrim_GetVertexCount(obj);
+	let pos;
+	a();
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjPrim_GetVertexCount(obj);
+		if (count != temp) {
+			NotifyEventAll(EV_OBJ_PRIM_COUNT, [obj, count, temp]);
+			count = temp;
+			a();
+		} else {
+			ascent (i in 0..count) {
+				let temp = ObjPrim_GetVertexPosition(obj, i);
+				if (pos[i][0] != temp[0] || pos[i][1] != temp[1] || pos[i][2] != temp[2]) {
+					NotifyEventAll(EV_OBJ_PRIM_VERTEXPOSITION, [obj, i, pos[i], temp]);
+					a();
+					break;
+				}
+			}
+		}
+		yield;
+	}
+
+	function a () {
+		pos = [];
+		ascent (i in 0..count) {
+			pos = pos ~ [ObjPrim_GetVertexPosition(obj, i)];
+		}
+	}
+}
+
+task ObjMesh_Event (obj) {
+	NotifyEventAll(EV_OBJ_MESH_NEW, [obj]);
+}
+
+task ObjText_Event (obj) {
+	NotifyEventAll(EV_OBJ_TEXT_NEW, [obj]);
+	let length_ = ObjText_GetTextLength(obj);
+	let length_CU = ObjText_GetTextLengthCU(obj);
+	let length_CUL = ObjText_GetTextLengthCUL(obj);
+	let width = ObjText_GetTotalWidth(obj);
+	let height = ObjText_GetTotalHeight(obj);
+
+	let temp_bool;
+
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		temp_bool = false;
+		let temp;
+		temp = ObjText_GetTextLengthCUL(obj);
+		ascent (i in 0..length(temp)) {
+			if (length_CUL[i] != temp[i]) {
+				NotifyEventAll(EV_OBJ_TEXT_TEXTLENGTHCUL, [obj, i, length_CUL[i], length_CUL, temp[i], temp]);
+				length_CUL = temp;
+				temp_bool = true;
+				break;
+			}
+		}
+		if (temp_bool == false) {
+			temp = ObjText_GetTextLengthCU(obj);
+			if (length_CU != temp) {
+				NotifyEventAll(EV_OBJ_TEXT_TEXTLENGTHCU, [obj, length_CU, temp]);
+				length_CU = temp;
+			} else {
+				temp = ObjText_GetTextLength(obj);
+				if (length_ != temp) {
+					NotifyEventAll(EV_OBJ_TEXT_TEXTLENGTH, [obj, length_, temp]);
+					length_ = temp;
+				}
+			}
+		}
+		yield;
+	}
+}
+
+task ObjShot_Event (obj) {
+	NotifyEventAll(EV_OBJ_SHOT_NEW, [obj]);
+	let damage = ObjShot_GetDamage(obj);
+	let penetration = ObjShot_GetPenetration(obj);
+	let delay = ObjShot_GetDelay(obj);
+	let is_spell_resist = ObjShot_IsSpellResist(obj);
+	let imageID = ObjShot_GetImageID(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjShot_GetDamage(obj);
+		if (damage != temp) {
+			NotifyEventAll(EV_OBJ_SHOT_DAMAGE, [obj, damage, temp]);
+			damage = temp;
+		}
+		temp = ObjShot_GetPenetration(obj);
+		if (penetration != temp) {
+			NotifyEventAll(EV_OBJ_SHOT_PENETRATION, [obj, penetration, temp]);
+			penetration = temp;
+		}
+		temp = ObjShot_GetDelay(obj);
+		if (delay != temp) {
+			NotifyEventAll(EV_OBJ_SHOT_DELAY, [obj, delay, temp]);
+			delay = temp;
+		}
+		temp = ObjShot_IsSpellResist(obj);
+		if (is_spell_resist != temp) {
+			NotifyEventAll(EV_OBJ_SHOT_SPELLRESIST, [obj, is_spell_resist, temp]);
+			is_spell_resist = temp;
+		}
+		temp = ObjShot_GetImageID(obj);
+		if (imageID != temp) {
+			NotifyEventAll(EV_OBJ_SHOT_IMAGEID, [obj, imageID, temp]);
+			imageID = temp;
+		}
+		yield;
+	}
+}
+
+task ObjLaser_Event (obj) {
+	let length_ = ObjLaser_GetLength(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjLaser_GetLength(obj);
+		if (length_ != temp) {
+			NotifyEventAll(EV_OBJ_LASER_LENGTH, [obj, length_, temp]);
+			length_ = temp;
+		}
+		yield;
+	}
+}
+
+task ObjStLaser_Event (obj) {
+	let angle = ObjStLaser_GetAngle(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjStLaser_GetAngle(obj);
+		if (angle != temp) {
+			NotifyEventAll(EV_OBJ_STLASER_ANGLE, [obj, angle, temp]);
+			angle = temp;
+		}
+		yield;
+	}
+}
+
+task ObjItem_Event (obj) {
+	//May not need
+}
+
+task ObjEnemy_Event (obj) {
+	NotifyEventAll(EV_OBJ_ENEMY_NEW, [obj]);
+	let life = ObjEnemy_GetInfo(obj, INFO_LIFE);
+	let damage_rate_shot = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SHOT);
+	let damage_rate_spell = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SPELL);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjEnemy_GetInfo(obj, INFO_LIFE);
+		if (life != temp) {
+			NotifyEventAll(EV_OBJ_ENEMY_LIFE, [obj, life, temp]);
+			life = temp;
+		}
+	  temp = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SHOT);
+		if (damage_rate_shot != temp) {
+			NotifyEventAll(EV_OBJ_ENEMY_DAMAGERATE_SHOT, [obj, damage_rate_shot, temp]);
+			damage_rate_shot = temp;
+		}
+	  temp = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SPELL);
+		if (damage_rate_spell != temp) {
+			NotifyEventAll(EV_OBJ_ENEMY_DAMAGERATE_SPELL, [obj, damage_rate_spell, temp]);
+			damage_rate_spell = temp;
+		}
+		yield;
+	}
+}
+
+task ObjSprite2D_Event (obj) {
+	//May not need
+}
+
+task ObjSpriteList2D_Event (obj) {
+	//May not need
+}
+
+task ObjSprite3D_Event (obj) {
+	//May not need
+}
+
+task ObjSpell_Event (obj) {
+	NotifyEventAll(EV_OBJ_SPELL_NEW, [obj]);
+}
+
+task ObjMove_Event (obj) {
+	let x = ObjMove_GetX(obj);
+	let y = ObjMove_GetY(obj);
+	let speed = ObjMove_GetSpeed(obj);
+	let angle = ObjMove_GetAngle(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjMove_GetX(obj);
+		if (x != temp) {
+			NotifyEventAll(EV_OBJ_MOVE_X, [obj, x, temp]);
+			x = temp;
+		}
+		temp = ObjMove_GetY(obj);
+		if (y != temp) {
+			NotifyEventAll(EV_OBJ_MOVE_Y, [obj, y, temp]);
+			y = temp;
+		}
+		temp = ObjMove_GetSpeed(obj);
+		if (speed != temp) {
+			NotifyEventAll(EV_OBJ_MOVE_SPEED, [obj, speed, temp]);
+			speed = temp;
+		}
+		temp = ObjMove_GetAngle(obj);
+		if (angle != temp) {
+			NotifyEventAll(EV_OBJ_MOVE_ANGLE, [obj, angle, temp]);
+			angle = temp;
+		}
+		yield;
+	}
+}
+
+task ObjSound_Event (obj) {
+	NotifyEventAll(EV_OBJ_SOUND_NEW, [obj]);
+	let is_playing = ObjSound_IsPlaying(obj);
+	let volume_rate = ObjSound_GetVolumeRate(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjSound_IsPlaying(obj);
+		if (is_playing != temp) {
+			NotifyEventAll(EV_OBJ_SOUND_PLAYING, [obj, is_playing, temp]);
+			is_playing = temp;
+		}
+	 	temp = ObjSound_GetVolumeRate(obj);
+		if (volume_rate != temp) {
+			NotifyEventAll(EV_OBJ_SOUND_VOLUMERATE, [obj, volume_rate, temp]);
+			volume_rate = temp;
+		}
+		yield;
+	}
+}
+
+task ObjFile_Event (obj) {
+	NotifyEventAll(EV_OBJ_FILE_NEW, [obj]);
+	let size = ObjFile_GetSize(obj);
+	yield;
+	while (!Obj_IsDeleted(obj)) {
+		let temp;
+		temp = ObjFile_GetSize(obj);
+		if (size != temp) {
+			NotifyEventAll(EV_OBJ_FILE_SIZE, [obj, size, temp]);
+			size = temp;
+		}
+		yield;
+	}
+}
+
+task ObjFileT_Event (obj) {
+	//May not need
+}
+
+task ObjFileB_Event (obj) {
+	//May not need
+}
+
+task ObjEnemyBossScene_Event (obj) {
+	//NotifyEventAll(EV_OBJ_ENEMY_BOSS_SCENE_NEW, [obj]);
+}
+
+task ObjPlayer_Event (obj) {
+	//May not need
+}
+
+task ObjCol_Event (obj) {
+	//May not need
+}
+
+//Not object related task
+
+task EventCommonData (key) {
+	NotifyEventAll(EV_COMMON_DATA_NEW, [key]);
+	let value = GetCommonData(key, COMMON_DATA_DEFAULT);
+	yield;
+	while (true) {
+		let temp = GetCommonData(key, COMMON_DATA_DEFAULT);
+		if (ToString(temp) != COMMON_DATA_DEFAULT) {
+			if (value != temp) {
+				NotifyEventAll(EV_COMMON_DATA_CHANGE, [key]);
+				value = temp;
+			}
+		} else {
+			break;
+		}
+		yield;
+	}
+	NotifyEventAll(EV_COMMON_DATA_DELETE, [key]);
+}
+
+task EventAreaCommonData (area) {
+	NotifyEventAll(EV_COMMON_DATA_AREA_NEW, [area]);
+	yield;
+	while (IsCommonDataAreaExists(area)) {
+		yield;
+	}
+	NotifyEventAll(EV_COMMON_DATA_AREA_DELETE, [area]);
+}
+
+task EventAreaCommonDataKey (area, key) {
+	NotifyEventAll(EV_COMMON_DATA_AREA_KEY_NEW, [area, key]);
+	let value = GetAreaCommonData(area, key, COMMON_DATA_DEFAULT);
+	yield;
+	while (true) {
+		let temp = GetAreaCommonData(area, key, COMMON_DATA_DEFAULT);
+		if (ToString(temp) != COMMON_DATA_DEFAULT) {
+			if (value != temp) {
+				NotifyEventAll(EV_COMMON_DATA_AREA_KEY_CHANGE, [area, key]);
+				value = temp;
+			}
+		} else {
+			break;
+		}
+		yield;
+	}
+	NotifyEventAll(EV_COMMON_DATA_AREA_KEY_DELETE, [area, key]);
+}
+
+//Helper function
