@@ -6,10 +6,6 @@ let digitPath = dir ~ "ascii/ascii.png";
 
 function tempInit() {
 	//May remove these after we added Init function at start of the game...
-	//let path = GetCurrentScriptDirectory();
-	//StartShotScript(path ~ "shot.dnh");
-	//StartItemScript(path ~ "items.dnh");
-	
 	CreateCommonDataArea("main");
 
 	let character = ["reimu", "marisa", "shou", "hecatia"];
@@ -406,7 +402,7 @@ task UpdatePlayerLife {
 	ObjSprite2D_SetDestRect(objLife, 0, 0, 104, 26);
 	ObjRender_SetScaleX(objLife, 0.75);
 	ObjRender_SetScaleY(objLife, 0.75);
-	ObjRender_SetX(objLife, 640 - 211);
+	ObjRender_SetX(objLife, 640 - 212.5 - 7);
 	ObjRender_SetY(objLife, 94);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -779,4 +775,3 @@ function NumberToArray(let number, let haveComma) {
 	}
 	return res;
 }
-
