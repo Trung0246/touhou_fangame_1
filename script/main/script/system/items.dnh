@@ -1,0 +1,139 @@
+#include "script/main/script/system/event.dnh"
+
+@Initialize{
+	SetDefaultBonusItemEnable(false);
+	//SetCommonData("player_point", 10000000);
+	//AddGraze(500000); //2866
+	LoadItemData(GetModuleDirectory() ~ "/script/!test/ItemData.txt");
+}
+
+@MainLoop{
+	yield;
+}
+
+@Event{
+	alternative(GetEventType)
+		case(EV_GET_ITEM) {
+			alternative(GetEventArgument(0))
+			case (1) { //Life
+				SetCommonData("player_life_piece", GetCommonData("player_life_piece", 0) + 1);
+			}
+			case (2) { //Life piece
+
+			}
+			case (3) { //Spell
+				SetCommonData("player_spell_piece", GetCommonData("player_spell_piece", 0) + 1);
+			}
+			case (4) { //Spell piece
+				
+			}
+			case (5) { //Full power
+				SetCommonData("player_power", 4);
+			}
+			case (6) { //Big power
+				SetCommonData("player_power", GetCommonData("player_power", 0) + 1);
+			}
+			case (7) { //Power
+				SetCommonData("player_power", GetCommonData("player_power", 0) + 0.01);
+			}
+			case (8) { //Big point
+				AddScore(GetCommonData("player_point", 0) * 10);
+			}
+			case (9) { //Point
+				AddScore(GetCommonData("player_point", 0));
+			}
+			case (10) { //Small drop (when bullet grazed or else)
+				let tempScore = GetGraze() / 500000 / 1000 * 100000; // every 1000th graze at 500000 mark have 100000 points
+				if (tempScore < 1) {
+					tempScore = 1;
+				}
+				AddScore(tempScore);
+			}
+			case (11) { //Normal drop (when bullet removed or else)
+				let tempScore = GetGraze() / 500000 / 1000 * 1000000; // every 1000th graze at 500000 mark have 1000000 points
+				if (tempScore < 5) {
+					tempScore = 5;
+				}
+				AddScore(tempScore);
+			}
+			case (12) { //Big drop (when bullet removed or else)
+				let tempScore = GetGraze() / 500000 / 1000 * 10000000; // every 1000th graze at 500000 mark have 1000000 points
+				if (tempScore < 10) {
+					tempScore = 10;
+				}
+				AddScore(tempScore);
+			}
+			case (13) { //Raindrop red
+				SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
+			}
+			case (14) { //Raindrop green
+				SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) + GetCommonData("item_raindrop_change", 0));
+			}
+			case (15) { //Raindrop blue
+				SetCommonData("item_raindrop_blue", GetCommonData("item_raindrop_blue", 0) + GetCommonData("item_raindrop_change", 0));
+			}
+		}
+		case (EV_OBJ_ENEMY_LIFE) {
+			let enemy = GetEventArgument(0)[0];
+			if (GetEventArgument(0)[1] > 0) {
+				let tempX = ObjMove_GetX(enemy);
+				let tempY = ObjMove_GetY(enemy);
+				let angle = -90 + rand(-45, 45);
+				let dist = 100 + rand(-5, 5);
+				let preDist = 0 + rand(-1, 1);
+				let obj = CreateItemU2(10, cos(angle) * preDist + tempX, sin(angle) * preDist + tempY, cos(angle) * dist + tempX, sin(angle) * dist + tempY, 0);
+				Obj_SetRenderPriorityI(obj, 20);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				ObjItem_SetAutoCollectEnable(obj, false);
+				if (GetEventArgument(0)[2] <= 0) {
+					obj = CreateItemU2(11, tempX, tempY, tempX, tempY, 0);
+					Obj_SetRenderPriorityI(obj, 20);
+					ObjItem_SetRenderScoreEnable(obj, false);	
+				}
+			}
+		}
+		case (EV_DELETE_SHOT_TO_ITEM) {
+			let pos = GetEventArgument(1);
+			let obj = CreateItemU2(11, pos[0], pos[1], pos[0], pos[1], 0);
+			Obj_SetRenderPriorityI(obj, 20);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			ObjItem_SetAutoCollectEnable(obj, false);
+		}
+		case (EV_GRAZE) {
+			/*let shot = GetEventArgument(1);
+			let tempX = GetPlayerX();
+			let tempY = GetPlayerY();
+			ascent (i in 0..length(shot)) {
+				let angle = atan2(ObjMove_GetY(shot[i]) - tempY, ObjMove_GetX(shot[i]) - tempX) + rand(-5, 5);
+				let dist = 100 + rand(-5, 5);
+				let preDist = rand(19, 21);
+				let obj = CreateItemU2(10, cos(angle) * preDist + tempX, sin(angle) * preDist + tempY, cos(angle) * dist + tempX, sin(angle) * dist + tempY, 0);
+				Obj_SetRenderPriorityI(obj, 20);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				ObjItem_SetAutoCollectEnable(obj, false);
+			}*/
+		}
+		case (EV_PLAYER_SHOOTDOWN) {
+			let tempPower = GetCommonData("player_power", 0);
+			if (tempPower >= 0.5) {
+				SetCommonData("player_power", tempPower - 0.5)
+			} else if (tempPower < 0.5) {
+				SetCommonData("player_power", 0);
+			}
+			ascent (i in 0..10) {
+				let tempX = GetPlayerX();
+				let tempY = GetPlayerY();
+				let dist = 150;
+				let angle = atan2(-tempY, GetStgFrameWidth() / 2 - tempX) + 90;
+				let obj = CreateItemU2(7, tempX, tempY, cos(i / 10 * 90 - 40 - 90 + angle) * dist + tempX, sin(i / 10 * 90 - 40 - 90 + angle) * dist + tempY, 0);
+				Obj_SetRenderPriorityI(obj, 20);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			} 
+		}
+}
+
+function wait(i) {
+	loop (i) {
+		yield;
+	}
+}
