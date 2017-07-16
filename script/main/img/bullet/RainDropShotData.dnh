@@ -1,0 +1,26 @@
+#UserShotData
+
+shot_image = "./items.png"
+delay_rect = (209, 474, 240, 505)
+
+
+ShotData{ //red
+	id = 512
+	rect = (288,48,303,63)
+	render = ADD_ARGB
+	delay_color = (255,63,63)
+}
+
+ShotData{ //green
+	id = 513
+	rect = (256,48,271,63)
+	render = ADD_ARGB
+	delay_color = (63,255,63)
+}
+
+ShotData{ //blue
+	id = 514
+	rect = (272,48,287,63)
+	render = ADD_ARGB
+	delay_color = (63,63,255)
+}
