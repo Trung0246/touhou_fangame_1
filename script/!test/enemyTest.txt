@@ -148,13 +148,13 @@ task CheckPlayerCollect(raindrop){
 	task RaindropBehavior(type){
 		alternative(type)
 		case(RAINDROP_RED){
-			SetCommonData("raindrop_red",GetCommonData("raindrop_red",0)+1);
+			SetCommonData("item_raindrop_red",GetCommonData("item_raindrop_red",0)+1);
 		}
 		case(RAINDROP_BLUE){
-			SetCommonData("raindrop_blue",GetCommonData("raindrop_blue",0)+1);
+			SetCommonData("item_raindrop_blue",GetCommonData("item_raindrop_blue",0)+1);
 		}
 		case(RAINDROP_GREEN){
-			SetCommonData("raindrop_green",GetCommonData("raindrop_green",0)+1);
+			SetCommonData("item_raindrop_green",GetCommonData("item_raindrop_green",0)+1);
 		}
 		others{RaiseError("That is invalid you dork");}
 	}
