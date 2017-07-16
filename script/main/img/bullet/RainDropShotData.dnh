@@ -1,7 +1,7 @@
 #UserShotData
 
 shot_image = "./items.png"
-delay_rect = (209, 474, 240, 505)
+//delay_rect = (209, 474, 240, 505)
 
 
 ShotData{ //red
