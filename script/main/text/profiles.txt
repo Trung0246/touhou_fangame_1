@@ -5,6 +5,7 @@ Also, if you didn't play extra, don't read extra one :P
 
 --------------------Stage 1 Boss - Child of the Great Saltwater Sea--------------------
 
+名: アジャースワール
 Name: Azure Swirl
 
 Species: Fairy (Nereid)
@@ -105,6 +106,7 @@ finding the Aquamarine Expanse.
 
 --------------------Stage 4 Boss - Perperuna of Dignification--------------------
 
+名: 画数 梅姫
 Name: Kazarashi Umehime
 
 Species: Wani (鰐)
@@ -137,6 +139,7 @@ She speaks in a Kansai-ben accent and finds Aloe Vera uncanny.
 
 --------------------Stage 4 Boss - Will-o-Wisp of Grace--------------------
 
+名: 画数 色は姫
 Name: Kazarashi Irohahime
 
 Species: Wani (鰐)
@@ -271,6 +274,7 @@ Soon, she would be their mother again.
 
 --------------------Stage EX Mid-boss  - Nymph of the Great Saltwater Sea--------------------
 
+名: アジャースワール
 Name: Azure Swirl
 
 Species: Fairy (Nereid)
@@ -286,37 +290,6 @@ This time, Reimu and company encountered her right in the heart of the Expanse.
 She thinks that putting in the effort is only being polite, but really, she's just acting as a huge roadblock.
 
 She's still as cordial (and needlessly formal) as ever.
-
---------------------Stage EXTRA Boss: - Under Ancient Alien--------------------
-
-Name: Pandora Nasakoro
-
-Species: Unidentified Foreign God
-Ability: Able to Speak in Tongues to change someone's dream and vision
-
-Pandora lived as a servant youkai somewhere other than gensokyo. Her job was to deliver spiritual messages to peoples
-dreams. She would speak in tongues to their minds, and it would influence how they would act through the day
-
-Some people would steal her and force her to send negative messages into peoples dreams to ruin their lives. But soon
-enough this was discovered by the gods of that world. Though instead of accusing the culprits, they accused Pandora for
-ruining the dreams of high ranking gods.
-
-Her punishment was to be purified inside of a box which acted as a pocket dimension. 
-
-Though recently, something unexpected has been happening in Gensokyo, the Goddess of Hell, Hecatia visits the strange world
-to inform them of the weird incident and that she has concerns of the possible relations to the alien planet. Through
-discussion and theorization they come across a thought of who it might be. Though they cannot locate the culprit what-so
-ever. 
-
-This is when they decide to open up the box where Pandora has been purified. Her mission was to seep into the dreams of the
-culprit to reveal herself, but the culprit doesn't listen and she gets stuck in the salt-water dream of Ummu. 
-
-After the events of Aquamarine Panlogism, she emerges from the dream to appear in gensokyo. Though she has completed her
-mission, and that she was to return back to the other world to return to the box. She wishes to stay in gensokyo as it is
-much nicer.
-
-When she meets with Hecatia in game, she begs her to make her master let her go. (Which Hecatia does force Pandora's master
-to release her after the game)
 
 --------------------Stage EX Boss - Heraldric Alien Martyr--------------------
 
@@ -371,3 +344,41 @@ Through her, Aloe Vera recovered the language paired with the Jidai Moji.
 She couldn't go back. Not like this.
 
 So she fled into Gensokyo, seeking out someone who could help her.
+
+-------------------------------DRAFT---------------------------------
+
+--------------------Stage EXTRA Boss: - Under Ancient Alien--------------------
+
+Name: Pandora Nasakoro
+
+Species: Unidentified Foreign God
+Ability: Able to Speak in Tongues to change someone's dream and vision
+
+Pandora lived as a servant youkai somewhere other than gensokyo. Her job was to deliver spiritual messages to peoples
+dreams. She would speak in tongues to their minds, and it would influence how they would act through the day
+
+Some people would steal her and force her to send negative messages into peoples dreams to ruin their lives. But soon
+enough this was discovered by the gods of that world. Though instead of accusing the culprits, they accused Pandora for
+ruining the dreams of high ranking gods.
+
+Her punishment was to be purified inside of a box which acted as a pocket dimension. 
+
+Though recently, something unexpected has been happening in Gensokyo, the Goddess of Hell, Hecatia visits the strange world
+to inform them of the weird incident and that she has concerns of the possible relations to the alien planet. Through
+discussion and theorization they come across a thought of who it might be. Though they cannot locate the culprit what-so
+ever. 
+
+This is when they decide to open up the box where Pandora has been purified. Her mission was to seep into the dreams of the
+culprit to reveal herself, but the culprit doesn't listen and she gets stuck in the salt-water dream of Ummu. 
+
+After the events of Aquamarine Panlogism, she emerges from the dream to appear in gensokyo. Though she has completed her
+mission, and that she was to return back to the other world to return to the box. She wishes to stay in gensokyo as it is
+much nicer.
+
+When she meets with Hecatia in game, she begs her to make her master let her go. (Which Hecatia does force Pandora's master
+to release her after the game)
+
+
+
+
+
