@@ -41,21 +41,21 @@
 				AddScore(GetCommonData("player_point", 0));
 			}
 			case (10) { //Small drop (when bullet grazed or else)
-				let tempScore = GetGraze() / 500000 / 1000 * 100000; // every 1000th graze at 500000 mark have 100000 points
+				let tempScore = GetGraze() / 500000 / 100 * 100000; // every 100th graze at 500000 mark have 100000 points (+1000 max)
 				if (tempScore < 1) {
 					tempScore = 1;
 				}
 				AddScore(tempScore);
 			}
 			case (11) { //Normal drop (when bullet removed or else)
-				let tempScore = GetGraze() / 500000 / 1000 * 1000000; // every 1000th graze at 500000 mark have 1000000 points
+				let tempScore = GetGraze() / 500000 / 100 * 1000000; // every 100th graze at 500000 mark have 1000000 points (+10000 max)
 				if (tempScore < 5) {
 					tempScore = 5;
 				}
 				AddScore(tempScore);
 			}
 			case (12) { //Big drop (when bullet removed or else)
-				let tempScore = GetGraze() / 500000 / 1000 * 10000000; // every 1000th graze at 500000 mark have 1000000 points
+				let tempScore = GetGraze() / 500000 / 100 * 10000000; // every 100th graze at 500000 mark have 1000000 points (+100000 max)
 				if (tempScore < 10) {
 					tempScore = 10;
 				}
