@@ -2,8 +2,6 @@
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
-	//SetCommonData("player_point", 10000000);
-	//AddGraze(500000); //2866
 	LoadItemData(GetModuleDirectory() ~ "/script/!test/ItemData.txt");
 }
 
