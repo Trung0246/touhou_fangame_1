@@ -172,7 +172,7 @@ She speaks in a Kansai-ben accent and finds Aloe Vera uncanny.
 Name: Aloe Vera                                   (Sorry for the name :(, I know it same for a plant but we can't change it)
 
 Species: Vetala
-Abilities:  Changing the form of inanimate objects
+Abilities: Changing the form of inanimate objects
 
 She's a thing that shouldn't be.
 
@@ -202,7 +202,7 @@ When the heathens tried to interfere, she swiftly locked them up. When even her 
 faithfulness, she ignored them. Her god had made her a reanimated corpse, exactly as she asked. Through virtue, she would
 be the Child of God.
 
---------------------Stage 6 Boss (DRAFT) - Saltwater Madonna--------------------
+--------------------Stage 6 Boss - Saltwater Madonna--------------------
 
 名: 水混 有無 (つまざる うむ)
 Name: Tzumazaru Ummu
@@ -292,7 +292,7 @@ She's still as cordial (and needlessly formal) as ever.
 Name: Pandora Nasakoro
 
 Species: Unidentified Foreign God
-Ability: Able to Speak in Tongues to Change someone's dream and vision
+Ability: Able to Speak in Tongues to change someone's dream and vision
 
 Pandora lived as a servant youkai somewhere other than gensokyo. Her job was to deliver spiritual messages to peoples
 dreams. She would speak in tongues to their minds, and it would influence how they would act through the day
