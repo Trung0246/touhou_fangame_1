@@ -1,3 +1,5 @@
+//Made by Trung0246, version 1.2
+
 function ObjShotStruct_Create() {
   return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 }
