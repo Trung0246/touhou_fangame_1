@@ -1,0 +1,9 @@
+function wait(i) {
+	loop (i) {
+		yield;
+	}
+}
+
+function AddScoreSmooth (val) {
+	SetCommonData("player_score_change", GetCommonData("player_score_change", 0) + val);
+}
