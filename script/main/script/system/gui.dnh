@@ -42,6 +42,12 @@ function tempInit() {
 	SetCommonData("player_life_max", 8); //8, cap of original life
 	SetCommonData("player_life_piece", 0);
 
+	SetCommonData("player_score_change", 0);
+	SetCommonData("player_score_max", 2147483647); //2147483647, cap of int, rounded
+	SetCommonData("player_score_speed", 8);
+
+	SetCommonData("player_graze_max", 500000); //500000, cap of Touhou 16
+
 	SetCommonData("player_spell", 3);
 	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
 	SetCommonData("player_spell_piece", 0);
@@ -59,11 +65,11 @@ function tempInit() {
 	InitLine();
 	UpdateHiScore();
 	UpdateScore();
-	UpdateGraze();
-	UpdatePower();
-	UpdatePoint(); //Blue drop bonus
 	UpdatePlayerLife();
 	UpdatePlayerSpell();
+	UpdatePower();
+	UpdatePoint(); //Blue drop bonus //144 * 24 for phantasm, ... 304 x 46 for disable
+	UpdateGraze();
 	//UpdateBossLife();
 	//UpdateBossTimer();
 	//UpdateBossXPos();
@@ -227,13 +233,30 @@ task UpdateScore {
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 62.5 + 2);
 
+	let scoreLeft = 0;
+
 	while (true) {
+		let tempChange = GetCommonData("player_score_change", 0);
+		if (tempChange > 0) {
+			scoreLeft += tempChange;
+			SetCommonData("player_score_change", 0);
+		}
+		if (scoreLeft > 10) {
+			let scoreChange = floor(scoreLeft / GetCommonData("player_score_speed", 1));
+			AddScore(scoreChange);
+			scoreLeft -= scoreChange; 
+		} else if (scoreLeft > 0 && scoreLeft <= 10) {
+			AddScore(scoreLeft);
+			scoreLeft = 0;
+		}
+
+		let maxScore = GetCommonData("player_score_max", 2147483647);
 		let number = GetScore();
-		if (number > 2000000000) {
-			AddScore(-(number - 2000000000));
+		if (number > maxScore) {
+			AddScore(-(number - maxScore));
 			number = GetScore();
 		}
-		number = min(number, 2000000000); //2147483647, cap of int, rounded
+		number = min(number, maxScore);
 		let listNum = NumberToArray(number, true);
 		let commaCount = 0;
 
@@ -272,12 +295,13 @@ task UpdateGraze {
 	ObjRender_SetY(obj, 225 + 2);
 
 	while (true) {
+		let grazeMax = GetCommonData("player_graze_max", 0);
 		let number = GetGraze();
-		if (number > 500000) {
-			AddGraze(-(number - 500000));
+		if (number > grazeMax) {
+			AddGraze(-(number - grazeMax));
 			number = GetGraze();
 		}
-		number = min(number, 500000); //500000, cap of Touhou 16
+		number = min(number, grazeMax);
 		let listNum = NumberToArray(number, true);
 		let commaCount = 0;
 
