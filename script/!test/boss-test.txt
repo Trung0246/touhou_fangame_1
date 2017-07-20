@@ -13,6 +13,7 @@ let objBoss;
 	ObjEnemy_Regist(objBoss);
 	TWork;
 	Animation_Azure(objBoss);
+	BossAura_Azure(objBoss);
 	TEnd;
 
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
@@ -118,6 +119,62 @@ task Animation_Azure(obj){
 			wait(floor(rand(240,480)));
 			blink = true;
 		}
+	}
+}
+
+task BossAura_Azure(boss){
+	let water = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(water,GetCurrentScriptDirectory() ~ "./system/azureaura.png");
+	ObjSprite2D_SetSourceRect(water,0,0,152,152);
+	ObjSprite2D_SetDestCenter(water);
+	ObjRender_SetBlendType(water,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(water,192,120,0);
+	Obj_SetRenderPriority(water,0.3);
+	SpinWave(water,0,1);
+	let circle = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(circle,GetCurrentScriptDirectory() ~ "./system/azureaura.png");
+	ObjSprite2D_SetSourceRect(circle,152,0,304,152);
+	ObjSprite2D_SetDestCenter(circle);
+	ObjRender_SetBlendType(circle,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(circle,192,120,0);
+	Obj_SetRenderPriority(circle,0.3);
+	SpinWave(circle,180,-1);
+
+	while(!Obj_IsDeleted(objBoss)){
+		let wave = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(wave,GetCurrentScriptDirectory() ~ "./system/azureaura.png");
+		ObjSprite2D_SetSourceRect(wave,304,0,456,152);
+		ObjSprite2D_SetDestCenter(wave);
+		ObjRender_SetBlendType(wave,BLEND_ADD_ARGB);
+		ObjRender_SetPosition(wave,ObjMove_GetX(boss),ObjMove_GetY(boss),0);
+		Obj_SetRenderPriority(wave,0.3);
+		Expansion(wave);
+		wait(3);
+	}
+	
+	task Expansion(obj){
+		ascent(i in 0..16){
+			let scale = 0.5+i/32;
+			ObjRender_SetScaleXYZ(obj,scale,scale,1);
+			ObjRender_SetAlpha(obj,i*12);
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+
+	task SpinWave(obj,size,dir){
+		let angle = rand(0,360);
+		let scale;
+		while(!Obj_IsDeleted(boss)){
+			angle += 5*dir;
+			ObjRender_SetAngleZ(obj,angle);
+			size += 2;
+			scale = sin(size)*0.1+1;
+			ObjRender_SetScaleXYZ(obj,scale,scale,1);
+			ObjRender_SetPosition(obj,ObjMove_GetX(boss),ObjMove_GetY(boss),1);
+			yield;
+		}
+		Obj_Delete(obj);
 	}
 }
 
