@@ -56,7 +56,7 @@ let EV_COMMON_DATA_AREA_KEY_DELETE = EV_USER + 52;
 
 let COMMON_DATA_DEFAULT = "qweiunfajdsnfifowinciomxmfnewioufqcixofmxfzmcmxxqzed";
 let CURRRENT_EV_COUNT = EV_USER + 53;
-//Near the first gate, find the first crate, on top of freedom poles is your goal, boost yourself such and such, but not too much
+
 //Main library
 task Obj_Event (obj) {
 	let is_visible = Obj_IsVisible(obj);
@@ -307,7 +307,7 @@ task ObjShot_Event (obj) {
 		yield;
 	}
 }
-RaiseError();
+
 task ObjLaser_Event (obj) {
 	let length_ = ObjLaser_GetLength(obj);
 	yield;
