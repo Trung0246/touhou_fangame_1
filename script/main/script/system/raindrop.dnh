@@ -1,6 +1,6 @@
 local
 {
-	let current = GetModuleDirectory() ~ "script/main/img/bullet/RainDropShotData.dnh";
+	let current = GetModuleDirectory() ~ "script/main/img/bullet/rainDropShotData.dnh";
 	LoadEnemyShotData(current);
 }
 
