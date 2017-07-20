@@ -1,4 +1,5 @@
 //How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/gui.dnh"]
+#include "script/main/script/lib/Utils.dnh"
 
 let dir = GetModuleDirectory() ~ "script/main/img/";
 let guiPath = dir ~ "system/front00.png";
@@ -42,6 +43,12 @@ function tempInit() {
 	SetCommonData("player_life_max", 8); //8, cap of original life
 	SetCommonData("player_life_piece", 0);
 
+	SetCommonData("player_score_change", 0);
+	SetCommonData("player_score_max", 2147483647); //2147483647, cap of int, rounded
+	SetCommonData("player_score_speed", 8);
+
+	SetCommonData("player_graze_max", 500000); //500000, cap of Touhou 16
+
 	SetCommonData("player_spell", 3);
 	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
 	SetCommonData("player_spell_piece", 0);
@@ -59,11 +66,11 @@ function tempInit() {
 	InitLine();
 	UpdateHiScore();
 	UpdateScore();
-	UpdateGraze();
-	UpdatePower();
-	UpdatePoint(); //Blue drop bonus
 	UpdatePlayerLife();
 	UpdatePlayerSpell();
+	UpdatePower();
+	UpdatePoint(); //Blue drop bonus //144 * 24 for phantasm, ... 304 x 46 for disable
+	UpdateGraze();
 	//UpdateBossLife();
 	//UpdateBossTimer();
 	//UpdateBossXPos();
@@ -227,13 +234,30 @@ task UpdateScore {
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 62.5 + 2);
 
+	let scoreLeft = 0;
+
 	while (true) {
+		let tempChange = GetCommonData("player_score_change", 0);
+		if (tempChange > 0) {
+			scoreLeft += tempChange;
+			SetCommonData("player_score_change", 0);
+		}
+		if (scoreLeft > 10) {
+			let scoreChange = floor(scoreLeft / GetCommonData("player_score_speed", 1));
+			AddScore(scoreChange);
+			scoreLeft -= scoreChange; 
+		} else if (scoreLeft > 0 && scoreLeft <= 10) {
+			AddScore(scoreLeft);
+			scoreLeft = 0;
+		}
+
+		let maxScore = GetCommonData("player_score_max", 2147483647);
 		let number = GetScore();
-		if (number > 2000000000) {
-			AddScore(-(number - 2000000000));
+		if (number > maxScore) {
+			AddScore(-(number - maxScore));
 			number = GetScore();
 		}
-		number = min(number, 2000000000); //2147483647, cap of int, rounded
+		number = min(number, maxScore);
 		let listNum = NumberToArray(number, true);
 		let commaCount = 0;
 
@@ -272,12 +296,13 @@ task UpdateGraze {
 	ObjRender_SetY(obj, 225 + 2);
 
 	while (true) {
+		let grazeMax = GetCommonData("player_graze_max", 0);
 		let number = GetGraze();
-		if (number > 500000) {
-			AddGraze(-(number - 500000));
+		if (number > grazeMax) {
+			AddGraze(-(number - grazeMax));
 			number = GetGraze();
 		}
-		number = min(number, 500000); //500000, cap of Touhou 16
+		number = min(number, grazeMax);
 		let listNum = NumberToArray(number, true);
 		let commaCount = 0;
 
@@ -537,77 +562,7 @@ task UpdatePlayerSpell {
 	}
 }
 task UpdateBossLife {
-	/*let objScene = GetEnemyBossSceneObjectID();
-	let lastRemStep = -1;
-	let lifeRateRender = 0;
-	let asd = ObjPrim_Create(OBJ_PRIMITIVE_2D);
-	ObjPrim_SetPrimitiveType(asd, PRIMITIVE_TRIANGLESTRIP);
-	ObjPrim_SetVertexCount(asd, 360 * 2 - 1);
-	ascent (i in 0..(360 * 2 - 1)) {
-		let dist = 75;
-		if (i % 2 != 0) {
-			dist -= 3;
-		}
-		let tempAngle = i / (360 * 2 - 4) * 360 - 90;
-		ObjPrim_SetVertexPosition(asd, i, cos(tempAngle) * dist + 100, sin(tempAngle) * dist + 100, 0);
-		ObjPrim_SetVertexColor(asd, i, 255, 0, 0);
-	}
-	ObjRender_SetBlendType(asd, 2);
-
-	let tempHp = 1;
-	function fucktest() {
-		ascent (i in 0..(360 * 2 - 1)) {
-			let dist = 75;
-			if (i % 2 != 0) {
-				dist -= 3;
-			}
-			let tempAngle = i / (360 * 2 - 4) * (tempHp * 360) - 90 + ((1 - tempHp) * 360);
-			ObjPrim_SetVertexPosition(asd, i, cos(tempAngle) * dist + 100, sin(tempAngle) * dist + 100, 0);
-		}
-	}
-	task changefuck() {
-		while (tempHp > 0) {
-			fucktest();
-			//loop(10){yield;}
-			yield;
-			tempHp -= 0.001;
-		}
-	}
-	changefuck();
-	//Have no idea, maybe later in game
-	let countRemStep = ObjEnemyBossScene_GetInfo(objScene, INFO_REMAIN_STEP_COUNT);
-	if(lastRemStep != countRemStep) {
-		lifeRateRender = 0;
-	}
-
-	let lifeTotalMax = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_MAX_LIFE);
-	let lifeTotal = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_LIFE);
-	let lifeRate = min(lifeTotal / lifeTotalMax, lifeRateRender);
-	ObjSpriteList2D_SetSourceRect(obj, 1, 1, 127, 11);
-	ObjSpriteList2D_SetDestRect(obj, 72, 8, 72 + 270 * lifeRate, 12);
-	ObjSpriteList2D_AddVertex(obj);
-
-	ObjSpriteList2D_SetSourceRect(obj, 132, 1, 137, 11);
-	let listLifeDiv = [0] ~ ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_LIFE_RATE_LIST);
-	ascent(iDiv in 0 .. length(listLifeDiv))
-	{
-		let rate = listLifeDiv[iDiv];
-		let x = 72 + 270 * (1-rate);
-		ObjSpriteList2D_SetDestRect(obj, x-1, 4, x + 1, 14);
-		ObjSpriteList2D_AddVertex(obj);
-	}
-
-	ObjSpriteList2D_SetSourceRect(obj, 1, 1, 127, 11);
-	ascent(iStep in 0 .. countRemStep) {
-		let remStepRate = 58 / countRemStep;
-		ObjSpriteList2D_SetDestRect(obj, 4 + iStep * remStepRate + 2, 8,
-			4 + (iStep + 1) * remStepRate, 12);
-		ObjSpriteList2D_AddVertex(obj);
-	}
-
-	lifeRateRender += 0.01;
-	lifeRateRender = min(lifeRateRender, 1);
-	lastRemStep = countRemStep;*/
+	
 }
 task UpdateBossTimer {
 	//Have no idea, maybe later in game

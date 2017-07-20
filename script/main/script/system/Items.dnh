@@ -1,8 +1,9 @@
-#include "script/main/script/system/event.dnh"
+#include "script/main/script/system/Event.dnh"
+#include "script/main/script/lib/Utils.dnh"
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
-	LoadItemData(GetModuleDirectory() ~ "/script/!test/ItemData.txt");
+	LoadItemData(GetModuleDirectory() ~ "script/main/img/bullet/ItemData.dnh");
 }
 
 @MainLoop{
@@ -10,6 +11,7 @@
 }
 
 @Event{
+	let grazeMax = GetCommonData("player_graze_max", 0);
 	alternative(GetEventType)
 		case(EV_GET_ITEM) {
 			alternative(GetEventArgument(0))
@@ -35,31 +37,31 @@
 				SetCommonData("player_power", GetCommonData("player_power", 0) + 0.01);
 			}
 			case (8) { //Big point
-				AddScore(GetCommonData("player_point", 0) * 10);
+				AddScoreSmooth(GetCommonData("player_point", 0) * 10);
 			}
 			case (9) { //Point
-				AddScore(GetCommonData("player_point", 0));
+				AddScoreSmooth(GetCommonData("player_point", 0));
 			}
 			case (10) { //Small drop (when bullet grazed or else)
-				let tempScore = GetGraze() / 500000 / 100 * 100000; // every 100th graze at 500000 mark have 100000 points (+1000 max)
+				let tempScore = GetGraze() / grazeMax / 100 * 100000; // every 100th graze at 500000 mark have 100000 points (+1000 max)
 				if (tempScore < 1) {
 					tempScore = 1;
 				}
-				AddScore(tempScore);
+				AddScoreSmooth(tempScore);
 			}
 			case (11) { //Normal drop (when bullet removed or else)
-				let tempScore = GetGraze() / 500000 / 100 * 1000000; // every 100th graze at 500000 mark have 1000000 points (+10000 max)
+				let tempScore = GetGraze() / grazeMax / 100 * 1000000; // every 100th graze at 500000 mark have 1000000 points (+10000 max)
 				if (tempScore < 5) {
 					tempScore = 5;
 				}
-				AddScore(tempScore);
+				AddScoreSmooth(tempScore);
 			}
 			case (12) { //Big drop (when bullet removed or else)
-				let tempScore = GetGraze() / 500000 / 100 * 10000000; // every 100th graze at 500000 mark have 1000000 points (+100000 max)
+				let tempScore = GetGraze() / grazeMax / 100 * 10000000; // every 100th graze at 500000 mark have 1000000 points (+100000 max)
 				if (tempScore < 10) {
 					tempScore = 10;
 				}
-				AddScore(tempScore);
+				AddScoreSmooth(tempScore);
 			}
 		}
 		case (EV_USER + 100) {
@@ -131,10 +133,4 @@
 				ObjItem_SetRenderScoreEnable(obj, false);
 			} 
 		}
-}
-
-function wait(i) {
-	loop (i) {
-		yield;
-	}
 }
