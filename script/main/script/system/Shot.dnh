@@ -1,3 +1,5 @@
+#include "script/main/script/lib/Utils.dnh"
+
 @Initialize{
 	SetShotDeleteEventEnable(EV_DELETE_SHOT_IMMEDIATE,true); //18
 	SetShotDeleteEventEnable(EV_DELETE_SHOT_TO_ITEM,true); //19
@@ -11,13 +13,21 @@
 @Event{
 	alternative(GetEventType)
 		case(EV_DELETE_SHOT_IMMEDIATE) {
-			DeleteBulletFX(GetEventArgument(0),GetEventArgument(1));
+			let shot = GetEventArgument(0);
+			let imageId = ObjShot_GetImageID(shot);
+			if (imageId != 512 && imageId != 513 && imageId != 514) {
+				DeleteBulletFX(shot,GetEventArgument(1));
+			}
 		}
 		case(EV_DELETE_SHOT_TO_ITEM) {
-			DeleteBulletFX(GetEventArgument(0),GetEventArgument(1));
+			let shot = GetEventArgument(0);
+			let imageId = ObjShot_GetImageID(shot);
+			if (imageId != 512 && imageId != 513 && imageId != 514) {
+				DeleteBulletFX(shot,GetEventArgument(1));
+			}
 		}
 		case(EV_DELETE_SHOT_FADE) {
-			DeleteBulletFX(GetEventArgument(0),GetEventArgument(1));
+			//DeleteBulletFX(GetEventArgument(0),GetEventArgument(1));
 		}
 }
 
@@ -70,10 +80,4 @@ task DeleteBulletFX_BreakFX(shot, position, color) {
 		wait(2)
 	}
 	Obj_Delete(that);
-}
-
-function wait(i) {
-	loop (i) {
-		yield;
-	}
 }
