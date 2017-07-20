@@ -1,6 +1,8 @@
 #TouhouDanmakufu[Package]
-#Title["Title Test V2"]
+#Title["Title Test V3"]
 #Text["Text Test"]
+
+#include "script/main/script/lib/Utils.dnh"
 
 @Initialize {
 
@@ -16,6 +18,9 @@
 
 }
 
+//Variables
+let screenW = GetScreenWidth();
+let screenH = GetScreenHeight();
 
 //Constants! Please use those to refer to options!
 let OPTION_MAIN = -1;
@@ -32,32 +37,32 @@ let OPTION_QUIT = 7;
 task DisplayTitle{
 
 	//Create all objects
-	let dir = GetCurrentScriptDirectory() ~ "../../img";
+	let dir = /*GetModuleDirectory() ~ "script/main/img"; //But why*/ GetModuleDirectory() ~ "/script/main/img";// ~ "../../img";
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(titleImg,20);
 	ObjPrim_SetTexture(titleImg, dir ~ "/system/menus.png");
 	ObjSprite2D_SetSourceRect(titleImg, 0, 0, 1000, 750);
  	ObjSprite2D_SetDestRect(titleImg, 0, 0, 1000, 750);
-	ObjRender_SetScaleX(titleImg, 640 / 1000);
-	ObjRender_SetScaleY(titleImg, 480 / 750);
+	ObjRender_SetScaleX(titleImg, screenW / 1000);
+	ObjRender_SetScaleY(titleImg, screenH / 750);
 
 	let objWheelFake = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheelFake, 21);
 	ObjPrim_SetTexture(objWheelFake, dir ~ "/system/spokes.png");
 	ObjSprite2D_SetSourceRect(objWheelFake, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheelFake);
-	ObjRender_SetScaleX(objWheelFake, 480 / 656);
-	ObjRender_SetScaleY(objWheelFake, 480 / 656);
-	ObjRender_SetY(objWheelFake,300);
+	ObjRender_SetScaleX(objWheelFake, screenH / 656);
+	ObjRender_SetScaleY(objWheelFake, screenH / 656);
+	ObjRender_SetY(objWheelFake, 480 / 2);
 	
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(objWheel, 22);
 	ObjPrim_SetTexture(objWheel, dir ~ "/system/spokes2.png");
 	ObjSprite2D_SetSourceRect(objWheel, 0, 0, 656, 656);
 	ObjSprite2D_SetDestCenter(objWheel);
-	ObjRender_SetScaleX(objWheel, 480 / 656);
-	ObjRender_SetScaleY(objWheel, 480 / 656);
-	ObjRender_SetY(objWheel,300);
+	ObjRender_SetScaleX(objWheel, screenH / 656);
+	ObjRender_SetScaleY(objWheel, screenH / 656);
+	ObjRender_SetY(objWheel, 480 / 2);
 	ObjRender_SetAlpha(objWheel,0);
 
 	//Launch the wheel animation intro
@@ -119,7 +124,7 @@ task DisplayTitle{
 		let options = [0,0,0,0];
 		ascent(i in 0..4){
 			let option = ObjPrim_Create(OBJ_SPRITE_2D);
-			ObjPrim_SetTexture(option,dir ~ "/system/difficulty.png");
+			ObjPrim_SetTexture(option, dir ~ "/system/difficulty.png");
 			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
 			ObjSprite2D_SetDestCenter(option);
 			ObjRender_SetPosition(option,220,500,1);
@@ -273,8 +278,8 @@ task WheelFade(objFake,objReal){
 	//Moving-from-left part
 	task MoveFromSide{
 		descent(i in 0..60){
-			ObjRender_SetX(objFake,640+i);
-			ObjRender_SetX(objReal,640+i);
+			ObjRender_SetX(objFake,screenW+i);
+			ObjRender_SetX(objReal,screenW+i);
 			yield;
 		}
 	}
@@ -312,8 +317,4 @@ task WheelFade(objFake,objReal){
 		}
 		ObjRender_SetAlpha(objFake,0);
 	}
-}
-
-function wait(n){
-	loop(n){yield;}
 }
