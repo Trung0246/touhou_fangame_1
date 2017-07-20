@@ -1,0 +1,10 @@
+﻿//Auto-convert from Shift_JIS to UTF-8 by Github may break this file...
+
+package.script.main = script/main/script/system/Package.dnh
+
+window.title = 東方潮聖書 ~ Sapphire Panlogism
+
+//Any ways to change these value dynamically ?
+screen.width = 640
+screen.height = 480
+
