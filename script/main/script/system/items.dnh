@@ -3,7 +3,7 @@
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
-	LoadItemData(GetModuleDirectory() ~ "/script/!test/itemData.txt");
+	LoadItemData(GetModuleDirectory() ~ "/script/!test/ItemData.txt");
 }
 
 @MainLoop{
