@@ -1,8 +1,8 @@
 //Auto-convert from Shift_JIS to UTF-8 by Github may break this file...
 
-package.script.main = script/main/script/system/package.dnh
+package.script.main = script/main/script/system/Package.dnh
 
-window.title = "Touhou test"
+window.title = "Touhou Sapphire Panlogism"
 
 //Any ways to change these value dynamically ?
 screen.width = 640
