@@ -65,17 +65,19 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 }
 task DeleteBulletFX_BreakFX(shot, position, color) {
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/bullet-delete-anim.png"); //TODO: change file path
+	ObjPrim_SetTexture(that, GetCurrentScriptDirectory() ~ "/system/effects.png");//"/system/bullet-delete-anim.png"  /system/water-white.png
+	ObjSprite2D_SetSourceRect(that, 256, 784, 256 + 64, 748 + 64);
+	ObjSprite2D_SetDestCenter(that);
 	ObjRender_SetPosition(that, position[0], position[1], 0);
 	ObjRender_SetAngleZ(that, rand(0, 360));
 	ObjRender_SetColor(that, color[0], color[1], color[2]);
 	ascent(i in 0..4){
-		ObjSprite2D_SetSourceRect(that, 64 * i, 0, 64 * (i + 1), 64);
+		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 784, 64 * (i + 1) + 256, 64 + 784);
 		ObjSprite2D_SetDestCenter(that);
 		wait(2);
 	}
 	ascent(i in 0..4){
-		ObjSprite2D_SetSourceRect(that, 64 * i, 64, 64 * (i + 1), 128);
+		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 64 + 784, 64 * (i + 1) + 256, 128 + 784);
 		ObjSprite2D_SetDestCenter(that);
 		wait(2)
 	}
