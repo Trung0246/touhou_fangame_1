@@ -31,8 +31,6 @@
 		}
 }
 
-
-
 //ObjRender_SetBlendType(shot, BLEND_ADD_RGB);
 let path = GetModuleDirectory() ~ "/script/default_system/img/Default_Shot.png";
 
@@ -56,8 +54,8 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 	ObjRender_SetY(obj, position[1] + 16);
 	ObjRender_SetAngleZ(obj, ObjMove_GetAngle(shot) + 90);
 	ascent (i in 0..time) {
-		ObjRender_SetScaleX(obj, 1 + (i / time * 0.1));
-		ObjRender_SetScaleY(obj, 1 + (i / time * 0.1));
+		ObjRender_SetScaleX(obj, 1 + (i / time * 0.15));
+		ObjRender_SetScaleY(obj, 1 + (i / time * 0.15));
 		ObjRender_SetAlpha(obj, (255 - i / time * 255));
 		yield;
 	}
@@ -69,17 +67,17 @@ task DeleteBulletFX_BreakFX(shot, position, color) {
 	ObjSprite2D_SetSourceRect(that, 256, 784, 256 + 64, 748 + 64);
 	ObjSprite2D_SetDestCenter(that);
 	ObjRender_SetPosition(that, position[0], position[1], 0);
-	ObjRender_SetAngleZ(that, rand(0, 360));
+	//ObjRender_SetAngleZ(that, rand(0, 360));
 	ObjRender_SetColor(that, color[0], color[1], color[2]);
 	ascent(i in 0..4){
-		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 784, 64 * (i + 1) + 256, 64 + 784);
+		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 784, 64 * (i + 1) + 256 - 1, 64 + 784);
 		ObjSprite2D_SetDestCenter(that);
 		wait(2);
 	}
 	ascent(i in 0..4){
-		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 64 + 784, 64 * (i + 1) + 256, 128 + 784);
+		ObjSprite2D_SetSourceRect(that, 64 * i + 256, 64 + 784, 64 * (i + 1) + 256 - 1, 128 + 784);
 		ObjSprite2D_SetDestCenter(that);
-		wait(2)
+		wait(2);
 	}
 	Obj_Delete(that);
 }
