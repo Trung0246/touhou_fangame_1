@@ -1,5 +1,5 @@
-#include "script/main/script/system/event.dnh"
-#include "script/main/script/lib/utils.dnh"
+#include "script/main/script/system/Event.dnh"
+#include "script/main/script/lib/Utils.dnh"
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
