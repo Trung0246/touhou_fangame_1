@@ -1,5 +1,5 @@
 //How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/gui.dnh"]
-#include "script/main/script/lib/utils.dnh"
+#include "script/main/script/lib/Utils.dnh"
 
 let dir = GetModuleDirectory() ~ "script/main/img/";
 let guiPath = dir ~ "system/front00.png";
