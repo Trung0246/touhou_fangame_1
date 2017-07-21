@@ -364,7 +364,7 @@ task UpdatePower {
 				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
 				ObjRender_SetX(obj, ObjRender_GetX(obj) + 1.5);
 			} else if (ToString(num) == "/") {
-				ObjSpriteList2D_SetSourceRect(obj, 160, 144 + 1, 175, 159 + 1);
+				ObjSpriteList2D_SetSourceRect(obj, 160, 144, 175, 159);
 				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 144, (atoi(num) + 1) * 16, 144 + 16);
