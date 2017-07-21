@@ -589,7 +589,7 @@ task UpdateCurrentFpsAndMs {
 	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(objFps, digitPath);
 	Obj_SetRenderPriority(objFps, 0.1);
-	ObjRender_SetY(objFps, 480 - 27);
+	ObjRender_SetY(objFps, 480 - 26.5);
 	ObjRender_SetScaleX(objFps, 0.7);
 	ObjRender_SetScaleY(objFps, 0.7);
 
@@ -622,7 +622,6 @@ task UpdateCurrentFpsAndMs {
 		time = GetStageTime();
 		thisFrameTime = time - lastLoop;
 		frameTime += (thisFrameTime - frameTime) / smoothing;
-		fps = 1000 / frameTime;
 		if (frameStart < lastLoop) {
 			ms = frameTime;
 		} else {
@@ -635,15 +634,12 @@ task UpdateCurrentFpsAndMs {
 		preTime = time;*/
 
 		//Render fps and ms
-		if (GetKeyState(KEY_LCONTROL) == 3) {
-			//Fast mode
-			fps = GetCurrentFps();
-		}
 		if (GetCurrentFps() <= fpsRate) {
 			 tempFpsRate = 0;
 		}
 		if (tempFpsRate <= 0) {
-			tempFpsRate = fpsRate;
+			fps = min(1000 / frameTime, GetCurrentFps());
+			tempFpsRate += fpsRate;
 			//fps = min(fps, 60); //60, cap of fps, obviously
 			listNum = NumberToArray(fps, true);
 
