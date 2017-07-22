@@ -6,6 +6,9 @@ let guiPath = dir ~ "system/front00.png";
 let digitPath = dir ~ "ascii/ascii.png";
 
 function tempInit() {
+	LoadTexture(guiPath);
+	LoadTexture(digitPath);
+	
 	//May remove these after we added Init function at start of the game...
 	CreateCommonDataArea("main");
 
