@@ -463,8 +463,8 @@ task UpdatePlayerLife {
 		ascent(i in 0 .. number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 727, 0, 750, 25);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 727 + 1, 1, 750 + 0, 25);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
 		}
@@ -473,15 +473,15 @@ task UpdatePlayerLife {
 			let pieceCount = GetCommonData("player_life_piece", 0);
 			count ++;
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
-			ObjSpriteList2D_SetSourceRect(obj, 607 + floor(pieceCount * 5) * 24 - pieceCount, 0, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 609 + floor(pieceCount * 5) * 24 - pieceCount, 1, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 		}
 		//Render empty life
 		ascent(i in 0 .. GetCommonData("player_life_max", 0) - 1 - number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 607, 0, 630 + 2, 25);
+			ObjSpriteList2D_SetSourceRect(obj, 609, 1, 630 + 2, 25);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -534,8 +534,8 @@ task UpdatePlayerSpell {
 		ascent(i in 0 .. number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 26, 750, 25 + 26);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 27, 750, 25 + 27);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
 		}
@@ -544,7 +544,7 @@ task UpdatePlayerSpell {
 			let pieceCount = GetCommonData("player_spell_piece", 0);
 			count ++;
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
-			ObjSpriteList2D_SetSourceRect(obj, 607 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 26, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 26);
+			ObjSpriteList2D_SetSourceRect(obj, 608 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 27, 630 + 3 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 27);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -552,7 +552,7 @@ task UpdatePlayerSpell {
 		ascent(i in 0 .. GetCommonData("player_spell_max", 0) - 1 - number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 607, 0 + 26, 630 + 2, 25 + 26);
+			ObjSpriteList2D_SetSourceRect(obj, 608, 0 + 27, 630 + 2, 25 + 27);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
