@@ -84,7 +84,7 @@ task TRenderPlayer {
 	ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0);
 
 	// Note: we need a special wait function because right now it has to wait for the current animation to end before it can start another one 
-
+	
 	while(!Obj_IsDeleted(objPlayer)){
 		ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0); // Makes the sprite actually be where the player is
 
@@ -108,7 +108,41 @@ task TRenderPlayer {
 				wait(10);
 			}
 		}
-
+		
+		/*
+		if (GetVirtualKeyState(VK_LEFT) == 3) {
+			ascent(i in 0..7){
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),48,32+(32*i),96);
+				loop (10) {
+					if (GetVirtualKeyState(VK_LEFT) != 3) {
+						break;
+					}
+					yield;
+				}
+			}
+		} else if (GetVirtualKeyState(VK_RIGHT) == 3) {
+			ascent(i in 0..7){
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),96,32+(32*i),144);
+				loop (10) {
+					if (GetVirtualKeyState(VK_RIGHT) != 3) {
+						break;
+					}
+					yield;
+				}
+			}
+		} else {
+			ascent (i in 0..7) {
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),0,32+(32*i),48);
+				loop (10) {
+					if (GetVirtualKeyState(VK_LEFT) != 3 || GetVirtualKeyState(VK_RIGHT) != 3) {
+						break;
+					}
+					yield;
+				}
+			}
+		}
+		*/
+		
 		yield;
 	}
 }
