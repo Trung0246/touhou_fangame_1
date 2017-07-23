@@ -1,5 +1,5 @@
 #TouhouDanmakufu[Player]
-#ScriptVersion[3]	//ƒXƒNƒŠƒvƒgƒo[ƒWƒ‡ƒ“3‚ª•K{‚Å‚·
+#ScriptVersion[3]
 #ID["Reimu"]
 #Title["Reimu Hakurei"]
 #Text["Unfocused: Homing [r] Focused: Needles"]
@@ -86,7 +86,7 @@ task TRenderPlayer {
 	// Note: we need a special wait function because right now it has to wait for the current animation to end before it can start another one 
 	
 	while(!Obj_IsDeleted(objPlayer)){
-		ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0); // Makes the sprite actually be where the player is
+		/*ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0); // Makes the sprite actually be where the player is
 
 		if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH || GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ // Pressing left
 			ascent(i in 0..7){
@@ -107,9 +107,8 @@ task TRenderPlayer {
 				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),0,32+(32*i),48);
 				wait(10);
 			}
-		}
+		}*/		
 		
-		/*
 		if (GetVirtualKeyState(VK_LEFT) == 3) {
 			ascent(i in 0..7){
 				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),48,32+(32*i),96);
@@ -141,7 +140,6 @@ task TRenderPlayer {
 				}
 			}
 		}
-		*/
 		
 		yield;
 	}
