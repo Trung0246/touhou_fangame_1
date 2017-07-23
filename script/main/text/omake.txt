@@ -14,6 +14,24 @@ CLOSE THIS FILE NOW IF YOU HAVEN'T PLAYED THE GAME YET !!!
 Also, if you didn't play extra, don't read the parts about extra :P
 
 --------------------------------------------------------------------
+◇About the Team
+--------------------------------------------------------------------
+
+Malik: artist, who use SAI to draw main character portrait, background,... and gave us some ideas.
+
+Aiya: artist, nya... :3. No idea about gender, drew some cute little faries, bosses, bullets,... for us to use <3
+
+Frogmask: composer, who made background music and sound effect for us, and also wrote character profiles dialogue.
+
+Badz: programmer, who wrote system and menu stuff, optimize codes,... have no idea how to describe him.
+
+Lollipop: programmer, review code, ... and have a MSPaint-style avatar?
+
+Trung0246: programmer, texture packer, create spell cards, system, ..., and mantainer of this repository. Hello world!
+
+Ciryes: tester, once a programmer, but being overwhelmed by TODO lists, poor him :(
+
+--------------------------------------------------------------------
 ◇Enemy Characters
 --------------------------------------------------------------------
 
