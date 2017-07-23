@@ -1,0 +1,114 @@
+#TouhouDanmakufu[Player]
+#ScriptVersion[3]	//ƒXƒNƒŠƒvƒgƒo[ƒWƒ‡ƒ“3‚ª•K{‚Å‚·
+#ID["Reimu"]
+#Title["Reimu Hakurei"]
+#Text["Unfocused: Homing [r] Focused: Needles"]
+#ReplayName["Reimu"]
+
+#include "./lib/Event.dnh"
+
+let objPlayer = GetPlayerObjectID();
+let CSD = GetCurrentScriptDirectory();
+
+let shot = CSD ~ "./lib/ReimuShot.dnh";
+let sprite = CSD ~ "./img/sprite.png";
+
+@Initialize {
+	LoadPlayerShotData(shot); // Load the shots
+	LoadTexture(sprite); // Load the sprites
+
+	ObjPlayer_AddIntersectionCircleA1(objPlayer, 0, 0, 1, 24); // Set hitbox
+
+	SetPlayerSpeed(4.5, 2.0);
+
+	SetPlayerClip(0+6, 0+24, 384-6, 448-16);
+
+	SetPlayerDownStateFrame(60);
+	SetPlayerRebirthFrame(30); // Deathbomb window
+
+	SetPlayerAutoItemCollectLine(120); //POC line
+
+	TRenderPlayer;
+	//TRenderHitbox;
+}
+
+@Event {
+	alternative(GetEventType)
+
+	case(EV_REQUEST_SPELL){ // Bomb stuff (not implemented)
+		if(GetPlayerSpell > 0){
+			SetScriptResult(true);
+		}
+		else{
+			SetScriptResult(false);
+		}
+	}
+
+	case(EV_PLAYER_SHOOTDOWN){ // Death stuff
+		SetForbidPlayerShot(true);
+		SetForbidPlayerSpell(true);
+		ObjRender_SetAlpha(objPlayer,0);
+	}
+
+	case(EV_PLAYER_REBIRTH){ // Upon revival
+		SetForbidPlayerShot(false);
+		SetForbidPlayerSpell(false);
+		ObjRender_SetAlpha(objPlayer,255);
+		SetPlayerInvincibilityFrame(120);
+		SetPlayerSpell(3);
+	}
+}
+
+@MainLoop {
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+@Finalize {
+
+}
+
+task TRenderPlayer {
+	// Basic stuff
+	ObjPrim_SetTexture(objPlayer,sprite);
+	Obj_SetRenderPriorityI(objPlayer,31);
+	ObjRender_SetBlendType(objPlayer,BLEND_ALPHA);
+	ObjRender_SetAngleXYZ(objPlayer,0,0,0);
+	ObjRender_SetScaleXYZ(objPlayer,1,1,0);
+	ObjRender_SetAlpha(objPlayer,255);
+	ObjSprite2D_SetSourceRect(objPlayer,0,0,32,48);
+	ObjSprite2D_SetDestCenter(objPlayer);
+	ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0);
+
+	// Note: we need a special wait function because right now it has to wait for the current animation to end before it can start another one 
+
+	while(!Obj_IsDeleted(objPlayer)){
+		ObjRender_SetPosition(objPlayer,GetPlayerX,GetPlayerY,0); // Makes the sprite actually be where the player is
+
+		if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH || GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ // Pressing left
+			ascent(i in 0..7){
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),48,32+(32*i),96);
+				wait(10);
+			}
+		}
+
+		else if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH || GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ // Pressing right
+			ascent(i in 0..7){
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),96,32+(32*i),144);
+				wait(10);
+			}
+		}
+
+		else{ // Pressing up/down or nothing
+			ascent(i in 0..7){
+				ObjSprite2D_SetSourceRect(objPlayer,0+(32*i),0,32+(32*i),48);
+				wait(10);
+			}
+		}
+
+		yield;
+	}
+}

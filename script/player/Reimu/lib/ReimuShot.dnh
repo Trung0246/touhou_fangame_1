@@ -1,0 +1,9 @@
+shot_image = "../img/sprite.png"
+
+ShotData {
+	id = 1 
+	rect = (192,0,200,16) 
+	render = ALPHA
+	alpha= 64
+	collision = 16
+}
