@@ -6,10 +6,11 @@ let guiPath = dir ~ "system/front00.png";
 let digitPath = dir ~ "ascii/ascii.png";
 
 function tempInit() {
+	//May remove these after we added Init function at start of the game...
 	LoadTexture(guiPath);
 	LoadTexture(digitPath);
+	InstallFont(GetModuleDirectory() ~ "script/main/text/font/russell-square-std.ttf");
 	
-	//May remove these after we added Init function at start of the game...
 	CreateCommonDataArea("main");
 
 	let character = ["reimu", "marisa", "shou", "hecatia"];
@@ -589,19 +590,35 @@ task UpdateBossXPos (obj) {
 	}
 }
 task UpdateCurrentFpsAndMs {
-	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objFps, digitPath);
-	Obj_SetRenderPriority(objFps, 0.1);
-	ObjRender_SetY(objFps, 480 - 26.5);
-	ObjRender_SetScaleX(objFps, 0.7);
-	ObjRender_SetScaleY(objFps, 0.7);
+	let objFps = ObjText_Create();
+	ObjText_SetFontType(objFps, "Russell Square Std");//GetCurrentScriptDirectory() ~ "system/russell-square.ttf");
+	ObjText_SetFontSize(objFps, 15);
+	ObjText_SetFontBold(objFps, true);
+	ObjText_SetFontColorTop(objFps, 205, 205, 205);
+	ObjText_SetFontColorBottom(objFps, 100, 100, 100);
+	ObjText_SetFontBorderType(objFps, BORDER_FULL);
+	ObjText_SetFontBorderColor(objFps, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objFps, 1);
+	ObjText_SetHorizontalAlignment(objFps, ALIGNMENT_RIGHT);
+	ObjText_SetMaxWidth(objFps, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objFps, 1);
+	ObjRender_SetX(objFps, 5);
+	ObjRender_SetY(objFps, GetScreenHeight() - 16);
 
-	let objMs = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objMs, digitPath);
-	Obj_SetRenderPriority(objMs, 0.1);
-	ObjRender_SetY(objMs, 480 - 13);
-	ObjRender_SetScaleX(objMs, 0.7);
-	ObjRender_SetScaleY(objMs, 0.7);
+	let objMs = ObjText_Create();
+	ObjText_SetFontType(objMs, "Russell Square Std");
+	ObjText_SetFontSize(objMs, 15);
+	ObjText_SetFontBold(objMs, true);
+	ObjText_SetFontColorTop(objMs, 205, 205, 205);
+	ObjText_SetFontColorBottom(objMs, 100, 100, 100);
+	ObjText_SetFontBorderType(objMs, BORDER_FULL);
+	ObjText_SetFontBorderColor(objMs, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objMs, 1);
+	ObjText_SetHorizontalAlignment(objMs, ALIGNMENT_RIGHT);
+	ObjText_SetMaxWidth(objMs, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objMs, 1);
+	ObjRender_SetX(objMs, 5);
+	ObjRender_SetY(objMs, GetScreenHeight() - 30);
 
 	//Option
 	let smoothing = 1; //Can change this value, should be in option menu tho, minumum 1
@@ -643,43 +660,11 @@ task UpdateCurrentFpsAndMs {
 		if (tempFpsRate <= 0) {
 			fps = min(1000 / frameTime, GetCurrentFps());
 			tempFpsRate += fpsRate;
-			//fps = min(fps, 60); //60, cap of fps, obviously
-			listNum = NumberToArray(fps, true);
-
-			ObjSpriteList2D_ClearVertexCount(objFps);
-			ascent(i in 0 .. length(listNum)) {
-				let num = listNum[i];
-				ObjRender_SetX(objFps, 640 - 15 - (length(listNum) - 1 - i) * 8);
-				if (ToString(num) == ",") {
-					ObjSpriteList2D_SetSourceRect(objFps, 224, 144 + 1, 239, 159 + 1);
-					ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-					ObjRender_SetX(objFps, ObjRender_GetX(objFps) + 2.5);
-				} else {
-					ObjSpriteList2D_SetSourceRect(objFps, num * 16, 144, (num + 1) * 16, 144 + 16);
-					ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-				}
-				ObjSpriteList2D_AddVertex(objFps);
-			}
+			ObjText_SetText(objFps, rtos("0.000", fps) ~ " fps");
 		} else {
 			tempFpsRate --;
 		}
-
-		listNum = NumberToArray(ms, true);
-
-		ObjSpriteList2D_ClearVertexCount(objMs);
-		ascent(i in 0 .. length(listNum)) {
-			let num = listNum[i];
-			ObjRender_SetX(objMs, 640 - 15 - (length(listNum) - 1 - i) * 8);
-			if (ToString(num) == ",") {
-				ObjSpriteList2D_SetSourceRect(objMs, 224, 144 + 1, 239, 159 + 1);
-				ObjSpriteList2D_SetDestRect(objMs, 0, 0, 16, 16);
-				ObjRender_SetX(objMs, ObjRender_GetX(objMs) + 2.5);
-			} else {
-				ObjSpriteList2D_SetSourceRect(objMs, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(objMs, 0, 0, 16, 16);
-			}
-			ObjSpriteList2D_AddVertex(objMs);
-		}
+		ObjText_SetText(objMs, IntToString(ms) ~ " ms");
 		yield;
 	}
 }
@@ -688,31 +673,24 @@ task UpdateReplayFps {
 	if (!IsReplay()) {
 		return;
 	}
-	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objFps, digitPath);
-	Obj_SetRenderPriority(objFps, 0.1);
-	ObjRender_SetY(objFps, 480 - 13);
-	ObjRender_SetScaleX(objFps, 0.7);
-	ObjRender_SetScaleY(objFps, 0.7);
+	let objFps = ObjText_Create();
+	ObjText_SetFontType(objFps, "Russell Square Std");//GetCurrentScriptDirectory() ~ "system/russell-square.ttf");
+	ObjText_SetFontSize(objFps, 15);
+	ObjText_SetFontBold(objFps, true);
+	ObjText_SetFontColorTop(objFps, 205, 205, 205);
+	ObjText_SetFontColorBottom(objFps, 100, 100, 100);
+	ObjText_SetFontBorderType(objFps, BORDER_FULL);
+	ObjText_SetFontBorderColor(objFps, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objFps, 1);
+	ObjText_SetHorizontalAlignment(objFps, ALIGNMENT_LEFT);
+	ObjText_SetMaxWidth(objFps, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objFps, 1);
+	ObjRender_SetX(objFps, 640 - 222.5);
+	ObjRender_SetY(objFps, GetScreenHeight() - 16);
 
-	let fps = GetReplayFps();
-
-	fps = min(fps, 60); //60, cap of fps, obviously
-	let listNum = NumberToArray(fps, true);
-
-	ObjSpriteList2D_ClearVertexCount(objFps);
-	ascent(i in 0 .. length(listNum)) {
-		let num = listNum[i];
-		ObjRender_SetX(objFps, 640 - 215 - (length(listNum) - 1 - i) * 8);
-		if (ToString(num) == ",") {
-			ObjSpriteList2D_SetSourceRect(objFps, 224, 144 + 1, 239, 159 + 1);
-			ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-			ObjRender_SetX(objFps, ObjRender_GetX(objFps) + 2.5);
-		} else {
-			ObjSpriteList2D_SetSourceRect(objFps, num * 16, 144, (num + 1) * 16, 144 + 16);
-			ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-		}
-		ObjSpriteList2D_AddVertex(objFps);
+	while (true) {
+		ObjText_SetText(objFps, IntToString(GetReplayFps()) ~ " fps");
+		yield;
 	}
 }
 
