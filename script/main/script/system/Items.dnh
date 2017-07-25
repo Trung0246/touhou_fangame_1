@@ -1,4 +1,4 @@
-#include "script/main/script/system/Event.dnh"
+#include "script/main/script/lib/Event.dnh"
 #include "script/main/script/lib/Utils.dnh"
 
 @Initialize{
