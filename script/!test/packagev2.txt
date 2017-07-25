@@ -26,11 +26,6 @@ task LoadSaveData{
 	LoadCommonDataAreaA2("Settings","script/main/save/Settings.dat");
 }
 
-/*task SetBGMVolume(vol){
-	SetAreaCommonData("Settings","Volume_BGM",vol);
-	ObjSound_SetVolumeRate(objBGM,vol);
-}*/
-
 //Constants! Please use those to refer to options!
 let OPTION_MAIN = -1;
 let OPTION_STARTGAME = 0;
@@ -54,6 +49,7 @@ task DisplayTitle{
 	let objBGM = ObjSound_Create();
 	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
 	ObjSound_Load(objBGM,dir ~ "../main/sound/bgm/01.ogg");
+	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
 	ObjSound_Play(objBGM);
 
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
@@ -452,8 +448,8 @@ task DisplayTitle{
 		let selected = 0;
 
 		//Used for tracking settings
-		let sndVolume = 100;
-		let BGMVolume = 80;
+		let sndVolume = GetAreaCommonData("Settings","sound_fx_volume",100);
+		let BGMVolume = GetAreaCommonData("Settings","sound_bgm_volume",100);
 
 		//Angle of wheel as of when entering this menu
 		let origAngle = destAngle;
@@ -536,6 +532,7 @@ task DisplayTitle{
 				case(1){
 					BGMVolume = (BGMVolume+5)%105;
 					DrawNumber(numbers[1],BGMVolume,1,0);
+					ObjSound_SetVolumeRate(objBGM,BGMVolume);
 				}
 			}
 
@@ -548,6 +545,7 @@ task DisplayTitle{
 				case(1){
 					BGMVolume = (BGMVolume-5)%105;
 					DrawNumber(numbers[1],BGMVolume,1,0);
+					ObjSound_SetVolumeRate(objBGM,BGMVolume);
 				}
 			}
 
@@ -596,6 +594,10 @@ task DisplayTitle{
 		}
 
 		task cancelMenu{
+			SetAreaCommonData("Settings","sound_fx_volume",sndVolume);
+			SetAreaCommonData("Settings","sound_bgm_volume",BGMVolume);
+			SaveCommonDataAreaA2("Settings","script/main/save/Settings.dat");
+
 			destAngle = origAngle;
 			position = origPosition;
 			DeleteOptions;
