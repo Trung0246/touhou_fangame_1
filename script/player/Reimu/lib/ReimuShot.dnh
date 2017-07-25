@@ -1,9 +1,9 @@
-shot_image = "../img/sprite.png"
+shot_image = "./shot/sprite.png"
 
 ShotData {
 	id = 1 
-	rect = (192,0,200,16) 
+	rect = (0,192,16,208) 
 	render = ALPHA
-	alpha= 64
+	alpha = 255
 	collision = 16
 }
