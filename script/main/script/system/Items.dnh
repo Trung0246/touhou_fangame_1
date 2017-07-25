@@ -127,10 +127,10 @@
 				let tempX = GetPlayerX();
 				let tempY = GetPlayerY();
 				let dist = 150;
-				let angle = atan2(-tempY, GetStgFrameWidth() / 2 - tempX) + 90;
+				let angle = atan2(-tempY + 60, GetStgFrameWidth() / 2 - tempX) + 90;
 				let obj = CreateItemU2(7, tempX, tempY, cos(i / 10 * 90 - 40 - 90 + angle) * dist + tempX, sin(i / 10 * 90 - 40 - 90 + angle) * dist + tempY, 0);
 				Obj_SetRenderPriorityI(obj, 20);
 				ObjItem_SetRenderScoreEnable(obj, false);
-			} 
+			}
 		}
 }
