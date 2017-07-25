@@ -1,4 +1,7 @@
 #include "script/main/script/lib/Utils.dnh"
+#include "script/default_system/Default_ShotConst.txt"
+#include "script/main/script/lib/Event.dnh"
+#include "script/main/script/system/Raindrop.dnh"
 
 local {
 	//Fuck off
