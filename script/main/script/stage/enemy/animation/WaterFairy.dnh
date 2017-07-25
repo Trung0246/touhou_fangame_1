@@ -5,6 +5,12 @@ local {
 	LoadTexture(dir);
 }
 
+/*function WaterFairy_Init() {
+	//No idea if this function is necessary :P
+	LoadTexture(GetCurrentScriptDirectory() ~ "./system/Tiny_Fairies.png");
+	LoadTexture(GetCurrentScriptDirectory() ~ "./system/RainDrop_Fairies.png");
+}*/
+
 task AnimateWaterSmallFairy (obj,color) {
 	Obj_SetValue(obj,"Anim",0);
 	ObjPrim_SetTexture(obj, dir);
