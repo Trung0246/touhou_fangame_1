@@ -1,0 +1,33 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage test"]
+#Text["Stage text"]
+#System["script/main/script/system/Gui.dnh"]
+
+//Everything is included in this file and if you need to include something ask me
+#include "script/main/script/system/Init.dnh"
+
+//DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
+
+@Initialize {
+  //Put this function temporary here and read this in Init.dnh to understand how to call this function
+	Start_Init();
+  
+  //Always call this function in every start of a stage script
+	Stage_Init();
+}
+
+@MainLoop {
+  //Debug code
+	if (GetKeyState(KEY_U) == 1) {
+		CloseStgScene();
+	}
+	if (GetKeyState(KEY_I) == 1) {
+		DeleteShotAll(TYPE_ALL, TYPE_IMMEDIATE);
+	}
+	yield;
+}
+ 
+@Finalize {
+
+}
