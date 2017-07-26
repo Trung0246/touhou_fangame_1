@@ -21,7 +21,11 @@ Malik: artist, who use SAI to draw main character portrait, background,... and g
 
 Aiya: artist, nya... :3. No idea about gender, drew some cute little faries, bosses, bullets,... for us to use <3
 
+Naudiz: artist, who drew some sprites and effects for us :)
+
 Frogmask: composer, who made background music and sound effect for us, and also wrote character profiles dialogue.
+
+Timi: composer, who composed a stage 4 boss theme.
 
 Badz: programmer, who wrote system and menu stuff, optimize codes,... have no idea how to describe him.
 
