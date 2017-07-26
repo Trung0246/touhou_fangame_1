@@ -14,6 +14,8 @@
 	let grazeMax = GetCommonData("player_graze_max", 0);
 	alternative(GetEventType)
 		case(EV_GET_ITEM) {
+			//To fix weird shit bug ...
+			NotifyEvent(GetPlayerScriptID(), EV_GET_ITEM, GetEventArgument(0));
 			alternative(GetEventArgument(0))
 			case (1) { //Life
 				SetCommonData("player_life_piece", GetCommonData("player_life_piece", 0) + 1);
