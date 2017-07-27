@@ -416,8 +416,8 @@ function Orb_Manage() {
 		Obj_SetValue(orb[3], "x2", -dist);
 		Obj_SetValue(orb[3], "y2", 0);
 	} else if (powerData >= 3) {
-		startChange = -60;
-		angleChange = -30;
+		startChange = -65;
+		angleChange = -25;
 		Obj_SetValue(orb[0], "enable", true);
 		Obj_SetValue(orb[0], "x1", dist);
 		Obj_SetValue(orb[0], "y1", 0);
