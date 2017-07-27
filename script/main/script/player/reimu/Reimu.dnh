@@ -390,7 +390,7 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = 1;//GetCommonData("player_power", 0);
+	let powerData = GetCommonData("player_power", 0);
 	let dist = 40;
 	if (powerData >= 4) {
 		startChange = -60;
