@@ -48,6 +48,9 @@ let tempNeedleDelay = 0;
 
 let enemyCount = 0;
 
+let startChange = 0;
+let angleChange = 0;
+
 let orb = [];
 
 let dir = GetCurrentScriptDirectory();
@@ -58,8 +61,6 @@ let dir = GetCurrentScriptDirectory();
 
 	SetPlayerSpeed(speed, speedFocus);
 	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
-  
-  //Set how to get data here...
 	SetPlayerLife(GetCommonData("player_life", 2));
 	SetPlayerSpell(GetCommonData("player_spell", 3));
 	SetPlayerPower(GetCommonData("player_power", 0));
@@ -126,12 +127,12 @@ let dir = GetCurrentScriptDirectory();
 			}
 		} else {
 			if (tempHomingDelay <= 0) {
-				let tempAngle = -60;
+				let tempAngle = startChange;
 				ascent (i in 0..length(orb)) {
 					if (Obj_GetValueD(orb[i], "enable", false) == true) {
 						Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
 					}
-					tempAngle -= 20;
+					tempAngle += angleChange;
 				}
 				tempHomingDelay = homingDelay;
 			} else {
@@ -389,9 +390,11 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = GetCommonData("player_power", 0);
+	let powerData = 1;//GetCommonData("player_power", 0);
 	let dist = 40;
 	if (powerData >= 4) {
+		startChange = -60;
+		angleChange = -20;
 		Obj_SetValue(orb[0], "enable", true);
 		Obj_SetValue(orb[0], "x1", dist);
 		Obj_SetValue(orb[0], "y1", 0);
@@ -413,6 +416,8 @@ function Orb_Manage() {
 		Obj_SetValue(orb[3], "x2", -dist);
 		Obj_SetValue(orb[3], "y2", 0);
 	} else if (powerData >= 3) {
+		startChange = -60;
+		angleChange = -30;
 		Obj_SetValue(orb[0], "enable", true);
 		Obj_SetValue(orb[0], "x1", dist);
 		Obj_SetValue(orb[0], "y1", 0);
@@ -430,6 +435,8 @@ function Orb_Manage() {
 		Obj_SetValue(orb[2], "y2", 0);
 		Obj_SetValue(orb[3], "enable", false);
 	} else if (powerData >= 2) {
+		startChange = -70;
+		angleChange = -40;
 		Obj_SetValue(orb[0], "enable", true);
 		Obj_SetValue(orb[0], "x1", cos(60) * dist);
 		Obj_SetValue(orb[0], "y1", sin(60) * dist);
@@ -444,6 +451,8 @@ function Orb_Manage() {
 			Obj_SetValue(orb[i],"enable" , false);
 		}
 	} else if (powerData >= 1) {
+		startChange = -90;
+		angleChange = 0;
 		Obj_SetValue(orb[0], "enable", true);
 		Obj_SetValue(orb[0], "x1", 0);
 		Obj_SetValue(orb[0], "y1", dist);
