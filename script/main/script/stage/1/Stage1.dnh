@@ -3,6 +3,7 @@
 #Title["Stage test"]
 #Text["Stage text"]
 #System["script/main/script/system/Gui.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh"]
 
 //Everything is included in this file and if you need to include something ask me
 #include "script/main/script/system/Init.dnh"
