@@ -1,9 +1,9 @@
 #TouhouDanmakufu[Package]
-#Title["Title Test V2"]
-#Text["Text Test"]
+#Title["Package"]
+#Text["i.e the main menu"]
 
 @Initialize {
-
+	LoadSaveData;
 	DisplayTitle;
 }
 
@@ -16,6 +16,15 @@
 
 }
 
+//TODO: implement event calling
+/*@Event {
+	alternative(GetEventType)
+}*/
+
+task LoadSaveData{
+	CreateCommonDataArea("Settings");
+	LoadCommonDataAreaA2("Settings","script/main/save/Settings.dat");
+}
 
 //Constants! Please use those to refer to options!
 let OPTION_MAIN = -1;
@@ -24,15 +33,25 @@ let OPTION_EXTRA = 1;
 let OPTION_PRACTICE = 2;
 let OPTION_SPELLPRACTICE = 3;
 let OPTION_REPLAY = 4;
-let OPTION_MUSICROOM = 5;
-let OPTION_OPTIONS = 6; //lol
-let OPTION_QUIT = 7;
+let OPTION_PLAYERDATA = 5;
+let OPTION_MUSICROOM = 6;
+let OPTION_OPTIONS = 7; //lol
+let OPTION_OMAKE = 8;
+let OPTION_MANUAL = 9;
+let OPTION_QUIT = 10;
 
 
 task DisplayTitle{
 
-	//Create all objects
 	let dir = GetCurrentScriptDirectory();
+	//Create all objects
+
+	let objBGM = ObjSound_Create();
+	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
+	ObjSound_Load(objBGM,dir ~ "../main/sound/bgm/01.ogg");
+	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
+	ObjSound_Play(objBGM);
+
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(titleImg,20);
 	ObjPrim_SetTexture(titleImg, dir ~ "/system/menus2.png");
@@ -41,43 +60,104 @@ task DisplayTitle{
 	ObjRender_SetScaleX(titleImg, 640 / 1000);
 	ObjRender_SetScaleY(titleImg, 480 / 750);
 
-	let objWheelFake = ObjPrim_Create(OBJ_SPRITE_2D);
-	Obj_SetRenderPriorityI(objWheelFake, 21);
-	ObjPrim_SetTexture(objWheelFake, dir ~ "/system/spokes.png");
-	ObjSprite2D_SetSourceRect(objWheelFake, 0, 0, 656, 656);
-	ObjSprite2D_SetDestCenter(objWheelFake);
-	ObjRender_SetScaleX(objWheelFake, 480 / 656);
-	ObjRender_SetScaleY(objWheelFake, 480 / 656);
-	ObjRender_SetY(objWheelFake,300);
+	let objWheelOverlap = ObjPrim_Create(OBJ_SPRITE_2D);
+	Obj_SetRenderPriorityI(objWheelOverlap, 23);
+	ObjPrim_SetTexture(objWheelOverlap, dir ~ "/system/spokes.png");
+	ObjSprite2D_SetSourceRect(objWheelOverlap, 188, 46, 843, 701);
+	ObjSprite2D_SetDestCenter(objWheelOverlap);
+	ObjRender_SetScaleXYZ(objWheelOverlap,0.65,0.65,1);
+	ObjRender_SetY(objWheelOverlap,340);
 	
 	let objWheel = ObjPrim_Create(OBJ_SPRITE_2D);
-	Obj_SetRenderPriorityI(objWheel, 22);
-	ObjPrim_SetTexture(objWheel, dir ~ "/system/spokes5.png");
-	ObjSprite2D_SetSourceRect(objWheel, 0, 0, 656, 656);
+	Obj_SetRenderPriorityI(objWheel, 21);
+	ObjPrim_SetTexture(objWheel, dir ~ "/system/spokes.png");
+	ObjSprite2D_SetSourceRect(objWheel, 188, 46, 843, 701);
 	ObjSprite2D_SetDestCenter(objWheel);
-	ObjRender_SetScaleX(objWheel, 480 / 656);
-	ObjRender_SetScaleY(objWheel, 480 / 656);
-	ObjRender_SetY(objWheel,300);
+	ObjRender_SetScaleXYZ(objWheel,0.65,0.65,1);
+	ObjRender_SetY(objWheel,340);
 	ObjRender_SetAlpha(objWheel,0);
 
+	let objWheelOptions = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(objWheelOptions, dir ~ "/system/MenuOp.png");
+	Obj_SetRenderPriorityI(objWheelOptions, 22);
+
 	//Launch the wheel animation intro
-	WheelFade(objWheelFake,objWheel);
+	WheelFade(objWheelOverlap,objWheel);
 	
+	//tracks currently selected menu
+	let currMenu = OPTION_MAIN;
+
+	//previous menu, used to go back to the correct option
+	let prevMenu = OPTION_STARTGAME;
+
+	//Make sure to display the game title!!
+	TitleGraphics;
+
 	wait(100);
 	//Wheel angle handling stuff you probably shouldn't mess with
 	let destAngle = 0;
 	let currAngle = 0;
 
-	//tracks currently selected menu
-	let currMenu = OPTION_MAIN;
+	//Also used for tracking the wheel options' position. Fragile!
+	let position = 0;
 
 	//Start actually responding to controls
 	MainMenu;
 	wheelSpin;
 
+	task TitleGraphics{
+		let title = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(title,GetCurrentScriptDirectory() ~ "./system/title.png");
+		ObjSprite2D_SetSourceRect(title,0,0,722,477);
+		ObjSprite2D_SetDestRect(title,0,0,722,477);
+		ObjRender_SetScaleXYZ(title,0.5,0.5,0);
+
+		
+		let reimu = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(reimu,GetCurrentScriptDirectory() ~ "./system/ReimuTitle.png");
+		ObjSprite2D_SetSourceRect(reimu,0,0,412,592);
+		ObjSprite2D_SetDestCenter(reimu);
+		ObjRender_SetScaleXYZ(reimu,0.6,0.6,0);
+
+		descent(i in 0..96){
+			ObjRender_SetAlpha(title,256-i*3);
+			ObjRender_SetAlpha(reimu,256-i*3);
+			ObjRender_SetPosition(title,30+i*(i/30),-20,0);
+			ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+			yield;
+		}
+		
+		loop{
+			while(currMenu == OPTION_MAIN){yield;}
+			ascent(i in 0..32){
+				if(currMenu == OPTION_MAIN){break;}
+				ObjRender_SetAlpha(title,256-i*9);
+				ObjRender_SetAlpha(reimu,256-i*9);
+				ObjRender_SetPosition(title,30-i*(i/10),-20,0);
+				ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+				yield;
+			}
+			while(currMenu != OPTION_MAIN){yield;}
+			descent(i in 0..32){
+				if(currMenu != OPTION_MAIN){break;}
+				ObjRender_SetAlpha(title,256-i*9);
+				ObjRender_SetAlpha(reimu,256-i*9);
+				ObjRender_SetPosition(title,30-i*(i/30),-20,0);
+				ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+				yield;
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+	//Main menu
+	//------------------------------------------------------------------------
 	task MainMenu{
+		
 		//Currently selected option
-		let selected = 0;
+		let selected = prevMenu;
+		fadeWheel;
+		yield;
+		redrawMainOptions;
 
 		//Listen to controls
 		while(currMenu == OPTION_MAIN){
@@ -92,27 +172,63 @@ task DisplayTitle{
 					fadeWheel;
 					DifficultyMenu;
 				}
+				case(OPTION_EXTRA){
+					currMenu = OPTION_EXTRA;
+					fadeWheel;
+					ExtraStartMenu;
+				}
+				case(OPTION_OPTIONS){
+					currMenu = OPTION_OPTIONS;
+					fadeWheel;
+					OptionsMenu;
+				}
 			}
 			
 			//Movement
 			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
-				selected = (selected + 1)%8;
-				destAngle += 45;
+				selected = (selected + 1)%11;
+				position++;
+				destAngle -= 45;
+				redrawMainOptions;
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
-				selected = (selected - 1)%8;
-				destAngle -= 45;
+				selected = (selected - 1)%11;
+				position--;
+				destAngle += 45;
+				redrawMainOptions;
 			}
 			yield;
 		}
+
+		task redrawMainOptions{
+			ObjSpriteList2D_ClearVertexCount(objWheelOptions);
+			ObjRender_SetPosition(objWheelOptions,0,0,0);
+			ascent(i in -4..4){
+				let unselectOffset = 500;
+				if(i == 0){unselectOffset = 0;}
+				ObjRender_SetAngleZ(objWheelOptions,i*45 + position*45);
+				i = (i+selected)%11;
+				ObjSpriteList2D_SetSourceRect(objWheelOptions,unselectOffset,i*57,unselectOffset+300,(i+1)*57);
+				ObjSpriteList2D_SetDestRect(objWheelOptions,80,-14,210,14);
+				ObjSpriteList2D_AddVertex(objWheelOptions);
+			}
+			ObjSpriteList2D_CloseVertex(objWheelOptions);
+			ObjRender_SetPosition(objWheelOptions,10,340,0);
+		}
 	}
 
+	//------------------------------------------------------------------------
+	//Difficulty select: main game
+	//------------------------------------------------------------------------
 	task DifficultyMenu{
 		//Currently selected option
 		let selected = 1;
 
 		//Angle of wheel as of when entering this menu
 		let origAngle = destAngle;
+
+		//Position of wheel as of when entering this menu
+		let origPosition = position;
 
 		//Create the menu objects
 		//512x155
@@ -122,7 +238,8 @@ task DisplayTitle{
 			ObjPrim_SetTexture(option,dir ~ "system/difficulty.png");
 			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
 			ObjSprite2D_SetDestCenter(option);
-			ObjRender_SetPosition(option,220,500,1);
+			ObjRender_SetScaleXYZ(option,0.9,0.9,1);
+			ObjRender_SetPosition(option,420,500,1);
 			options[i] = option;
 		}
 
@@ -141,8 +258,10 @@ task DisplayTitle{
 			//}
 			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
 				destAngle = origAngle;
+				position = origPosition;
 				DeleteOptions;
 				currMenu = OPTION_MAIN;
+				prevMenu = OPTION_STARTGAME;
 				fadeWheel;
 				MainMenu;
 			}
@@ -151,12 +270,12 @@ task DisplayTitle{
 			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
 				selected = (selected + 1)%4;
 				SelectOption;
-				destAngle += 45;
+				destAngle -= 45;
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
 				selected = (selected - 1)%4;
 				SelectOption;
-				destAngle -= 45;
+				destAngle += 45;
 			}
 			yield;
 		}
@@ -196,7 +315,6 @@ task DisplayTitle{
 			}
 
 		}
-		
 
 		task DeleteOptions{
 			descent(i in 0..32){
@@ -211,10 +329,291 @@ task DisplayTitle{
 		}
 	}
 
+	//------------------------------------------------------------------------
+	//Difficulty select: Extra
+	//------------------------------------------------------------------------
+	task ExtraStartMenu{
+		//Currently selected option
+		let selected = 0;
 
+		//Angle of wheel as of when entering this menu
+		let origAngle = destAngle;
+
+		//Position of wheel as of when entering this menu
+		let origPosition = position;
+
+		//Create the menu objects
+		//512x155
+		let options = [0,0];
+		ascent(i in 0..2){
+			let option = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(option,dir ~ "system/difficulty-ex.png");
+			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
+			ObjSprite2D_SetDestCenter(option);
+			ObjRender_SetScaleXYZ(option,0.9,0.9,1);
+			ObjRender_SetPosition(option,420,500,1);
+			options[i] = option;
+		}
+
+		let currPos = 40;
+		let destPos = 40;
+		moveOptions;
+		SelectOption;
+		
+		wait(5);
+
+		//Listen to controls
+		while(currMenu == OPTION_EXTRA){
+			//Actual actions
+			//if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				
+			//}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				destAngle = origAngle;
+				position = origPosition;
+				DeleteOptions;
+				currMenu = OPTION_MAIN;
+				prevMenu = OPTION_EXTRA;
+				fadeWheel;
+				MainMenu;
+			}
+			
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%2;
+				SelectOption;
+				destAngle -= 45;
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%2;
+				SelectOption;
+				destAngle += 45;
+			}
+			yield;
+		}
+
+		task SelectOption{
+			ascent(i in 0..2){
+				ObjSprite2D_SetSourceRect(options[i],512,i*160,1024,(i+1)*160);
+			}
+			ObjSprite2D_SetSourceRect(options[selected],0,selected*160,512,(selected+1)*160);
+			
+			destPos = 240-selected*200;
+		}
+
+		task moveOptions{
+			moveOtherOptions;
+			while(!Obj_IsDeleted(options[0])){
+				currPos = ObjRender_GetY(options[0]);
+				if(currPos != destPos){
+					let displace = (destPos - currPos)/7;
+					if(absolute(displace) > 0.01){
+						ObjRender_SetY(options[0],ObjRender_GetY(options[0])+displace);
+					}
+					else{
+						ObjRender_SetY(options[0],destPos);
+					}
+				}
+				yield;
+			}
+
+			task moveOtherOptions{
+				while(!Obj_IsDeleted(options[0])){
+					ObjRender_SetY(options[1],ObjRender_GetY(options[0])+200);
+					yield;
+				}
+			}
+
+		}
+		
+
+		task DeleteOptions{
+			descent(i in 0..32){
+				ascent(j in 0..2){
+					ObjRender_SetAlpha(options[j],i*4);
+				}
+				yield;
+			}
+			ascent(i in 0..2){
+				Obj_Delete(options[i]);
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+	//Options menu
+	//------------------------------------------------------------------------
+	task OptionsMenu{
+
+		//Currently selected option
+		let selected = 0;
+
+		//Used for tracking settings
+		let sndVolume = GetAreaCommonData("Settings","sound_fx_volume",100);
+		let BGMVolume = GetAreaCommonData("Settings","sound_bgm_volume",100);
+
+		//Angle of wheel as of when entering this menu
+		let origAngle = destAngle;
+
+		//Position of wheel as of when entering this menu
+		let origPosition = position;
+
+		//Create the menu objects
+		//512x155
+		let labels = [0,0,0];
+		let numbers = [0,0];
+		ascent(i in 0..3){
+			let label = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(label, dir ~ "/system/MenuOp.png");
+			ObjSprite2D_SetSourceRect(label,0,570+i*57,300,570+(i+1)*57);
+			ObjSprite2D_SetDestCenter(label);
+			ObjRender_SetPosition(label,300,240-i*40,0);
+			ObjRender_SetScaleXYZ(label,0.5,0.5,0.5);
+			labels[2-i] = label;
+		}
+
+		ascent(i in 0..2){
+			let number = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+			ObjPrim_SetTexture(number, dir ~ "/system/MenuOp.png");
+			numbers[i] = number;
+		}
+
+		task DrawNumber(obj,num,height,unselected){
+			ObjSpriteList2D_ClearVertexCount(obj);
+			let numArray = [];
+			while(num > 0){
+				numArray = numArray ~ [num%10];
+				num = floor(num/10);
+			}
+			if(length(numArray) == 0){ numArray = [0]; }
+			let size = length(numArray);
+			ascent(i in 0..floor(size/2)){
+				let temp = numArray[i];
+				numArray[i] = numArray[size-1-i];
+				numArray[size-1-i] = temp;
+			}
+			WriteLog(numArray);
+			ascent(i in 0..size){
+				ObjRender_SetPosition(obj,0,0,0);
+				ObjSpriteList2D_SetSourceRect(obj,numArray[i]*64,1140+unselected*57,(numArray[i]+1)*64,1197+unselected*57);
+				ObjSpriteList2D_SetDestCenter(obj);
+				ObjRender_SetScaleXYZ(obj,0.5,0.5,0.5);
+				ObjRender_SetPosition(obj,380+i*13,160+height*40,0);
+				ObjSpriteList2D_AddVertex(obj);
+			}
+			ObjRender_SetPosition(obj,0,0,0);
+			ObjSpriteList2D_SetSourceRect(obj,640,1140+unselected*57,704,1197+unselected*57);
+			ObjSpriteList2D_SetDestCenter(obj);
+			ObjRender_SetScaleXYZ(obj,0.5,0.5,0.5);
+			ObjRender_SetPosition(obj,385+size*13,160+height*40,0);
+			ObjSpriteList2D_AddVertex(obj);
+			ObjSpriteList2D_CloseVertex(obj);
+		}
+
+		SelectOption;
+
+		wait(5);
+
+		//Listen to controls
+		while(currMenu == OPTION_OPTIONS){
+			//Actual actions
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH && selected == 2) {
+				cancelMenu;
+			}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				cancelMenu;
+			}
+			
+			if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH) {
+				alternative(selected)
+				case(0){
+					sndVolume = (sndVolume+5)%105;
+					DrawNumber(numbers[0],sndVolume,0,0);
+				}
+				case(1){
+					BGMVolume = (BGMVolume+5)%105;
+					DrawNumber(numbers[1],BGMVolume,1,0);
+					ObjSound_SetVolumeRate(objBGM,BGMVolume);
+				}
+			}
+
+			if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH) {
+				alternative(selected)
+				case(0){
+					sndVolume = (sndVolume-5)%105;
+					DrawNumber(numbers[0],sndVolume,0,0);
+				}
+				case(1){
+					BGMVolume = (BGMVolume-5)%105;
+					DrawNumber(numbers[1],BGMVolume,1,0);
+					ObjSound_SetVolumeRate(objBGM,BGMVolume);
+				}
+			}
+
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%3;
+				SelectOption;
+				destAngle -= 45;
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%3;
+				SelectOption;
+				destAngle += 45;
+			}
+			yield;
+		}
+
+		task SelectOption{
+			ascent(i in 0..3){
+				ObjSprite2D_SetSourceRect(labels[2-i],500,570+i*57,800,570+(i+1)*57);
+			}
+
+			if(selected == 0){DrawNumber(numbers[0],sndVolume,0,0);}
+			else{DrawNumber(numbers[0],sndVolume,0,1);}
+			if(selected == 1){DrawNumber(numbers[1],BGMVolume,1,0);}
+			else{DrawNumber(numbers[1],BGMVolume,1,1);}
+
+			ObjSprite2D_SetSourceRect(labels[selected],0,741-(selected+1)*57,300,741-selected*57);
+			
+		}
+		
+
+		task DeleteOptions{
+			ascent(i in 0..2){
+				Obj_Delete(numbers[i]);
+			}
+			descent(i in 0..32){
+				ascent(j in 0..3){
+					ObjRender_SetAlpha(labels[j],i*4);
+				}
+				yield;
+			}
+			ascent(i in 0..3){
+				Obj_Delete(labels[i]);
+			}
+		}
+
+		task cancelMenu{
+			SetAreaCommonData("Settings","sound_fx_volume",sndVolume);
+			SetAreaCommonData("Settings","sound_bgm_volume",BGMVolume);
+			SaveCommonDataAreaA2("Settings","script/main/save/Settings.dat");
+
+			destAngle = origAngle;
+			position = origPosition;
+			DeleteOptions;
+			currMenu = OPTION_MAIN;
+			prevMenu = OPTION_OPTIONS;
+			fadeWheel;
+			MainMenu;
+		}
+	}
+
+	//------------------------------------------------------------------------
+	//junk
+	//------------------------------------------------------------------------
 	//Makes the wheel spin depending on the option selected
 	task wheelSpin{
-		fakeWheelSpin;
+		optionsSpin;
 		ObjRender_SetAngleZ(objWheel,0);
 		loop{
 			currAngle = ObjRender_GetAngleZ(objWheel);
@@ -230,35 +629,34 @@ task DisplayTitle{
 			yield;
 		}
 
-		task fakeWheelSpin{
+		task optionsSpin{
 			loop{
-				ObjRender_SetAngleZ(objWheelFake,ObjRender_GetAngleZ(objWheel));
+				ObjRender_SetAngleZ(objWheelOverlap,ObjRender_GetAngleZ(objWheel));
+				ObjRender_SetAngleZ(objWheelOptions,ObjRender_GetAngleZ(objWheel));
 				yield;
 			}
 		}
 	}
 
-	let cancelFade;	
+	let cancelFade;
 
 	task fadeWheel{
 		cancelFade = true;
 		yield;
 		cancelFade = false;
-		if(currMenu != OPTION_MAIN){
-			ObjRender_SetAlpha(objWheelFake,255);
-			descent(i in 0..65){
+		if(currMenu == OPTION_MAIN){
+			descent(i in 0..33){
 				if(cancelFade){break;}
-				ObjRender_SetAlpha(objWheel,i*4);
+				ObjRender_SetAlpha(objWheelOverlap,i*8);
 				yield;
 			}
 		}
 		else{
-			ascent(i in 0..65){
+			ascent(i in 0..33){
 				if(cancelFade){break;}
-				ObjRender_SetAlpha(objWheel,i*4);
+				ObjRender_SetAlpha(objWheelOverlap,i*8);
 				yield;
 			}
-			ObjRender_SetAlpha(objWheelFake,0);
 		}
 	}
 }
@@ -273,8 +671,8 @@ task WheelFade(objFake,objReal){
 	//Moving-from-left part
 	task MoveFromSide{
 		descent(i in 0..60){
-			ObjRender_SetX(objFake,640+i);
-			ObjRender_SetX(objReal,640+i);
+			ObjRender_SetX(objFake,10-i);
+			ObjRender_SetX(objReal,10-i);
 			yield;
 		}
 	}
@@ -282,18 +680,17 @@ task WheelFade(objFake,objReal){
 	//Spinning part
 	task MaxSpeedSpin{
 		//offsets so it lands precisely on Game Start at the end of the spin
-		ObjRender_SetAngleZ(objFake,235);
-		ObjRender_SetAngleZ(objReal,235);
+		ObjRender_SetAngleZ(objFake,125);
+		ObjRender_SetAngleZ(objReal,125);
 
 		let spd = 10;
 		PleaseSlowDown;
 
 		loop(90){
-			ObjRender_SetAngleZ(objFake,ObjRender_GetAngleZ(objFake)-spd);
-			ObjRender_SetAngleZ(objReal,ObjRender_GetAngleZ(objReal)-spd);
+			ObjRender_SetAngleZ(objFake,ObjRender_GetAngleZ(objFake)+spd);
+			ObjRender_SetAngleZ(objReal,ObjRender_GetAngleZ(objReal)+spd);
 			yield;
 		}
-
 		task PleaseSlowDown{
 			wait(30);
 			descent(i in 0..60){
@@ -303,7 +700,6 @@ task WheelFade(objFake,objReal){
 		}
 	}
 
-	//"Make the options appear" part
 	task FadeIn{
 		wait(30);
 		ascent(i in 0..65){

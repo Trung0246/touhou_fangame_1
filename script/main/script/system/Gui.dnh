@@ -1,67 +1,11 @@
-//How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/gui.dnh"]
+//How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/Gui.dnh"]
 #include "script/main/script/lib/Utils.dnh"
 
-let dir = GetModuleDirectory() ~ "script/main/img/";
-let guiPath = dir ~ "system/front00.png";
-let digitPath = dir ~ "ascii/ascii.png";
-
-function tempInit() {
-	//May remove these after we added Init function at start of the game...
-	CreateCommonDataArea("main");
-
-	let character = ["reimu", "marisa", "shou", "hecatia"];
-
-	ascent (i in 0 .. length(character)) {
-		SetAreaCommonData("main", character[i] ~ "_extra", false);
-		SetAreaCommonData("main", character[i] ~ "_phantasm", false);
-		SetAreaCommonData("main", character[i] ~ "_extra_practice", false);
-		SetAreaCommonData("main", character[i] ~ "_phantasm_practice", false);
-		SetAreaCommonData("main", character[i] ~ "_extra_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_phantasm_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_extra_practice_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_phantasm_practice_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_easy_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_normal_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_hard_hiscore", 0);
-		SetAreaCommonData("main", character[i] ~ "_lunatic_hiscore", 0);
-		ascent (j in 0..6) {
-			SetAreaCommonData("main", character[i] ~ "_easy_practice_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_normal_practice_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_hard_practice_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_lunatic_practice_stage_" ~ IntToString(j), false);
-			SetAreaCommonData("main", character[i] ~ "_easy_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_normal_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_hard_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-			SetAreaCommonData("main", character[i] ~ "_lunatic_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
-		}
-	}
-
-	SetCommonData("player_power", 0);
-	SetCommonData("player_point", 10000);
-
-	SetCommonData("player_life", 2);
-	SetCommonData("player_life_max", 8); //8, cap of original life
-	SetCommonData("player_life_piece", 0);
-
-	SetCommonData("player_score_change", 0);
-	SetCommonData("player_score_max", 2147483647); //2147483647, cap of int, rounded
-	SetCommonData("player_score_speed", 8);
-
-	SetCommonData("player_graze_max", 500000); //500000, cap of Touhou 16
-
-	SetCommonData("player_spell", 3);
-	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
-	SetCommonData("player_spell_piece", 0);
-
-	SetCommonData("item_raindrop_red", 0);
-	SetCommonData("item_raindrop_green", 0);
-	SetCommonData("item_raindrop_blue", 0);
-
-	SetCommonData("item_raindrop_change", 1); //Additive amount when raindrop collected
-}
+let dir = GetModuleDirectory() ~ "script/main/img/system/";
+let guiPath = dir ~ "front00.png";
+let digitPath = dir ~ "ascii.png";
 
 @Initialize {
-	tempInit();
 	InitFrame();
 	InitLine();
 	UpdateHiScore();
@@ -232,7 +176,7 @@ task UpdateScore {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
-	ObjRender_SetY(obj, 62.5 + 2);
+	ObjRender_SetY(obj, 62 + 2);
 
 	let scoreLeft = 0;
 
@@ -283,7 +227,7 @@ task UpdateGraze {
 	let objGraze = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(objGraze, guiPath);
 	Obj_SetRenderPriority(objGraze, 0.1);
-	ObjSprite2D_SetSourceRect(objGraze, 479, 26 * 1, 479 + 128, (26 * 2) - 1);
+	ObjSprite2D_SetSourceRect(objGraze, 479, 26 * 1, 479 + 127, (26 * 2) - 1);
 	ObjSprite2D_SetDestRect(objGraze, 0, 0, 128, 26);
 	ObjRender_SetScaleX(objGraze, 0.75);
 	ObjRender_SetScaleY(objGraze, 0.75);
@@ -328,7 +272,7 @@ task UpdatePower {
 	let objPower = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(objPower, guiPath);
 	Obj_SetRenderPriority(objPower, 0.1);
-	ObjSprite2D_SetSourceRect(objPower, 479, 26 * 3, 479 + 128, (26 * 4) - 1);
+	ObjSprite2D_SetSourceRect(objPower, 479, 26 * 3, 479 + 127, (26 * 4) - 1);
 	ObjSprite2D_SetDestRect(objPower, 0, 0, 128, 26);
 	ObjRender_SetScaleX(objPower, 0.75);
 	ObjRender_SetScaleY(objPower, 0.75);
@@ -364,7 +308,7 @@ task UpdatePower {
 				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
 				ObjRender_SetX(obj, ObjRender_GetX(obj) + 1.5);
 			} else if (ToString(num) == "/") {
-				ObjSpriteList2D_SetSourceRect(obj, 160, 144 + 1, 175, 159 + 1);
+				ObjSpriteList2D_SetSourceRect(obj, 160, 144, 175, 159);
 				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
 			} else {
 				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 144, (atoi(num) + 1) * 16, 144 + 16);
@@ -379,7 +323,7 @@ task UpdatePoint {
 	let objPoint = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(objPoint, guiPath);
 	Obj_SetRenderPriority(objPoint, 0.1);
-	ObjSprite2D_SetSourceRect(objPoint, 479, 26 * 2, 479 + 128, (26 * 3) - 1);
+	ObjSprite2D_SetSourceRect(objPoint, 479, 26 * 2, 479 + 127, (26 * 3) - 1);
 	ObjSprite2D_SetDestRect(objPoint, 0, 0, 128, 26);
 	ObjRender_SetScaleX(objPoint, 0.75);
 	ObjRender_SetScaleY(objPoint, 0.75);
@@ -463,8 +407,8 @@ task UpdatePlayerLife {
 		ascent(i in 0 .. number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 727, 0, 750, 25);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 727 + 1, 1, 750 - 1, 25);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
 		}
@@ -473,15 +417,15 @@ task UpdatePlayerLife {
 			let pieceCount = GetCommonData("player_life_piece", 0);
 			count ++;
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
-			ObjSpriteList2D_SetSourceRect(obj, 607 + floor(pieceCount * 5) * 24 - pieceCount, 0, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 609 + floor(pieceCount * 5) * 24 - pieceCount, 1, 630 + 1 + floor(pieceCount * 5) * 24 - pieceCount, 25);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 		}
 		//Render empty life
 		ascent(i in 0 .. GetCommonData("player_life_max", 0) - 1 - number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 607, 0, 630 + 2, 25);
+			ObjSpriteList2D_SetSourceRect(obj, 609, 1, 630 + 1, 25);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -494,7 +438,7 @@ task UpdatePlayerSpell {
 	let objSpell = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(objSpell, guiPath);
 	Obj_SetRenderPriority(objSpell, 0.1);
-	ObjSprite2D_SetSourceRect(objSpell, 479, 0 + 1, 606, 25);
+	ObjSprite2D_SetSourceRect(objSpell, 479, 0 + 1, 605, 25);
 	ObjSprite2D_SetDestRect(objSpell, 0, 0, 128, 26);
 	ObjRender_SetScaleX(objSpell, 0.75);
 	ObjRender_SetScaleY(objSpell, 0.75);
@@ -534,8 +478,8 @@ task UpdatePlayerSpell {
 		ascent(i in 0 .. number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 26, 750, 25 + 26);
-			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
+			ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 27, 750 - 1, 25 + 27);
+			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
 		}
@@ -544,7 +488,7 @@ task UpdatePlayerSpell {
 			let pieceCount = GetCommonData("player_spell_piece", 0);
 			count ++;
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
-			ObjSpriteList2D_SetSourceRect(obj, 607 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 26, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 26);
+			ObjSpriteList2D_SetSourceRect(obj, 608 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 27, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 27);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -552,7 +496,7 @@ task UpdatePlayerSpell {
 		ascent(i in 0 .. GetCommonData("player_spell_max", 0) - 1 - number) {
 			let num = i;
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
-			ObjSpriteList2D_SetSourceRect(obj, 607, 0 + 26, 630 + 2, 25 + 26);
+			ObjSpriteList2D_SetSourceRect(obj, 608, 0 + 27, 630 + 1, 25 + 27);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -586,19 +530,35 @@ task UpdateBossXPos (obj) {
 	}
 }
 task UpdateCurrentFpsAndMs {
-	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objFps, digitPath);
-	Obj_SetRenderPriority(objFps, 0.1);
-	ObjRender_SetY(objFps, 480 - 27);
-	ObjRender_SetScaleX(objFps, 0.7);
-	ObjRender_SetScaleY(objFps, 0.7);
+	let objFps = ObjText_Create();
+	ObjText_SetFontType(objFps, "Russell Square Std");//GetCurrentScriptDirectory() ~ "system/russell-square.ttf");
+	ObjText_SetFontSize(objFps, 15);
+	ObjText_SetFontBold(objFps, true);
+	ObjText_SetFontColorTop(objFps, 205, 205, 205);
+	ObjText_SetFontColorBottom(objFps, 100, 100, 100);
+	ObjText_SetFontBorderType(objFps, BORDER_FULL);
+	ObjText_SetFontBorderColor(objFps, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objFps, 1);
+	ObjText_SetHorizontalAlignment(objFps, ALIGNMENT_RIGHT);
+	ObjText_SetMaxWidth(objFps, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objFps, 1);
+	ObjRender_SetX(objFps, 5);
+	ObjRender_SetY(objFps, GetScreenHeight() - 16);
 
-	let objMs = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objMs, digitPath);
-	Obj_SetRenderPriority(objMs, 0.1);
-	ObjRender_SetY(objMs, 480 - 13);
-	ObjRender_SetScaleX(objMs, 0.7);
-	ObjRender_SetScaleY(objMs, 0.7);
+	let objMs = ObjText_Create();
+	ObjText_SetFontType(objMs, "Russell Square Std");
+	ObjText_SetFontSize(objMs, 15);
+	ObjText_SetFontBold(objMs, true);
+	ObjText_SetFontColorTop(objMs, 205, 205, 205);
+	ObjText_SetFontColorBottom(objMs, 100, 100, 100);
+	ObjText_SetFontBorderType(objMs, BORDER_FULL);
+	ObjText_SetFontBorderColor(objMs, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objMs, 1);
+	ObjText_SetHorizontalAlignment(objMs, ALIGNMENT_RIGHT);
+	ObjText_SetMaxWidth(objMs, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objMs, 1);
+	ObjRender_SetX(objMs, 5);
+	ObjRender_SetY(objMs, GetScreenHeight() - 30);
 
 	//Option
 	let smoothing = 1; //Can change this value, should be in option menu tho, minumum 1
@@ -622,7 +582,6 @@ task UpdateCurrentFpsAndMs {
 		time = GetStageTime();
 		thisFrameTime = time - lastLoop;
 		frameTime += (thisFrameTime - frameTime) / smoothing;
-		fps = 1000 / frameTime;
 		if (frameStart < lastLoop) {
 			ms = frameTime;
 		} else {
@@ -635,52 +594,17 @@ task UpdateCurrentFpsAndMs {
 		preTime = time;*/
 
 		//Render fps and ms
-		if (GetKeyState(KEY_LCONTROL) == 3) {
-			//Fast mode
-			fps = GetCurrentFps();
-		}
 		if (GetCurrentFps() <= fpsRate) {
 			 tempFpsRate = 0;
 		}
 		if (tempFpsRate <= 0) {
-			tempFpsRate = fpsRate;
-			//fps = min(fps, 60); //60, cap of fps, obviously
-			listNum = NumberToArray(fps, true);
-
-			ObjSpriteList2D_ClearVertexCount(objFps);
-			ascent(i in 0 .. length(listNum)) {
-				let num = listNum[i];
-				ObjRender_SetX(objFps, 640 - 15 - (length(listNum) - 1 - i) * 8);
-				if (ToString(num) == ",") {
-					ObjSpriteList2D_SetSourceRect(objFps, 224, 144 + 1, 239, 159 + 1);
-					ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-					ObjRender_SetX(objFps, ObjRender_GetX(objFps) + 2.5);
-				} else {
-					ObjSpriteList2D_SetSourceRect(objFps, num * 16, 144, (num + 1) * 16, 144 + 16);
-					ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-				}
-				ObjSpriteList2D_AddVertex(objFps);
-			}
+			fps = min(1000 / frameTime, GetCurrentFps());
+			tempFpsRate += fpsRate;
+			ObjText_SetText(objFps, rtos("0.000", fps) ~ " fps");
 		} else {
 			tempFpsRate --;
 		}
-
-		listNum = NumberToArray(ms, true);
-
-		ObjSpriteList2D_ClearVertexCount(objMs);
-		ascent(i in 0 .. length(listNum)) {
-			let num = listNum[i];
-			ObjRender_SetX(objMs, 640 - 15 - (length(listNum) - 1 - i) * 8);
-			if (ToString(num) == ",") {
-				ObjSpriteList2D_SetSourceRect(objMs, 224, 144 + 1, 239, 159 + 1);
-				ObjSpriteList2D_SetDestRect(objMs, 0, 0, 16, 16);
-				ObjRender_SetX(objMs, ObjRender_GetX(objMs) + 2.5);
-			} else {
-				ObjSpriteList2D_SetSourceRect(objMs, num * 16, 144, (num + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(objMs, 0, 0, 16, 16);
-			}
-			ObjSpriteList2D_AddVertex(objMs);
-		}
+		ObjText_SetText(objMs, IntToString(ms) ~ " ms");
 		yield;
 	}
 }
@@ -689,31 +613,24 @@ task UpdateReplayFps {
 	if (!IsReplay()) {
 		return;
 	}
-	let objFps = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(objFps, digitPath);
-	Obj_SetRenderPriority(objFps, 0.1);
-	ObjRender_SetY(objFps, 480 - 13);
-	ObjRender_SetScaleX(objFps, 0.7);
-	ObjRender_SetScaleY(objFps, 0.7);
+	let objFps = ObjText_Create();
+	ObjText_SetFontType(objFps, "Russell Square Std");//GetCurrentScriptDirectory() ~ "system/russell-square.ttf");
+	ObjText_SetFontSize(objFps, 15);
+	ObjText_SetFontBold(objFps, true);
+	ObjText_SetFontColorTop(objFps, 205, 205, 205);
+	ObjText_SetFontColorBottom(objFps, 100, 100, 100);
+	ObjText_SetFontBorderType(objFps, BORDER_FULL);
+	ObjText_SetFontBorderColor(objFps, 0, 0, 0);
+	ObjText_SetFontBorderWidth(objFps, 1);
+	ObjText_SetHorizontalAlignment(objFps, ALIGNMENT_LEFT);
+	ObjText_SetMaxWidth(objFps, GetScreenWidth() - 8);
+	Obj_SetRenderPriority(objFps, 1);
+	ObjRender_SetX(objFps, 640 - 222.5);
+	ObjRender_SetY(objFps, GetScreenHeight() - 16);
 
-	let fps = GetReplayFps();
-
-	fps = min(fps, 60); //60, cap of fps, obviously
-	let listNum = NumberToArray(fps, true);
-
-	ObjSpriteList2D_ClearVertexCount(objFps);
-	ascent(i in 0 .. length(listNum)) {
-		let num = listNum[i];
-		ObjRender_SetX(objFps, 640 - 215 - (length(listNum) - 1 - i) * 8);
-		if (ToString(num) == ",") {
-			ObjSpriteList2D_SetSourceRect(objFps, 224, 144 + 1, 239, 159 + 1);
-			ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-			ObjRender_SetX(objFps, ObjRender_GetX(objFps) + 2.5);
-		} else {
-			ObjSpriteList2D_SetSourceRect(objFps, num * 16, 144, (num + 1) * 16, 144 + 16);
-			ObjSpriteList2D_SetDestRect(objFps, 0, 0, 16, 16);
-		}
-		ObjSpriteList2D_AddVertex(objFps);
+	while (true) {
+		ObjText_SetText(objFps, IntToString(GetReplayFps()) ~ " fps");
+		yield;
 	}
 }
 

@@ -1,0 +1,639 @@
+#TouhouDanmakufu[Player]
+#ScriptVersion[3]
+#ID["reimu"] //Please fucking decapitalize player id here, as it is important for later... (like reimu, marisa, shou, hecatia)
+#Title["Reimu"]
+#Text["Reimu"]
+#Image["./Reimu.png"]
+#ReplayName["Reimu"]
+
+//Config
+let speed = 4.5;
+let speedFocus = 1.8;
+
+let hitBox = 1.8;
+let grazeBox = 24;
+let itemBox = 48;
+
+let itemLine = 120;
+
+let clip = 12; //12
+
+let invisibleFrame = 290;
+let downFrame = 0;
+let rebirthFrame = 15;
+let lossFrame = 3;
+
+let shotDelay = 3;
+let shotDamage = 3;
+let homingDelay = 10;
+let homingDamage = 10;
+let needleDelay = 2;
+let needleDamage = 1;
+
+let grazeDelay = 60 * 3;
+
+//Init
+let objPlayer = ObjPrim_Create(OBJ_SPRITE_2D);
+
+let objPlayerId = GetPlayerObjectID();
+let playerId = GetPlayerID();
+let scriptId = GetPlayerScriptID();
+
+let isFocus = false;
+let grazeTime = 0;
+
+let tempShotDelay = 0;
+let tempHomingDelay = 0;
+let tempNeedleDelay = 0;
+
+let enemyCount = 0;
+
+let startChange = 0;
+let angleChange = 0;
+
+let orb = [];
+
+let dir = GetCurrentScriptDirectory();
+
+@Initialize {
+	//Init
+	SetCommonData("player_current", playerId);
+
+	SetPlayerSpeed(speed, speedFocus);
+	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
+	SetPlayerLife(GetCommonData("player_life", 2));
+	SetPlayerSpell(GetCommonData("player_spell", 3));
+	SetPlayerPower(GetCommonData("player_power", 0));
+
+	//SetPlayerInvincibilityFrame(invisibleFrame);
+	SetPlayerDownStateFrame(downFrame);
+	SetPlayerRebirthFrame(rebirthFrame);
+	SetPlayerRebirthLossFrame(lossFrame);
+
+	SetPlayerAutoItemCollectLine(itemLine);
+
+	ObjPlayer_AddIntersectionCircleA1(objPlayerId, 0, 0, hitBox, grazeBox);
+
+	//Shot data
+	LoadPlayerShotData(dir ~ "ReimuShotData.dnh");
+
+	LoadTexture(dir ~ "img/pl00.png");
+	LoadTexture(dir ~ "img/pl00b.png");
+	LoadTexture(dir ~ "img/hitbox.png");
+
+	Player_Render();
+
+	orb = orb ~ [Orb_Create(0, 0, 0, 0)];
+	orb = orb ~ [Orb_Create(0, 0, 0, 0)];
+	orb = orb ~ [Orb_Create(0, 0, 0, 0)];
+	orb = orb ~ [Orb_Create(0, 0, 0, 0)];
+	ascent (i in 0..4) {
+		Obj_SetValue(orb[i], "enable", false);
+	}
+
+	Orb_Manage();
+}
+
+@MainLoop {
+	enemyCount = length(GetIntersectionRegistedEnemyID());
+	//Handle input
+	//Slow
+	if(GetVirtualKeyState(VK_SLOWMOVE) != KEY_HOLD){
+		isFocus = false;
+	} else if (GetVirtualKeyState(VK_SLOWMOVE) == KEY_HOLD){
+		isFocus = true;
+	}
+
+	//Shot
+	if (GetVirtualKeyState(VK_SHOT) == KEY_HOLD && IsPermitPlayerShot() && GetPlayerState() == STATE_NORMAL) {
+		if (tempShotDelay <= 0) {
+			Shot_Normal_Create(-10);
+			Shot_Normal_Create(10);
+			tempShotDelay = shotDelay;
+		} else {
+			tempShotDelay --;
+		}
+		if (isFocus) {
+			if (tempNeedleDelay <= 0) {
+				ascent (i in 0..length(orb)) {
+					if (Obj_GetValueD(orb[i], "enable", false) == true) {
+						Shot_Needle_Create(ObjRender_GetX(orb[i]) - 6, ObjRender_GetY(orb[i]));
+						Shot_Needle_Create(ObjRender_GetX(orb[i]) + 6, ObjRender_GetY(orb[i]));
+					}
+				}
+				tempNeedleDelay = needleDelay;
+			} else {
+				tempNeedleDelay --;
+			}
+		} else {
+			if (tempHomingDelay <= 0) {
+				let tempAngle = startChange;
+				ascent (i in 0..length(orb)) {
+					if (Obj_GetValueD(orb[i], "enable", false) == true) {
+						Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
+					}
+					tempAngle += angleChange;
+				}
+				tempHomingDelay = homingDelay;
+			} else {
+				tempHomingDelay --;
+			}
+		}
+	} else {
+		tempShotDelay = 0;
+		tempNeedleDelay = 0;
+		tempHomingDelay = 0;
+	}
+
+	//Update
+	let pX = GetPlayerX();
+	let pY = GetPlayerY();
+	ObjRender_SetPosition(objPlayer, pX, pY, 0);
+	yield;
+}
+
+@Finalize {
+
+}
+
+@Event {
+	alternative(GetEventType())
+	case(EV_REQUEST_SPELL) {
+		let spell = GetCommonData("player_spell", 0);
+		if (spell > 0) {
+			SetScriptResult(true);
+			SetCommonData("player_spell", spell - 1);
+			Spell();
+		} else{
+			SetScriptResult(false);
+		}
+	}
+	case(EV_GRAZE) {
+		grazeTime = grazeDelay;
+	}
+	case(EV_HIT) {
+		//Sound effect and die effect here
+	}
+	case(EV_PLAYER_SHOOTDOWN) {
+		//May set player spell card to 3 here
+		DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	}
+	case(EV_PLAYER_REBIRTH) {
+		Orb_Manage();
+		Respawn();
+	}
+	case(EV_GET_ITEM) {
+		let itemType = GetEventArgument(0);
+		Orb_Manage();
+	}
+}
+
+// Basic stuff
+task Player_Render() {
+
+	Hitbox_Render();
+	ObjPrim_SetTexture(objPlayer, dir ~ "img/pl00.png");
+	Obj_SetRenderPriorityI(objPlayer, 31);
+	ObjRender_SetBlendType(objPlayer, BLEND_ALPHA);
+	ObjRender_SetAngleXYZ(objPlayer, 0, 0, 0);
+	ObjRender_SetScaleXYZ(objPlayer, 1, 1, 0);
+	ObjRender_SetAlpha(objPlayer, 255);
+	ObjSprite2D_SetSourceRect(objPlayer, 0, 0, 32, 48);
+	ObjSprite2D_SetDestCenter(objPlayer);
+	ObjRender_SetPosition(objPlayer, GetPlayerX(), GetPlayerY(), 0);
+
+	//let flip = true;
+	let rectY = 0;
+	let animationTime = 0;
+	
+	while (!Obj_IsDeleted(objPlayer)) {
+		if (GetVirtualKeyState(VK_LEFT) == KEY_PUSH) {
+			rectY = 1;
+			animationTime = 0;
+			CheckTime();
+		} else if (GetVirtualKeyState(VK_LEFT) == KEY_HOLD) {
+			rectY = 1;
+			CheckTime();
+		} else if (GetVirtualKeyState(VK_RIGHT) == KEY_PUSH) {
+			rectY = 2;
+			animationTime = 0;
+			CheckTime();
+		} else if (GetVirtualKeyState(VK_RIGHT) == KEY_HOLD) {
+			rectY = 2;
+			CheckTime();
+		} else {
+			rectY = 0;
+		}
+		let rectX = (truncate(animationTime / 4)) % 8;
+		animationTime += 1;
+		
+		ObjSprite2D_SetSourceRect(objPlayer, 32 * rectX, 48 * rectY, 32 * rectX + 32, 48 * rectY + 48);
+		ObjSprite2D_SetDestCenter(objPlayer);
+		yield;
+	}
+	function CheckTime(){
+		if(animationTime >= 32){
+			animationTime -= 20;
+		}
+	}
+}
+
+task Hitbox_Render() {
+	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(obj, dir ~ "img/hitbox.png");
+	Obj_SetRenderPriority(obj, 0.7);
+	let angle = 22.5;
+	let scale = 2.75;
+	let alpha = 0;
+	let angle2 = 22.5;
+	let scale2 = grazeBox / 42 * 4;
+	let alpha2 = 0;
+	while (!Obj_IsDeleted(objPlayer)) {
+		let playerState = GetPlayerState();
+		ObjSpriteList2D_ClearVertexCount(obj);
+		if (isFocus && playerState == STATE_NORMAL) {
+			Render();
+			scale = max(scale - 2 / 10, 64 / (64 - hitBox * 4.5));
+			alpha = min(alpha + 255 / 10, 255);
+		} else {
+			alpha = 0;
+			scale = 2.75;
+		}
+		if (grazeTime > 0) {
+			Render2();
+			scale2 = grazeBox / 42 * 4;
+			alpha2 = min(alpha2 + 255 / 100, (grazeTime / grazeDelay) * 80);
+			grazeTime --;
+		} else {
+			grazeTime = 0;
+		}
+		angle += 3;
+		angle2 -= 1.1;
+		yield;
+	}
+
+	function Render() {
+		ObjSpriteList2D_SetSourceRect(obj, 0, 0, 63, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX());
+		ObjRender_SetY(obj, GetPlayerY());
+		ObjRender_SetAngleZ(obj, angle);
+		ObjRender_SetScaleXYZ(obj, scale, scale, 1.0);
+		ObjRender_SetAlpha(obj, alpha);
+		ObjSpriteList2D_AddVertex(obj);
+
+		ObjSpriteList2D_SetSourceRect(obj, 0, 0, 63, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX);
+		ObjRender_SetY(obj, GetPlayerY);
+		ObjRender_SetAngleZ(obj, -angle);
+		ObjRender_SetScaleXYZ(obj,scale, scale, 1.0);
+		ObjRender_SetAlpha(obj, alpha);
+		ObjSpriteList2D_AddVertex(obj);
+	}
+
+	function Render2() {
+		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX());
+		ObjRender_SetY(obj, GetPlayerY());
+		ObjRender_SetAngleZ(obj, angle2);
+		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj, alpha2);
+		ObjSpriteList2D_AddVertex(obj);
+
+		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX());
+		ObjRender_SetY(obj, GetPlayerY());
+		ObjRender_SetAngleZ(obj, -angle2);
+		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj, alpha2);
+		ObjSpriteList2D_AddVertex(obj);
+	}
+}
+
+task Shot_Normal_Create(x) {
+	//ObjSound_Play(Sound[0]);
+	let objShot = CreatePlayerShotA1(GetPlayerX() + x, GetPlayerY() + 16, 1, -90, shotDamage, 1, 1);
+	let lastX = ObjMove_GetX(objShot);
+	let lastY = ObjMove_GetY(objShot);
+	ObjRender_SetAlpha(objShot, 110);
+	ObjRender_SetAngleZ(objShot, -90);
+	yield;
+	ObjMove_SetSpeed(objShot, 21);
+	while(!Obj_IsDeleted(objShot)) {
+		lastX = ObjMove_GetX(objShot);
+		lastY = ObjMove_GetY(objShot);
+		yield;
+	}
+	//CreateParticle2(LastX,LastY,270);
+}
+
+function Orb_Create(xPos1, yPos1, xPos2, yPos2) {
+	let obj = [ObjPrim_Create(OBJ_SPRITE_2D), ObjPrim_Create(OBJ_SPRITE_2D)];
+	ascent (i in 0..length(obj)) {
+		ObjPrim_SetTexture(obj[i], dir ~ "./img/pl00.png");
+		Obj_SetRenderPriorityI(obj[i], GetPlayerRenderPriorityI);
+		ObjSprite2D_SetSourceRect(obj[i], 96, 144, 111, 159);
+		ObjSprite2D_SetDestCenter(obj[i]);
+		ObjRender_SetScaleXYZ(obj[0], 1.35, 1.35, 1);
+		ObjRender_SetPosition(obj[i], GetPlayerX(), GetPlayerY(), 0);
+		ObjRender_SetBlendType(obj[0], BLEND_ADD_ARGB);
+	}
+	Orb_Render(obj);
+	Obj_SetValue(obj[1], "x1", xPos1);
+	Obj_SetValue(obj[1], "y1", yPos1);
+	Obj_SetValue(obj[1], "x2", xPos2);
+	Obj_SetValue(obj[1], "y2", yPos2);
+	Obj_SetValue(obj[1], "enable", true);
+	return obj[1];
+}
+
+task Orb_Render(obj) {
+	let frames = 4;
+	let x = Obj_GetValueD(obj[1], "x1", 0);
+	let y = Obj_GetValueD(obj[1], "y1", 0);;
+	while (!Obj_IsDeleted(objPlayer)) {
+		if (GetPlayerState == STATE_DOWN || GetPlayerState == STATE_END || Obj_GetValueD(obj[1], "enable", false) == false) {
+			ascent(i in 0..length(obj)) {
+				Obj_SetVisible(obj[i], false);
+			}
+		} else {
+			ascent(i in 0..length(obj)) {
+				Obj_SetVisible(obj[i], true);
+			}
+		}
+		ObjRender_SetAngleZ(obj[0], ObjRender_GetAngleZ(obj[0]) - 6);
+		ObjRender_SetAngleZ(obj[1], ObjRender_GetAngleZ(obj[1]) + 6);
+		let ox = ObjRender_GetX(obj[1]);
+		let oy = ObjRender_GetY(obj[1]);
+		if (isFocus) {
+			x = Obj_GetValueD(obj[1], "x2", 0);
+			y = Obj_GetValueD(obj[1], "y2", 0);;
+		} else {
+			x = Obj_GetValueD(obj[1], "x1", 0);
+			y = Obj_GetValueD(obj[1], "y1", 0);;
+		}
+		let xc = (GetPlayerX() + x - ox) / frames;
+		let yc = (GetPlayerY() + y - oy) / frames;
+		if (GetPlayerState == STATE_DOWN) {
+			xc = (GetStgFrameWidth() / 2 + x - ox) / frames;
+			yc = (GetStgFrameHeight() + 30 + y - oy) / frames;
+		}
+		ox += xc;
+		oy += yc;
+		ObjRender_SetPosition(obj[1], ox, oy, 0);
+		ObjRender_SetPosition(obj[0], ObjRender_GetX(obj[1]), ObjRender_GetY(obj[1]), 0);
+		yield;
+	}
+}
+
+function Orb_Manage() {
+	let powerData = GetCommonData("player_power", 0);
+	let dist = 40;
+	if (powerData >= 4) {
+		startChange = -60;
+		angleChange = -20;
+		Obj_SetValue(orb[0], "enable", true);
+		Obj_SetValue(orb[0], "x1", dist);
+		Obj_SetValue(orb[0], "y1", 0);
+		Obj_SetValue(orb[0], "x2", dist);
+		Obj_SetValue(orb[0], "y2", 0);
+		Obj_SetValue(orb[1], "enable", true);
+		Obj_SetValue(orb[1], "x1", cos(60) * dist);
+		Obj_SetValue(orb[1], "y1", sin(60) * dist);
+		Obj_SetValue(orb[1], "x2", cos(-60) * dist);
+		Obj_SetValue(orb[1], "y2", sin(-60) * dist);
+		Obj_SetValue(orb[2], "enable", true);
+		Obj_SetValue(orb[2], "x1", cos(30 + 90) * dist);
+		Obj_SetValue(orb[2], "y1", sin(30 + 90) * dist);
+		Obj_SetValue(orb[2], "x2", cos(-30 - 90) * dist);
+		Obj_SetValue(orb[2], "y2", sin(-30 - 90) * dist);
+		Obj_SetValue(orb[3], "enable", true);
+		Obj_SetValue(orb[3], "x1", -dist);
+		Obj_SetValue(orb[3], "y1", 0);
+		Obj_SetValue(orb[3], "x2", -dist);
+		Obj_SetValue(orb[3], "y2", 0);
+	} else if (powerData >= 3) {
+		startChange = -65;
+		angleChange = -25;
+		Obj_SetValue(orb[0], "enable", true);
+		Obj_SetValue(orb[0], "x1", dist);
+		Obj_SetValue(orb[0], "y1", 0);
+		Obj_SetValue(orb[0], "x2", dist);
+		Obj_SetValue(orb[0], "y2", 0);
+		Obj_SetValue(orb[1], "enable", true);
+		Obj_SetValue(orb[1], "x1", 0);
+		Obj_SetValue(orb[1], "y1", dist);
+		Obj_SetValue(orb[1], "x2", 0);
+		Obj_SetValue(orb[1], "y2", -dist);
+		Obj_SetValue(orb[2], "enable", true);
+		Obj_SetValue(orb[2], "x1", -dist);
+		Obj_SetValue(orb[2], "y1", 0);
+		Obj_SetValue(orb[2], "x2", -dist);
+		Obj_SetValue(orb[2], "y2", 0);
+		Obj_SetValue(orb[3], "enable", false);
+	} else if (powerData >= 2) {
+		startChange = -70;
+		angleChange = -40;
+		Obj_SetValue(orb[0], "enable", true);
+		Obj_SetValue(orb[0], "x1", cos(60) * dist);
+		Obj_SetValue(orb[0], "y1", sin(60) * dist);
+		Obj_SetValue(orb[0], "x2", cos(-60) * dist);
+		Obj_SetValue(orb[0], "y2", sin(-60) * dist);
+		Obj_SetValue(orb[1], "enable", true);
+		Obj_SetValue(orb[1], "x1", cos(30 + 90) * dist);
+		Obj_SetValue(orb[1], "y1", sin(30 + 90) * dist);
+		Obj_SetValue(orb[1], "x2", cos(-30 - 90) * dist);
+		Obj_SetValue(orb[1], "y2", sin(-30 - 90) * dist);
+		ascent (i in 2..4) {
+			Obj_SetValue(orb[i],"enable" , false);
+		}
+	} else if (powerData >= 1) {
+		startChange = -90;
+		angleChange = 0;
+		Obj_SetValue(orb[0], "enable", true);
+		Obj_SetValue(orb[0], "x1", 0);
+		Obj_SetValue(orb[0], "y1", dist);
+		Obj_SetValue(orb[0], "x2", 0);
+		Obj_SetValue(orb[0], "y2", -dist);
+		ascent (i in 1..4) {
+			Obj_SetValue(orb[i],"enable" , false);
+		}
+	} else {
+		ascent (i in 0..4) {
+			Obj_SetValue(orb[i], "enable" , false);
+		}
+	}
+}
+
+task Shot_Homing_Create(x, y, angle, a_rate) { //a_rate = 20
+	let speed = 8;
+	if(enemyCount > 0){
+		let ePos = GetEnemyIntersectionPosition(x, y, 1);
+		angle = Homing(atan2(ePos[0][1] - y, ePos[0][0] - x), angle, 180);
+	}
+	let obj = ObjShot_Create(OBJ_SHOT);
+	ObjMove_SetPosition(obj, x, y);
+	ObjMove_SetAngle(obj, angle);
+	ObjShot_SetGraphic(obj, 2);
+	ObjShot_SetDamage(obj, 1);
+	ObjShot_SetPenetration(obj, 1);
+	ObjShot_SetAutoDelete(obj, false);
+	ObjRender_SetAlpha(obj, 180);
+	ObjShot_Regist(obj);
+	let R_angle = 0;
+
+	ascent(i in 0..30) {
+		if (Obj_IsDeleted(obj)) {
+			break;
+		}
+		if (IsOut(x, y, 40)) {
+			Obj_Delete(obj);
+			return;
+		}
+		x = ObjMove_GetX(obj);
+		y = ObjMove_GetY(obj);
+		if (enemyCount > 0) {
+			let ePos = GetEnemyIntersectionPosition(x, y, 1);
+			angle = Homing(atan2(ePos[0][1] - y, ePos[0][0] - x), angle, a_rate * i / 30);
+			ObjMove_SetAngle(obj, angle);
+		}
+		ObjMove_SetSpeed(obj, speed * i / 30);
+		ObjRender_SetAngleZ(obj, R_angle);
+		R_angle += 12;
+		yield;
+	}
+	ObjMove_SetSpeed(obj, speed);
+	while (!Obj_IsDeleted(obj)) {
+		if (IsOut(x, y, 40)) {
+			Obj_Delete(obj);
+			return;
+		}
+		x = ObjMove_GetX(obj);
+		y = ObjMove_GetY(obj);
+		if (enemyCount > 0) {
+			let ePos = GetEnemyIntersectionPosition(x, y, 1);
+			angle = Homing(atan2(ePos[0][1] - y, ePos[0][0] - x), angle, a_rate);
+			ObjMove_SetAngle(obj, angle);
+		}
+		ObjMove_SetSpeed(obj, ObjMove_GetSpeed(obj) + 0.02);
+		ObjRender_SetAngleZ(obj, R_angle);
+		R_angle += 12;
+		yield;
+	}
+	if (!IsOut(x, y, 40)) {
+		//Do something when bullet delete
+		
+	}
+}
+
+task Shot_Needle_Create(x, y) {
+	let objShot = CreatePlayerShotA1(x, y + 16, 0, -90, needleDamage, 1, 3);
+	let lastX = ObjMove_GetX(objShot);
+	let lastY = ObjMove_GetY(objShot);
+	ObjRender_SetAlpha(objShot, 220);
+	ObjRender_SetAngleZ(objShot, -90);
+	yield;
+	ObjMove_SetSpeed(objShot, 22);
+	while (!Obj_IsDeleted(objShot)) {
+		lastX = ObjMove_GetX(objShot);
+		lastY = ObjMove_GetY(objShot);
+		yield;
+	}
+}
+
+task Respawn() {
+	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip + 30 + 16);
+	ObjMove_SetY(objPlayerId, GetStgFrameHeight + 30 + 16);
+	ObjRender_SetDestAtFrame(objPlayerId, GetPlayerX(), GetPlayerY() - 63, 50);
+	SetPlayerInvincibilityFrame(invisibleFrame);
+	Blink();
+	loop (50) {
+		yield;
+	}
+	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
+	//SetPlayerClip(13,15,GetStgFrameWidth-13,GetStgFrameHeight-15);
+}
+
+task Blink() {
+	let frameInv = GetPlayerInvincibilityFrame();
+	while (frameInv >  0) {
+		frameInv = GetPlayerInvincibilityFrame();
+		ascent (i in 0..2) {
+			ObjRender_SetColor(objPlayer, 255 * i, 255 * i, 255);
+			loop (2) {
+				yield;
+			}
+		}
+		yield;
+	}
+}
+
+task Spell() {
+	SetPlayerInvincibilityFrame(invisibleFrame);
+	//Do spell shit here...
+  
+  loop (invisibleFrame) { //Temporary until I find better one
+    yield;
+  }
+	Obj_Delete(GetSpellManageObject());
+}
+
+//Library stuff
+
+task ObjRender_SetDestAtFrame(obj, x, y, frames) {
+	let ox = ObjRender_GetX(obj);
+	let oy = ObjRender_GetY(obj);
+	let xc = (x - ox) / frames;
+	let yc = (y - oy) / frames;
+	loop(frames) {
+		ox += xc;
+		oy += yc;
+		ObjRender_SetX(obj, ox);
+		ObjRender_SetY(obj, oy);
+		yield;
+	}
+}
+
+function IsOut(x, y, d) {
+	let centerX = GetStgFrameWidth() / 2;
+	let centerY = GetStgFrameHeight() / 2;
+	if (absolute(centerX - x) < (centerX + d) && absolute(centerY - y) < (centerY + d)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function Homing(toAngle, angle, dAngle) {
+	toAngle %= 360;
+	angle %= 360;
+
+	let ret = toAngle - angle;
+	if (ret >= 180) {
+		ret -= 360;
+	}
+	if (ret < -180) {
+		ret += 360;
+	}
+
+	if (absolute(ret) < dAngle) {
+		angle = toAngle;
+	} else {
+		if (sin(ret) > 0) {
+			angle += dAngle;
+		}else{
+			angle -= dAngle;
+		}
+	}
+	if (angle >= 360) {
+		angle -= 360;
+	}
+	if (angle < 0) {
+		angle += 360;
+	}
+
+	return angle;
+}
