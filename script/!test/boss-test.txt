@@ -2,6 +2,7 @@
 #ScriptVersion[3]
 #Title["Boss testing"]
 #Text["feat. dangerous ocean fairy"]
+#System["/script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/DarkShotconstants.dnh"
 #include"script/default_system/Default_Effect.txt"
@@ -21,6 +22,8 @@ let objBoss;
 
 @MainLoop
 {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
 	yield;
 }
 
@@ -81,17 +84,11 @@ task Animation_Azure(obj){
 			Obj_SetValue(obj,"Anim",2);
 		}
 		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
-			ascent(i in 0..4){
+			ascent(i in 0..5){
 				ObjSprite2D_SetSourceRect(obj,i*64,96,(i+1)*64,192);
 				wait(6);
 			}
 			while(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
-				if(blink){
-					blink = false;
-					ObjSprite2D_SetSourceRect(obj,256,96,320,192);
-					wait(6);
-					ObjSprite2D_SetSourceRect(obj,192,96,256,192);
-				}
 				yield;
 			}
 			descent(i in 0..4){
@@ -130,6 +127,7 @@ task BossAura_Azure(boss){
 	ObjRender_SetBlendType(water,BLEND_ADD_ARGB);
 	ObjRender_SetPosition(water,192,120,0);
 	Obj_SetRenderPriority(water,0.3);
+	ObjRender_SetAlpha(water,192);
 	SpinWave(water,0,1);
 	let circle = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(circle,GetCurrentScriptDirectory() ~ "./system/azureaura.png");
@@ -138,6 +136,7 @@ task BossAura_Azure(boss){
 	ObjRender_SetBlendType(circle,BLEND_ADD_ARGB);
 	ObjRender_SetPosition(circle,192,120,0);
 	Obj_SetRenderPriority(circle,0.3);
+	ObjRender_SetAlpha(circle,192);
 	SpinWave(circle,180,-1);
 
 	while(!Obj_IsDeleted(objBoss)){
