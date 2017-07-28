@@ -491,7 +491,6 @@ task DisplayTitle{
 				numArray[i] = numArray[size-1-i];
 				numArray[size-1-i] = temp;
 			}
-			WriteLog(numArray);
 			ascent(i in 0..size){
 				ObjRender_SetPosition(obj,0,0,0);
 				ObjSpriteList2D_SetSourceRect(obj,numArray[i]*64,1140+unselected*57,(numArray[i]+1)*64,1197+unselected*57);
