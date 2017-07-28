@@ -162,7 +162,6 @@ let dir = GetCurrentScriptDirectory();
 		let spell = GetCommonData("player_spell", 0);
 		if (spell > 0) {
 			SetScriptResult(true);
-			SetCommonData("player_spell", spell - 1);
 			Spell();
 		} else{
 			SetScriptResult(false);
