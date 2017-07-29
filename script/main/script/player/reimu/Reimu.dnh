@@ -23,11 +23,11 @@ let downFrame = 0;
 let rebirthFrame = 15;
 let lossFrame = 3;
 
-let shotDelay = 3;
+let shotDelay = 2;
 let shotDamage = 3;
 let homingDelay = 10;
 let homingDamage = 5;
-let needleDelay = 2;
+let needleDelay = 3;
 let needleDamage = 1;
 
 let grazeDelay = 60 * 3;
