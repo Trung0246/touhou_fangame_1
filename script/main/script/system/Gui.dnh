@@ -688,7 +688,7 @@ task UpdateBossTimer
 	let timeout2 = ObjSound_Create;
 	ObjSound_Load(timeout2,GetCurrentScriptDirectory() ~ "../snd/sfx/system_timeout2.wav");
 
-	let active = false;
+	let active = true;
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.75);
@@ -740,7 +740,11 @@ task UpdateBossTimer
 
 		}
 		active = false;
-		ObjSpriteList2D_ClearVertexCount(obj);
+		//This is the part where the timer goes away and everything is trashed
+		Obj_Delete(obj);
+		Obj_Delete(timeout1);
+		Obj_Delete(timeout2);
+		
 
 		task CheckTimerFade{
 			let objPlayer = GetPlayerObjectID();
@@ -775,7 +779,7 @@ task UpdateBossTimer
 		}*/
 
 		task CheckRemainingTime{
-			while(objScene != ID_INVALID){
+			while(active){
 				yield;
 				while(sec > 10 && active){
 					yield;
