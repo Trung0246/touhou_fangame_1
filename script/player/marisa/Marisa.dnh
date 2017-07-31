@@ -10,11 +10,11 @@
 let speed = 5.0;
 let speedFocus = 2.2;
 
-let hitBox = 2.7;
+let hitBox = 2.2;
 let grazeBox = 36;
 let itemBox = 48;
 
-let itemLine = 120;
+let itemLine = 150;
 
 let clip = 12; //12
 
