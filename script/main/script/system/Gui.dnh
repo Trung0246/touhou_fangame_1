@@ -142,7 +142,7 @@ task UpdateHiScore {
 		let number = 9999999999; //Temporary, will try to get high score here
 		number = min(number, 9999999999); //2147483647, cap of int, rounded 2000000000
 
-		RenderNumber(obj, 640 - 20, 40 + 2, number, -1, true, false, false);
+		RenderNumber(obj, 640 - 20, 40 + 2, number, -1, true, false, 0, false);
 		yield;
 	}
 }
@@ -186,7 +186,7 @@ task UpdateScore {
 		}
 		number = min(number, maxScore);
 
-		RenderNumber(obj, 640 - 20, 62 + 2, number, -1, true, false, false);
+		RenderNumber(obj, 640 - 20, 62 + 2, number, -1, true, false, 0, false);
 		yield;
 	}
 }
@@ -214,7 +214,7 @@ task UpdateGraze {
 		}
 		number = min(number, grazeMax);
 
-		RenderNumber(obj, 640 - 20, 225 + 2, number, -1, true, false, false);
+		RenderNumber(obj, 640 - 20, 225 + 2, number, -1, true, false, 0, false);
 		yield;
 	}
 }
@@ -292,7 +292,7 @@ task UpdatePoint {
 		}
 		number = GetCommonData("player_point", 0); 
 
-		RenderNumber(obj, 640 - 20, 225 - 22 + 2, number, -1, true, false, false);
+		RenderNumber(obj, 640 - 20, 225 - 22 + 2, number, -1, true, false, 0, false);
 		yield;
 	}
 }
@@ -570,10 +570,15 @@ task UpdateReplayFps {
 	}
 }
 
-function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, isSmallFloat) {
+function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigit, isSmallFloat) {
+	if (floatDigit < 0) {
+		floatDigit = 0;
+	}
 
 	ObjSpriteList2D_ClearVertexCount(obj);
 	ObjRender_SetY(obj, y);
+
+	number = roundNumber(number, floatDigit);
 
 	let floatNum = number - floor(number);
 	let listNum = DigitToArray(floatNum * 1000000, -1);
@@ -583,21 +588,24 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, isSmallFl
 
 	let size = 12;
 	let size2 = 0;
+	let switch = false;
 
 	if (isSmallFloat) {
 		size = 9;
 		size2 = 6;
 	}
 
-	if (havePeriod && floatNum != 0) {
+	if (havePeriod && floatDigit > 0) {
 		xCount += 12;
-		let switch = false;
 		while (length(listNum) < 6) {
 			listNum = listNum ~ [0];
 			zeroCount --;
 		}
 		descent (i in 0..6) {
 			let num = listNum[i];
+			if (i == 5 && floatDigit == 6) {
+				switch = true;
+			}
 			if (num != 0 || switch == true) {
 				switch = true;
 				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
@@ -606,6 +614,9 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, isSmallFl
 				ObjSpriteList2D_AddVertex(obj);
 				xCount += size;
 			} else {
+				if (i == floatDigit && floatDigit < 6) {
+					switch = true;
+				}
 				zeroCount ++;
 			}
 		}
