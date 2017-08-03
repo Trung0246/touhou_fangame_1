@@ -23,11 +23,11 @@ let downFrame = 0;
 let rebirthFrame = 15;
 let lossFrame = 3;
 
-let shotDelay = 3;
+let shotDelay = 2;
 let shotDamage = 3;
 let homingDelay = 10;
-let homingDamage = 10;
-let needleDelay = 2;
+let homingDamage = 5;
+let needleDelay = 3;
 let needleDamage = 1;
 
 let grazeDelay = 60 * 3;
@@ -162,7 +162,6 @@ let dir = GetCurrentScriptDirectory();
 		let spell = GetCommonData("player_spell", 0);
 		if (spell > 0) {
 			SetScriptResult(true);
-			SetCommonData("player_spell", spell - 1);
 			Spell();
 		} else{
 			SetScriptResult(false);
@@ -478,7 +477,7 @@ task Shot_Homing_Create(x, y, angle, a_rate) { //a_rate = 20
 	ObjMove_SetPosition(obj, x, y);
 	ObjMove_SetAngle(obj, angle);
 	ObjShot_SetGraphic(obj, 2);
-	ObjShot_SetDamage(obj, 1);
+	ObjShot_SetDamage(obj, homingDamage);
 	ObjShot_SetPenetration(obj, 1);
 	ObjShot_SetAutoDelete(obj, false);
 	ObjRender_SetAlpha(obj, 180);

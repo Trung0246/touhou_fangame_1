@@ -1,0 +1,169 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss testing"]
+#Text["feat. dangerous ocean fairy"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+@Initialize
+{
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	Animation_Azure(objBoss);
+	TEnd;
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+}
+
+@MainLoop
+{
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1500);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(60);
+	}
+}
+
+task TWork
+{
+	let wind = 0;
+	SetOffTheWind;
+	ObjMove_SetPosition(objBoss,192,-120);
+	Obj_SetValue(objBoss,"Anim",1);
+	ObjMove_SetDestAtFrame(objBoss,192,140,90);
+	wait(120);
+	Obj_SetValue(objBoss,"Anim",3);
+	let angle = rand(0,360);
+	let shot;
+	ActualFiring;
+	while(!Obj_IsDeleted(objBoss)){
+		ascent(i in 0..6){
+			shot = CreateShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,1,0,0,0,0,0,DS_RICE_S_BLUE,5);
+			InstaDelete(shot);
+		}
+		angle -= 5;
+		yield;
+	}
+
+	task ActualFiring{
+		while(!Obj_IsDeleted(objBoss)){
+			ascent(i in 0..6){
+				shot = CreateShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DS_RICE_S_BLUE,5);
+			}
+			wait(floor(rand(9,12)));
+		}
+	}
+
+	task SetOffTheWind{
+		let n = 0;
+		while(!Obj_IsDeleted(objBoss)){
+			n += 2;
+			wind = sin(n);
+			yield;
+		}
+	}
+}
+
+task InstaDelete(shot){
+	wait(ObjShot_GetDelay(shot)-1);
+	Obj_Delete(shot);
+}
+
+task Animation_Azure(obj){
+	let blink = false;
+	BlinkTimer;
+	ObjSprite2D_SetDestRect(obj,-32,-48,32,48);
+	ObjPrim_SetTexture(obj,GetCurrentScriptDirectory() ~ "./system/azuresprite.png");
+	while(!Obj_IsDeleted(obj)){
+		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
+			if(blink){
+				blink = false;
+				ObjSprite2D_SetSourceRect(obj,256,0,320,96);
+				wait(6);
+				ObjSprite2D_SetSourceRect(obj,0,0,64,96);
+				wait(6);
+			}
+			else{
+				ObjSprite2D_SetSourceRect(obj,0,0,64,96);
+				wait(12);
+			}
+			ascent(i in 1..4){
+				if(Obj_GetValueD(obj,"Anim",0) != 0 || Obj_IsDeleted(obj)){break;}
+				ObjSprite2D_SetSourceRect(obj,i*64,0,(i+1)*64,96);
+				wait(12);
+			}
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 1){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",2);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..4){
+				ObjSprite2D_SetSourceRect(obj,i*64,96,(i+1)*64,192);
+				wait(6);
+			}
+			while(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+				if(blink){
+					blink = false;
+					ObjSprite2D_SetSourceRect(obj,256,96,320,192);
+					wait(6);
+					ObjSprite2D_SetSourceRect(obj,192,96,256,192);
+				}
+				yield;
+			}
+			descent(i in 0..4){
+				ObjSprite2D_SetSourceRect(obj,i*64,96,(i+1)*64,192);
+				wait(6);
+			}
+			ObjRender_SetScaleX(obj,1);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 3 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..5){
+				ObjSprite2D_SetSourceRect(obj,i*64,192,(i+1)*64,288);
+				wait(6);
+			}
+			while(Obj_GetValueD(obj,"Anim",0) == 3 && !Obj_IsDeleted(obj)){yield;}
+			descent(i in 0..4){
+				ObjSprite2D_SetSourceRect(obj,i*64,192,(i+1)*64,288);
+				wait(6);
+			}
+		}
+	}
+	
+
+	task BlinkTimer{
+		while(!Obj_IsDeleted(objBoss)){
+			wait(floor(rand(240,480)));
+			blink = true;
+		}
+	}
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+}
+
+function wait(n){loop(n){yield;}}

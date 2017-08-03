@@ -1,0 +1,71 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Stage 3 Spell Idea"]
+#Text["For Saga's nonspells maybe?"]
+
+#include "script/main/script/lib/DarkShotconstants.dnh"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(300);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(60);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss, 10, 10);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+task TMain {
+	let a = 0;
+	while(!Obj_IsDeleted(objBoss)){
+		a += (360 * 0.6180339887498948482);
+		ascent(i in 0..4){
+			let shot = CreateShotA2(192,120,0,a+i*90,0.01,6,BALL_M_BLUE_INV-i%2,5);
+			ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+		}
+		wait(2);
+	}
+}
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
