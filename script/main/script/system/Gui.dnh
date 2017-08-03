@@ -644,7 +644,7 @@ task UpdateBossTimer
 		CheckRemainingTime;
 		CheckTimerFade;
 		while(objScene != ID_INVALID){
-			ObjSpriteList2D_ClearVertexCount(obj);
+			/*ObjSpriteList2D_ClearVertexCount(obj);
 			time = ObjEnemyBossScene_GetInfo(objScene, INFO_TIMERF);
 			sec = min(99.99,time/60);
 			let listNum = DigitToArray(sec*100,count);
@@ -666,9 +666,9 @@ task UpdateBossTimer
 				ObjSpriteList2D_SetDestRect(obj, 0, 6, 10, 16);
 				ObjSpriteList2D_AddVertex(obj);
 			}
-			ObjSpriteList2D_CloseVertex(obj);
+			ObjSpriteList2D_CloseVertex(obj);*/
 			//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
-			//RenderNumber(obj, 192, 0, sec, 2, false, true, 2, true);
+			RenderNumber(obj, 192, 0, sec, 2, false, true, 2, true);
 			yield;
 
 		}
