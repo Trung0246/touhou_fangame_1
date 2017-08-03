@@ -21,7 +21,11 @@ Malik: artist, who use SAI to draw main character portrait, background,... and g
 
 Aiya: artist, nya... :3. No idea about gender, drew some cute little faries, bosses, bullets,... for us to use <3
 
+Naudiz: artist, who drew some sprites and effects for us :)
+
 Frogmask: composer, who made background music and sound effect for us, and also wrote character profiles dialogue.
+
+Timi: composer, who composed a stage 4 boss theme.
 
 Badz: programmer, who wrote system and menu stuff, optimize codes,... have no idea how to describe him.
 
@@ -138,7 +142,7 @@ finding the Aquamarine Expanse.
 
 --------------------Stage 4 Boss - Will-o-Wisp of Grace--------------------
 
-名: 画数 色は姫
+名: 風嵐 色は姫
 Name: Kazarashi Irohahime
 
 Species: Wani (鰐)
@@ -371,8 +375,8 @@ It wasn't her will to do any of this, but she had no choice. It was either that 
 dominated.
 
 In the end, it seemed that none of that truly mattered. The heavenly gods conquered the earthly gods' land, shrines, and
-people. Naturally, for what Nasukoro had done to them, she would of course have a suitable punishment. It didn't matter
-that it wasn't Nasukoro's own idea.
+people. Naturally, for what Nusakoro had done to them, she would of course have a suitable punishment. It didn't matter
+that it wasn't Nusakoro's own idea.
 
 She was sealed into an Inaw, a tool of her own creation, and bound by Shimenawa. She could do nothing to help her people,
 and thus they were ravaged.
@@ -389,10 +393,10 @@ The Inaw was unsealed.
 She was to calmly negotiate a retrieval of the artifact from whoever held it. If she succeeded, she would be permanantly
 freed. If she failed, she would be re-sealed. It should have been a simple thing, really.
 
-But then she failed. Nasukoro had made the intentions of the gods quite clear to Ummu. Those words should have done
-something, it was in Nasukoro's nature, but-- Ummu simply chose not to care. It was another crushing defeat.
+But then she failed. Nusakoro had made the intentions of the gods quite clear to Ummu. Those words should have done
+something, it was in Nusakoro's nature, but-- Ummu simply chose not to care. It was another crushing defeat.
 
-In fact, it seemed as if Nasukoro had just made the problem worse.
+In fact, it seemed as if Nusakoro had just made the problem worse.
 Through her, Aloe Vera recovered the language paired with the Jidai Moji.
 
 She couldn't go back. Not like this.
@@ -422,7 +426,7 @@ Despite being an outsider, she's very much like the people of Gensokyo. Somehow,
 innumerable fleet of rather unimportant deities. She's used both of these things to inadvertantly cause another incident
 on her god-given "errand run".
 
-Like Nasukoro, she's actually quite old. She was born an earthly god, left abandoned by Izanagi as he made his way back
+Like Nusakoro, she's actually quite old. She was born an earthly god, left abandoned by Izanagi as he made his way back
 to the heavens. However, when the heavenly gods returned to make their conquest of Honshu with the humans that worshipped
 them, she sided with them. Thus, she's still maintained a decently high status through the years. 
 
@@ -441,12 +445,12 @@ gods sealed away ages ago.
 Her resulting interactions with Ummu (which she has managed to keep confidential) put the world of the gods into a state
 of panic. Even so, she's tried to clean up her mess.
 
-Ever clever but never truly dedicated, she was the one who proposed to unseal Nasukoro. Though, as the one who suggest it,
+Ever clever but never truly dedicated, she was the one who proposed to unseal Nusakoro. Though, as the one who suggest it,
 she's been put in charge of her for the time being. So, then, she was in charge of the hunt for her when it became evident
-that Nasukoro had failed. It was only a half-hearted search. It's good to see old friends, after all.
+that Nusakoro had failed. It was only a half-hearted search. It's good to see old friends, after all.
 
 She also managed to charm the hearts of the Human Village, setting up a danmaku festival under the guise of doing something
-to lure Nasukoro out. Really, it was just another way for Rina-hime to attempt to combat boredom.
+to lure Nusakoro out. Really, it was just another way for Rina-hime to attempt to combat boredom.
 
 She'll probably bum around Gensokyo for a while.
 She's learned that she doesn't need to do anything too formal to see danmaku.

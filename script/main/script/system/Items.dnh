@@ -1,4 +1,4 @@
-#include "script/main/script/system/Event.dnh"
+#include "script/main/script/lib/Event.dnh"
 #include "script/main/script/lib/Utils.dnh"
 
 @Initialize{
@@ -14,6 +14,8 @@
 	let grazeMax = GetCommonData("player_graze_max", 0);
 	alternative(GetEventType)
 		case(EV_GET_ITEM) {
+			//To fix weird shit bug ...
+			NotifyEvent(GetPlayerScriptID(), EV_GET_ITEM, GetEventArgument(0));
 			alternative(GetEventArgument(0))
 			case (1) { //Life
 				SetCommonData("player_life_piece", GetCommonData("player_life_piece", 0) + 1);
@@ -127,10 +129,10 @@
 				let tempX = GetPlayerX();
 				let tempY = GetPlayerY();
 				let dist = 150;
-				let angle = atan2(-tempY, GetStgFrameWidth() / 2 - tempX) + 90;
+				let angle = atan2(-tempY + 60, GetStgFrameWidth() / 2 - tempX) + 90;
 				let obj = CreateItemU2(7, tempX, tempY, cos(i / 10 * 90 - 40 - 90 + angle) * dist + tempX, sin(i / 10 * 90 - 40 - 90 + angle) * dist + tempY, 0);
 				Obj_SetRenderPriorityI(obj, 20);
 				ObjItem_SetRenderScoreEnable(obj, false);
-			} 
+			}
 		}
 }

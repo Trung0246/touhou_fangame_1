@@ -1,13 +1,17 @@
 #include "script/main/script/lib/Utils.dnh"
 
-local {
-	let dir = GetModuleDirectory() ~ "script/main/img/enemy/enemy.png";
-	LoadTexture(dir);
-}
+let dirWaterFairy = GetModuleDirectory() ~ "script/main/img/enemy/enemy.png";
+LoadTexture(dirWaterFairy);
 
-task AnimateWaterSmallFairy (obj,color) {
+/*function WaterFairy_Init() {
+	//No idea if this function is necessary :P
+	LoadTexture(GetCurrentScriptDirectory() ~ "./system/Tiny_Fairies.png");
+	LoadTexture(GetCurrentScriptDirectory() ~ "./system/RainDrop_Fairies.png");
+}*/
+
+task AnimateSmallWaterFairy (obj,color) {
 	Obj_SetValue(obj,"Anim",0);
-	ObjPrim_SetTexture(obj, dir);
+	ObjPrim_SetTexture(obj, dirWaterFairy);
 	ObjSprite2D_SetDestRect(obj,-16,-16,16,16);
 	while(!Obj_IsDeleted(obj)){
 		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
@@ -50,9 +54,9 @@ task AnimateWaterSmallFairy (obj,color) {
 	}
 }
 
-task AnimateWaterBigFairy (obj,color) {
+task AnimateBigWaterFairy (obj,color) {
 	Obj_SetValue(obj,"Anim",0);
-	ObjPrim_SetTexture(obj, dir);
+	ObjPrim_SetTexture(obj, dirWaterFairy);
 	ObjSprite2D_SetDestRect(obj,-24,-24,24,24);
 	while(!Obj_IsDeleted(obj)){
 		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){

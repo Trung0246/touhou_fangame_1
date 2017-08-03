@@ -1,0 +1,33 @@
+shot_image = "./img/pl01.png"
+
+ShotData {
+	id = 1
+	render = ADD_ARGB
+	alpha = 255
+	collision = 16
+	AnimationData {
+		animation_data = (2, 0, 144, 32, 159)
+	}
+}
+
+/*ShotData {
+	id = 2
+	render = ADD_ARGB
+	alpha = 255
+	collision = 16
+	AnimationData {
+		animation_data = (2, 0, 160, 15, 175)
+		animation_data = (2, 64, 160, 79, 175)
+	}
+}*/
+
+ShotData {
+	id = 3
+	render = ADD_ARGB
+	alpha = 255
+	collision = 16
+	AnimationData {
+		animation_data = (2, 129, 192, 159, 207)
+		animation_data = (2, 160, 192, 189, 207)
+	}
+}

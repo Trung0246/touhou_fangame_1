@@ -4,7 +4,11 @@ This is Touhou fangame made by us:
 
 -Aiya: artist, nya... :3. No idea about gender, drew some cute little faeries, bosses, bullets,... for us to use <3.
 
+-Naudiz: artist, who drew some sprites and effects for us :)
+
 -frogmask: composer, who made background music and sound effect for us, and also wrote character profiles dialogue
+
+-Timi: composer, who composed a stage 4 boss theme.
 
 -Badz: programmer, who wrote system shit and menu stuff, optimize codes,... have no idea how to describe him.
 

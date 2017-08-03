@@ -1,20 +1,20 @@
 #TouhouDanmakufu[Player]
 #ScriptVersion[3]
-#ID["reimu"] //ok i got the message please dont swear ;_;
-#Title["Reimu"]
-#Text["Reimu"]
-#Image["./Reimu.png"]
-#ReplayName["Reimu"]
+#ID["marisa"] 
+#Title["Marisa"]
+#Text["Marisa"]
+#Image["./Marisa.png"]
+#ReplayName["Marisa"]
 
 //Config
-let speed = 4.5;
-let speedFocus = 1.8;
+let speed = 5.0;
+let speedFocus = 2.2;
 
-let hitBox = 1.8;
-let grazeBox = 24;
+let hitBox = 2.2;
+let grazeBox = 36;
 let itemBox = 48;
 
-let itemLine = 120;
+let itemLine = 150;
 
 let clip = 12; //12
 
@@ -27,8 +27,8 @@ let shotDelay = 2;
 let shotDamage = 3;
 let homingDelay = 10;
 let homingDamage = 5;
-let needleDelay = 3;
-let needleDamage = 1;
+let missileDelay = 5;
+let missileDamage = 1;
 
 let grazeDelay = 60 * 3;
 
@@ -44,7 +44,7 @@ let grazeTime = 0;
 
 let tempShotDelay = 0;
 let tempHomingDelay = 0;
-let tempNeedleDelay = 0;
+let tempMissileDelay = 0;
 
 let enemyCount = 0;
 
@@ -75,10 +75,10 @@ let dir = GetCurrentScriptDirectory();
 	ObjPlayer_AddIntersectionCircleA1(objPlayerId, 0, 0, hitBox, grazeBox);
 
 	//Shot data
-	LoadPlayerShotData(dir ~ "ReimuShotData.dnh");
+	LoadPlayerShotData(dir ~ "MarisaShotData.dnh");
 
-	LoadTexture(dir ~ "img/pl00.png");
-	LoadTexture(dir ~ "img/pl00b.png");
+	LoadTexture(dir ~ "img/pl01.png");
+	LoadTexture(dir ~ "img/pl01b.png");
 	LoadTexture(dir ~ "img/hitbox.png");
 
 	Player_Render();
@@ -114,23 +114,22 @@ let dir = GetCurrentScriptDirectory();
 			tempShotDelay --;
 		}
 		if (isFocus) {
-			if (tempNeedleDelay <= 0) {
+			if (tempMissileDelay <= 0) {
 				ascent (i in 0..length(orb)) {
 					if (Obj_GetValueD(orb[i], "enable", false) == true) {
-						Shot_Needle_Create(ObjRender_GetX(orb[i]) - 6, ObjRender_GetY(orb[i]));
-						Shot_Needle_Create(ObjRender_GetX(orb[i]) + 6, ObjRender_GetY(orb[i]));
+						Shot_Missile_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]) - 35);
 					}
 				}
-				tempNeedleDelay = needleDelay;
+				tempMissileDelay = missileDelay;
 			} else {
-				tempNeedleDelay --;
+				tempMissileDelay --;
 			}
 		} else {
 			if (tempHomingDelay <= 0) {
 				let tempAngle = startChange;
 				ascent (i in 0..length(orb)) {
 					if (Obj_GetValueD(orb[i], "enable", false) == true) {
-						Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
+						Shot_Missile_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]) - 35);
 					}
 					tempAngle += angleChange;
 				}
@@ -141,7 +140,7 @@ let dir = GetCurrentScriptDirectory();
 		}
 	} else {
 		tempShotDelay = 0;
-		tempNeedleDelay = 0;
+		tempMissileDelay = 0;
 		tempHomingDelay = 0;
 	}
 
@@ -191,7 +190,7 @@ let dir = GetCurrentScriptDirectory();
 task Player_Render() {
 
 	Hitbox_Render();
-	ObjPrim_SetTexture(objPlayer, dir ~ "img/pl00.png");
+	ObjPrim_SetTexture(objPlayer, dir ~ "img/pl01.png");
 	Obj_SetRenderPriorityI(objPlayer, 31);
 	ObjRender_SetBlendType(objPlayer, BLEND_ALPHA);
 	ObjRender_SetAngleXYZ(objPlayer, 0, 0, 0);
@@ -332,9 +331,9 @@ task Shot_Normal_Create(x) {
 function Orb_Create(xPos1, yPos1, xPos2, yPos2) {
 	let obj = [ObjPrim_Create(OBJ_SPRITE_2D), ObjPrim_Create(OBJ_SPRITE_2D)];
 	ascent (i in 0..length(obj)) {
-		ObjPrim_SetTexture(obj[i], dir ~ "./img/pl00.png");
+		ObjPrim_SetTexture(obj[i], dir ~ "./img/pl01.png");
 		Obj_SetRenderPriorityI(obj[i], GetPlayerRenderPriorityI);
-		ObjSprite2D_SetSourceRect(obj[i], 96, 144, 111, 159);
+		ObjSprite2D_SetSourceRect(obj[i], 144, 144, 160, 160);
 		ObjSprite2D_SetDestCenter(obj[i]);
 		ObjRender_SetScaleXYZ(obj[0], 1.35, 1.35, 1);
 		ObjRender_SetPosition(obj[i], GetPlayerX(), GetPlayerY(), 0);
@@ -389,7 +388,7 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = GetCommonData("player_power", 0);
+	let powerData = GetCommonData("player_power", 4);
 	let dist = 40;
 	if (powerData >= 4) {
 		startChange = -60;
@@ -467,7 +466,7 @@ function Orb_Manage() {
 	}
 }
 
-task Shot_Homing_Create(x, y, angle, a_rate) { //a_rate = 20
+/*task Shot_Homing_Create(x, y, angle, a_rate) { //a_rate = 20
 	let speed = 8;
 	if(enemyCount > 0){
 		let ePos = GetEnemyIntersectionPosition(x, y, 1);
@@ -526,16 +525,25 @@ task Shot_Homing_Create(x, y, angle, a_rate) { //a_rate = 20
 		//Do something when bullet delete
 		
 	}
-}
+}*/
 
-task Shot_Needle_Create(x, y) {
-	let objShot = CreatePlayerShotA1(x, y + 16, 0, -90, needleDamage, 1, 3);
+task Shot_Missile_Create(x, y) {
+	let objShot = CreatePlayerShotA1(x, y + 16, 0, -90, missileDamage, 1, 3);
 	let lastX = ObjMove_GetX(objShot);
 	let lastY = ObjMove_GetY(objShot);
 	ObjRender_SetAlpha(objShot, 220);
 	ObjRender_SetAngleZ(objShot, -90);
 	yield;
-	ObjMove_SetSpeed(objShot, 22);
+	ObjMove_SetSpeed(objShot, 1);
+	speedIncr;
+
+	task speedIncr {
+		while(ObjMove_GetSpeed(objShot) < 22){
+			ObjMove_SetSpeed(objShot,ObjMove_GetSpeed(objShot)+0.4);
+			yield;
+		}
+	}
+
 	while (!Obj_IsDeleted(objShot)) {
 		lastX = ObjMove_GetX(objShot);
 		lastY = ObjMove_GetY(objShot);
@@ -606,7 +614,7 @@ function IsOut(x, y, d) {
 	}
 }
 
-function Homing(toAngle, angle, dAngle) {
+/*function Homing(toAngle, angle, dAngle) {
 	toAngle %= 360;
 	angle %= 360;
 
@@ -635,4 +643,4 @@ function Homing(toAngle, angle, dAngle) {
 	}
 
 	return angle;
-}
+}*/

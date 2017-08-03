@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Player]
 #ScriptVersion[3]
-#ID["reimu"] //ok i got the message please dont swear ;_;
+#ID["reimu"] //Please fucking decapitalize player id here, as it is important for later... (like reimu, marisa, shou, hecatia)
 #Title["Reimu"]
 #Text["Reimu"]
 #Image["./Reimu.png"]
