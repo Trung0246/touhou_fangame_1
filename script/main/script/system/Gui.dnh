@@ -668,7 +668,7 @@ task UpdateBossTimer
 			}
 			ObjSpriteList2D_CloseVertex(obj);
 			//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
-			//RenderNumber(obj, 192, 0, sec, 2, false, true, true);
+			//RenderNumber(obj, 192, 0, sec, 2, false, true, 2, true);
 			yield;
 
 		}
