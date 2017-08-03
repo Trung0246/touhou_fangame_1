@@ -656,7 +656,6 @@ task UpdateBossTimer
 				ObjSpriteList2D_AddVertex(obj);
 			}
 			ObjRender_SetX(obj,168+20);
-			//ObjSpriteList2D_SetSourceRect(obj, 175, 0, 183, 26);
 			ObjSpriteList2D_SetSourceRect(obj, 176, 145, 191, 160);
 			ObjSpriteList2D_SetDestRect(obj, -3, 3, 12, 18);
 			ObjSpriteList2D_AddVertex(obj);
@@ -668,6 +667,8 @@ task UpdateBossTimer
 				ObjSpriteList2D_AddVertex(obj);
 			}
 			ObjSpriteList2D_CloseVertex(obj);
+			//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
+			//RenderNumber(obj, 192, 0, sec, 2, false, true, true);
 			yield;
 
 		}
