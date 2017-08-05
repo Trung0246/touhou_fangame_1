@@ -8,7 +8,8 @@ local {
 }
 
 function Package_Init() {
-  //Call when opening exe
+	//Call when opening exe
+  	//TODO: this one did not work in Package script so may remove this file and readd this in main package script
 	CreateCommonDataArea("main");
 
 	let character = ["reimu", "marisa", "shou", "hecatia"];
