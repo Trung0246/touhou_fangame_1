@@ -462,6 +462,8 @@ task DisplayTitle{
 		SelectOption;
 		MoveToBottom(diffObj);
 
+		let darkness;
+		DarkenScreen;
 		
 		wait(5);
 
@@ -495,15 +497,15 @@ task DisplayTitle{
 		task SelectOption{
 			option = ObjPrim_Create(OBJ_SPRITE_2D);
 			ObjPrim_SetTexture(option,dir ~ "shottypes.png");
-			ObjSprite2D_SetSourceRect(option,(selected%2)*256,floor(selected/2)*256,256+(selected%2)*256,256+floor(selected/2)*256);
+			ObjSprite2D_SetSourceRect(option,(selected%2)*384,floor(selected/2)*384,384+(selected%2)*384,384+floor(selected/2)*384);
 			ObjSprite2D_SetDestCenter(option);
-			ObjRender_SetPosition(option,470,192,1);
+			ObjRender_SetPosition(option,455,192,1);
 
 			let originalOption = selected;
 			ascent(i in 0..11){
 				if(originalOption != selected){break;}
 				ObjRender_SetScaleX(option,0.1*i);
-				ObjRender_SetX(portraits[selected],200-i*3);
+				ObjRender_SetX(portraits[selected],185-i*3);
 				ObjRender_SetAlpha(portraits[selected],i*25);
 				yield;
 			}
@@ -512,7 +514,7 @@ task DisplayTitle{
 		task UnselectOption(obj,portrait){
 			descent(i in 0..11){
 				ObjRender_SetScaleX(obj,0.1*i);
-				ObjRender_SetX(portrait,140+i*3);
+				ObjRender_SetX(portrait,125+i*3);
 				ObjRender_SetAlpha(portrait,i*25);
 				yield;
 			}
@@ -567,11 +569,24 @@ task DisplayTitle{
 			portraits[3] = portrait;
 		}
 
+		task DarkenScreen{
+			darkness = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(darkness, dir ~ "black.png");
+			ObjSprite2D_SetSourceRect(darkness,0,0,32,32);
+			ObjSprite2D_SetDestRect(darkness,0,0,640,480);
+			Obj_SetRenderPriorityI(darkness,24);
+			ascent(i in 0..17){
+				ObjRender_SetAlpha(darkness,i*8);
+				yield;
+			}
+		}
+
 		task DeleteOptions{
 			descent(i in 0..32){
 				ObjRender_SetAlpha(option,i*4);
 				ObjRender_SetAlpha(diffObj,i*4);
 				ObjRender_SetAlpha(portraits[selected],i*4);
+				ObjRender_SetAlpha(darkness,i*4);
 				yield;
 			}
 			Obj_Delete(option);
