@@ -19,9 +19,9 @@ let itemLine = 120;
 let clip = 12; //12
 
 let invisibleFrame = 290;
-let downFrame = 0;
-let rebirthFrame = 15;
-let lossFrame = 3;
+let downFrame = 15;
+let rebirthFrame = 0;
+let lossFrame = 0;
 
 let shotDelay = 2;
 let shotDamage = 3;

@@ -8,7 +8,8 @@ local {
 }
 
 function Package_Init() {
-  //Call when opening exe
+	//Call when opening exe
+	//TODO: move this function to Package.dnh file
 	CreateCommonDataArea("main");
 
 	let character = ["reimu", "marisa", "shou", "hecatia"];

@@ -45,3 +45,8 @@ function NumberLength(number) {
 function isInterger(number) {
 	return floor(number) == number;
 }
+
+function roundNumber(x, e) {
+  let factor = power(10, e);
+  return round((x) * factor) / factor;
+}
