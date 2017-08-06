@@ -40,10 +40,12 @@ let OPTION_OMAKE = 8;
 let OPTION_MANUAL = 9;
 let OPTION_QUIT = 10;
 
+let OPTION_PLAYERSELECT = 11;
+
 
 task DisplayTitle{
 
-	let dir = "script/main/img/system/";
+	let dir = "script/main/img/system/menu/";
 	//Create all objects
 
 	let objBGM = ObjSound_Create();
@@ -170,7 +172,7 @@ task DisplayTitle{
 				case(OPTION_STARTGAME){
 					currMenu = OPTION_STARTGAME;
 					fadeWheel;
-					DifficultyMenu;
+					DifficultyMenu(1);
 				}
 				case(OPTION_EXTRA){
 					currMenu = OPTION_EXTRA;
@@ -220,9 +222,9 @@ task DisplayTitle{
 	//------------------------------------------------------------------------
 	//Difficulty select: main game
 	//------------------------------------------------------------------------
-	task DifficultyMenu{
+	task DifficultyMenu(initial){
 		//Currently selected option
-		let selected = 1;
+		let selected = initial;
 
 		//Angle of wheel as of when entering this menu
 		let origAngle = destAngle;
@@ -253,9 +255,14 @@ task DisplayTitle{
 		//Listen to controls
 		while(currMenu == OPTION_STARTGAME){
 			//Actual actions
-			//if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
-				
-			//}
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				destAngle = origAngle;
+				position = origPosition;
+				currMenu = OPTION_PLAYERSELECT;
+				PlayerSelectMenu(selected,options[selected]);
+				options = erase(options,selected);
+				DeleteOptions;
+			}
 			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
 				destAngle = origAngle;
 				position = origPosition;
@@ -307,7 +314,7 @@ task DisplayTitle{
 
 			task moveOtherOptions{
 				while(!Obj_IsDeleted(options[0])){
-					ascent(i in 1..4){
+					ascent(i in 1..length(options)){
 						ObjRender_SetY(options[i],ObjRender_GetY(options[0])+i*200);
 					}
 					yield;
@@ -318,12 +325,12 @@ task DisplayTitle{
 
 		task DeleteOptions{
 			descent(i in 0..32){
-				ascent(j in 0..4){
+				ascent(j in 0..length(options)){
 					ObjRender_SetAlpha(options[j],i*4);
 				}
 				yield;
 			}
-			ascent(i in 0..4){
+			ascent(i in 0..length(options)){
 				Obj_Delete(options[i]);
 			}
 		}
@@ -436,6 +443,141 @@ task DisplayTitle{
 			}
 			ascent(i in 0..2){
 				Obj_Delete(options[i]);
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------
+	//Player select
+	//------------------------------------------------------------------------
+	task PlayerSelectMenu(difficulty,diffObj){
+		//Currently selected option
+		let selected = 0;
+
+		//Create the menu objects
+		let portraits = [0,0,0,0];
+		MakePortraits;
+
+		let option;
+		SelectOption;
+		MoveToBottom(diffObj);
+
+		
+		wait(5);
+
+		//Listen to controls
+		while(currMenu == OPTION_PLAYERSELECT){
+			//Actual actions
+			//if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				
+			//}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				DeleteOptions;
+				currMenu = OPTION_STARTGAME;
+				prevMenu = OPTION_PLAYERSELECT;
+				DifficultyMenu(difficulty);
+			}
+			
+			//Movement
+			if (GetVirtualKeyState(VK_LEFT) == KEY_PUSH) {
+				UnselectOption(option,portraits[selected]);
+				selected = (selected - 1)%4;
+				SelectOption;
+			}
+			if (GetVirtualKeyState(VK_RIGHT) == KEY_PUSH) {
+				UnselectOption(option,portraits[selected]);
+				selected = (selected + 1)%4;
+				SelectOption;
+			}
+			yield;
+		}
+
+		task SelectOption{
+			option = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(option,dir ~ "shottypes.png");
+			ObjSprite2D_SetSourceRect(option,(selected%2)*256,floor(selected/2)*256,256+(selected%2)*256,256+floor(selected/2)*256);
+			ObjSprite2D_SetDestCenter(option);
+			ObjRender_SetPosition(option,470,192,1);
+
+			let originalOption = selected;
+			ascent(i in 0..11){
+				if(originalOption != selected){break;}
+				ObjRender_SetScaleX(option,0.1*i);
+				ObjRender_SetX(portraits[selected],200-i*3);
+				ObjRender_SetAlpha(portraits[selected],i*25);
+				yield;
+			}
+		}
+
+		task UnselectOption(obj,portrait){
+			descent(i in 0..11){
+				ObjRender_SetScaleX(obj,0.1*i);
+				ObjRender_SetX(portrait,140+i*3);
+				ObjRender_SetAlpha(portrait,i*25);
+				yield;
+			}
+			Obj_Delete(obj);
+		}
+
+		task MoveToBottom(obj){
+			let pos = ObjRender_GetY(obj);
+			let movement = (430-pos)/20;
+			ascent(i in 0..20){
+				ObjRender_SetScaleXYZ(obj,0.9-i*0.015,0.9-i*0.015,0);
+				ObjRender_SetPosition(obj,420+i*4,pos+movement*i,0);
+				yield;
+			}
+		}
+
+		task MakePortraits{
+			let portrait = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(portrait,dir ~ "player-reimu.png");
+			ObjSprite2D_SetSourceRect(portrait,0,0,1213,1887);
+			ObjSprite2D_SetDestCenter(portrait);
+			ObjRender_SetScaleXYZ(portrait,0.25,0.25,1);
+			ObjRender_SetPosition(portrait,150,240,0);
+			ObjRender_SetAlpha(portrait,0);
+			portraits[0] = portrait;
+
+			portrait = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(portrait,dir ~ "player-marisa.png");
+			ObjSprite2D_SetSourceRect(portrait,0,0,1348,1863);
+			ObjSprite2D_SetDestCenter(portrait);
+			ObjRender_SetScaleXYZ(portrait,0.25,0.25,1);
+			ObjRender_SetPosition(portrait,150,240,0);
+			ObjRender_SetAlpha(portrait,0);
+			portraits[1] = portrait;
+
+			portrait = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(portrait,dir ~ "player-shou.png");
+			ObjSprite2D_SetSourceRect(portrait,0,0,1339,2124);
+			ObjSprite2D_SetDestCenter(portrait);
+			ObjRender_SetScaleXYZ(portrait,0.25,0.25,1);
+			ObjRender_SetPosition(portrait,150,240,0);
+			ObjRender_SetAlpha(portrait,0);
+			portraits[2] = portrait;
+
+			portrait = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(portrait,dir ~ "player-hecatia.png");
+			ObjSprite2D_SetSourceRect(portrait,0,0,1339,2124);
+			ObjSprite2D_SetDestCenter(portrait);
+			ObjRender_SetScaleXYZ(portrait,0.25,0.25,1);
+			ObjRender_SetPosition(portrait,150,240,0);
+			ObjRender_SetAlpha(portrait,0);
+			portraits[3] = portrait;
+		}
+
+		task DeleteOptions{
+			descent(i in 0..32){
+				ObjRender_SetAlpha(option,i*4);
+				ObjRender_SetAlpha(diffObj,i*4);
+				ObjRender_SetAlpha(portraits[selected],i*4);
+				yield;
+			}
+			Obj_Delete(option);
+			Obj_Delete(diffObj);
+			ascent(i in 0..4){
+				Obj_Delete(portraits[i]);
 			}
 		}
 	}
