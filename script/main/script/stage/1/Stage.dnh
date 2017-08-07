@@ -31,11 +31,18 @@
 
 task Stage_Main() {
 	let dir = GetCurrentScriptDirectory();
-	let path = dir ~ "/boss/Plural.dnh";
-	let idScript = LoadScriptInThread(path);
-	StartScript(idScript);
-	while (!IsCloseScript(idScript) && GetPlayerState() != STATE_END) {
-		yield;
+	let step = [
+		dir ~ "/wave/Wave.dnh",
+		dir ~ "/boss/Plural.dnh"
+	];
+	let idScript = ID_INVALID;
+
+	ascent (i in 0..length(step)) {
+		idScript = LoadScriptInThread(step[i]);
+		StartScript(idScript);
+		while (!IsCloseScript(idScript) && GetPlayerState() != STATE_END) {
+			yield;
+		}
 	}
 
 	//TODO: do shit with this wait loop
