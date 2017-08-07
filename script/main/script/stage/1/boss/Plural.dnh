@@ -2,7 +2,7 @@
 #ScriptVersion[3]
 #Title["Stage test"]
 #Text["Stage text"]
-#Player["script\main\script\player\reimu\Reimu.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh"]
 #System["script/main/script/system/Gui.dnh"]
 #Background["script/main/script/stage/1/background/Background.dnh"]
 
