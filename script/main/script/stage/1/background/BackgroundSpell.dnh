@@ -1,0 +1,13 @@
+#include "script/main/script/lib/Utils.dnh"
+
+@Initialize {
+	
+}
+
+@MainLoop {
+
+}
+
+@Finalize {
+
+}

@@ -1,0 +1,52 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage test"]
+#Text["Stage text"]
+#System["script/main/script/system/Gui.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh"]
+#Background["script/main/script/stage/1/background/Background.dnh"]
+
+//Everything is included in this file and if you need to include something ask me
+#include "script/main/script/system/Init.dnh"
+
+//DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
+
+@Initialize {
+  	//Put this function temporary here and read this in Init.dnh to understand how to call this function
+	Start_Init();
+  
+  	//Always call this function in every start of a stage script
+	Stage_Init();
+	
+	Stage_Main();
+}
+
+@MainLoop {
+	yield;
+}
+ 
+@Finalize {
+	
+}
+
+task Stage_Main() {
+	let dir = GetCurrentScriptDirectory();
+	let step = [
+		dir ~ "/wave/Wave.dnh",
+		dir ~ "/boss/Plural.dnh"
+	];
+	let idScript = ID_INVALID;
+
+	ascent (i in 0..length(step)) {
+		idScript = LoadScriptInThread(step[i]);
+		StartScript(idScript);
+		while (!IsCloseScript(idScript) && GetPlayerState() != STATE_END) {
+			yield;
+		}
+	}
+
+	//TODO: do shit with this wait loop
+	loop(240){yield;}
+
+	CloseStgScene();
+}

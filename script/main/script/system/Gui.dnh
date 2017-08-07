@@ -1,11 +1,19 @@
 //How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/Gui.dnh"]
 #include "script/main/script/lib/Utils.dnh"
 
+//TODO: prevent memory leak of infinity loops
+
 let dir = GetModuleDirectory() ~ "script/main/img/system/";
 let guiPath = dir ~ "front00.png";
 let digitPath = dir ~ "ascii.png";
+let lifeBarPath = dir ~ "lifebar.png";
+let bossScene = ID_INVALID;
 
 @Initialize {
+	LoadTexture(guiPath);
+	LoadTexture(digitPath);
+	LoadTexture(lifeBarPath);
+
 	InitFrame();
 	InitLine();
 	UpdateHiScore();
@@ -15,7 +23,8 @@ let digitPath = dir ~ "ascii.png";
 	UpdatePower();
 	UpdatePoint(); //Blue drop bonus //144 * 24 for phantasm, ... 304 x 46 for disable
 	UpdateGraze();
-	//UpdateBossLife();
+	UpdateBossLife();
+	UpdateBossStep();
 	//UpdateBossTimer();
 	//UpdateBossXPos();
 	UpdateCurrentFpsAndMs();
@@ -23,6 +32,7 @@ let digitPath = dir ~ "ascii.png";
 }
 
 @MainLoop {
+	bossScene = GetEnemyBossSceneObjectID();
 	yield;
 }
 
@@ -33,7 +43,7 @@ let digitPath = dir ~ "ascii.png";
 		ascent (i in 0..length(tempObj)) {
 			UpdateBossXPos(tempObj[i]);
 		}
-		//UpdateBossTimer();
+		UpdateBossTimer();
 	}
 	case (EV_END_BOSS_STEP) {
 		
@@ -44,8 +54,8 @@ let digitPath = dir ~ "ascii.png";
 		StartScript(id);*/
 	}
 	case(EV_GAIN_SPELL) {
-		let objScene = GetEnemyBossSceneObjectID();
-		let score = ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE);
+		let score = ObjEnemyBossScene_GetInfo(bossScene, INFO_SPELL_SCORE);
+		AddScoreSmooth(score);
 		//TGainSpell(score);
 	}
 	case (EV_PLAYER_SPELL) {
@@ -439,13 +449,298 @@ task UpdatePlayerSpell {
 	}
 }
 task UpdateBossLife {
-	
+	let active = false;
+
+	let path = GetCurrentScriptDirectory() ~ "img/Default_System.png";
+
+	let lastRemStep = -1;
+	let lifeRateRender = 0;
+
+	while (true) {
+		//bossScene = GetEnemyBossSceneObjectID();
+		if (bossScene != ID_INVALID) {
+			if (!active) {
+				active = true;
+				RenderCircle();
+			}
+		}
+
+		yield;
+	}
+
+
+	task RenderCircle {
+		lifeRateRender = 0;
+
+		//Sprite list for those little divider things
+		let divisions = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+		Obj_SetRenderPriority(divisions, 0.76);
+		ObjPrim_SetTexture(divisions, lifeBarPath);
+		ObjSpriteList2D_SetSourceRect(divisions, 16, 0, 31, 15);
+		redrawDivisions();
+
+		//Will be called again to update them when the lifebar is emptied
+		task redrawDivisions {
+			let listLifeDiv = [] ~ ObjEnemyBossScene_GetInfo(bossScene, INFO_ACTIVE_STEP_LIFE_RATE_LIST);
+			ObjSpriteList2D_ClearVertexCount(divisions);
+			ascent(i in 0..length(listLifeDiv) - 1) {
+				let angle = listLifeDiv[i] * 360 - 90;
+				ObjSpriteList2D_SetDestRect(divisions, -2, -4, 3, 4);
+				ObjRender_SetPosition(divisions, cos(angle) * 62, sin(angle) * 62, 0);
+				ObjRender_SetAngleZ(divisions, angle + 90);
+				ObjSpriteList2D_AddVertex(divisions);
+			}
+			ObjSpriteList2D_CloseVertex(divisions);
+		}
+
+		//This is the actual lifebar
+		let lifebar = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+		Obj_SetRenderPriority(lifebar, 0.75);
+		ObjPrim_SetTexture(lifebar, lifeBarPath);
+		ObjPrim_SetPrimitiveType(lifebar, PRIMITIVE_TRIANGLESTRIP);
+		ObjPrim_SetVertexCount(lifebar, 64);
+
+		let circle = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+		ObjPrim_SetTexture(circle, lifeBarPath);
+		ObjPrim_SetPrimitiveType(circle, PRIMITIVE_TRIANGLESTRIP);
+		ObjPrim_SetVertexCount(circle, 64);
+		Obj_SetRenderPriority(circle, 0.74);
+
+		//Set up textures for all the circular parts
+		ascent(iVert in 0..32) {
+			let indexVert = iVert * 2;
+
+			ObjPrim_SetVertexUVT(circle, indexVert + 0, 8, 0);
+			ObjPrim_SetVertexUVT(circle, indexVert + 1, 15, 31);
+
+			ObjPrim_SetVertexUVT(lifebar, indexVert + 0, 0, 0);
+			ObjPrim_SetVertexUVT(lifebar, indexVert + 1, 7, 31); //4, 16
+		}
+
+		//Finalize the empty circles
+		ascent(i in 0..31) {
+			ascent(j in 0..2) {
+				ObjPrim_SetVertexPosition(circle, i * 2 + j, cos(i * 12) * (64 - j * 4), sin(i * 12) * (64 - j * 4), 0);
+			}
+		}
+
+		//Keep updating things until the boss scene no longer exists
+		while (bossScene != ID_INVALID) {
+			let lifeTotalMax = ObjEnemyBossScene_GetInfo(bossScene, INFO_ACTIVE_STEP_TOTAL_MAX_LIFE);
+			let lifeTotal = ObjEnemyBossScene_GetInfo(bossScene, INFO_ACTIVE_STEP_TOTAL_LIFE);
+			let lifeRate = min(lifeTotal / lifeTotalMax, lifeRateRender);
+
+			let countRemStep = ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT);
+			if (lastRemStep != countRemStep) {
+				lifeRateRender = 0;
+				redrawDivisions();
+			}
+
+			//Move all to boss' position
+			let boss = GetEnemyBossObjectID();
+			if (length(boss) > 0) {
+				ObjRender_SetPosition(circle, ObjMove_GetX(boss[0]), ObjMove_GetY(boss[0]), 0);
+
+				ObjRender_SetPosition(lifebar, ObjMove_GetX(boss[0]), ObjMove_GetY(boss[0]), 0);
+				ObjRender_SetPosition(divisions, ObjMove_GetX(boss[0]), ObjMove_GetY(boss[0]), 0);
+			}
+
+			//Redraw health bar
+			let angle = 12 * lifeRate;
+			ascent(i in 0..31) {
+				let xpos = cos(-i * angle - 90);
+				let ypos = sin(-i * angle - 90);
+				ascent(j in 0..2) {
+					ObjPrim_SetVertexPosition(lifebar, i * 2 + j, xpos * (64 - j * 4), ypos * (64 - j * 4), 0);
+				}
+			}
+
+			lifeRateRender = min(lifeRateRender + 0.01, 1);
+			lastRemStep = countRemStep;
+
+			yield;
+		}
+
+		//Throw all the things away
+		Obj_Delete(lifebar);
+		Obj_Delete(divisions);
+		Obj_Delete(circle);
+
+		//And make sure the lifebar can actually appear again!!
+		active = false;
+	}
 }
 task UpdateBossTimer {
+	/*let timeout1 = ObjSound_Create;
+	ObjSound_Load(timeout1, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout1.wav");
+	let timeout2 = ObjSound_Create;
+	ObjSound_Load(timeout2, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout2.wav");*/
 
+	let active = true;
+	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(obj, digitPath);
+	Obj_SetRenderPriority(obj, 0.75);
+	ObjRender_SetY(obj, 0);
+	let count = 4;
+
+	let time;
+	let sec = 0;
+	active = true;
+
+	//CheckSpell;
+	CheckRemainingTime();
+	CheckTimerFade();
+	while (bossScene != ID_INVALID) {
+		time = ObjEnemyBossScene_GetInfo(bossScene, INFO_TIMERF);
+		sec = min(99.99, time / 60);
+		//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
+		RenderNumber(obj, 192 + 12, 0, sec, 2, false, true, 2, true);
+		yield;
+
+	}
+	active = false;
+	//This is the part where the timer goes away and everything is trashed
+	Obj_Delete(obj);
+	//Obj_Delete(timeout1);
+	//Obj_Delete(timeout2);
+
+
+	task CheckTimerFade {
+		let objPlayer = GetPlayerObjectID();
+		while (active) {
+			if (ObjMove_GetX(objPlayer) > 162 && ObjMove_GetX(objPlayer) < 222 && ObjMove_GetY(objPlayer) < 96) {
+				ObjRender_SetAlpha(obj, 128);
+				while (ObjMove_GetX(objPlayer) > 162 && ObjMove_GetX(objPlayer) < 222 && ObjMove_GetY(objPlayer) < 96 && active) {
+					yield;
+				}
+				ObjRender_SetAlpha(obj, 256);
+			}
+			yield;
+		}
+	}
+	//TODO: update this once we decide how to check if a spell is active
+	/*task CheckSpell {
+		while(active){
+			while(!GetCommonData("SpellActive",false) && active){
+				yield;
+			}
+			ascent(i in 0..35){
+				ObjRender_SetY(obj,i);
+				yield;
+			}
+			while(GetCommonData("SpellActive",false) && active){
+				ObjRender_SetY(obj,35);
+				yield;
+			}
+			descent(i in 0..35){
+				ObjRender_SetY(obj,i);
+				yield;
+			}
+		}
+	}*/
+
+	task CheckRemainingTime {
+		while (active) {
+			yield;
+			while (sec > 10 && active) {
+				yield;
+			}
+			ObjRender_SetColor(obj, 256, 128, 128);
+			while (sec <= 10 && sec >= 5 && active) {
+				if (sec % 1 == 0) {
+					Beep;
+				}
+				yield;
+			}
+			ObjRender_SetColor(obj, 256, 64, 64);
+			while (sec <= 5 && sec > 0 && active) {
+				if (sec % 1 == 0) {
+					Beep;
+				}
+				yield;
+			}
+			ObjRender_SetColor(obj, 256, 256, 256);
+		}
+
+		task Beep {
+			if (sec > 5) {
+				//ObjSound_Play(timeout1);
+				descent(i in 0..5) {
+					ObjRender_SetScaleXYZ(obj, 1 + i / 20, 1 + i / 20, 0);
+					yield;
+				}
+			} else {
+				//ObjSound_Play(timeout2);
+				descent(i in 0..5) {
+					ObjRender_SetScaleXYZ(obj, 1 + i / 10, 1 + i / 10, 0);
+					yield;
+				}
+			}
+		}
+	}
 }
 task UpdateBossStep {
+	let active = false;
+	while (true) {
+		if (bossScene != ID_INVALID) {
+			if (!active) {
+				active = true;
+				RenderStep();
+			}
+		}
+		yield;
+	}
 
+	task RenderStep {
+		let stars = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+		Obj_SetRenderPriority(stars, 0.75);
+		ObjPrim_SetTexture(stars, lifeBarPath);
+		ObjSpriteList2D_SetSourceRect(stars, 16, 16, 31, 31);
+		
+		task updateStars(count) {
+			ObjSpriteList2D_ClearVertexCount(stars);
+			ascent(i in 0..count) {
+				ObjSpriteList2D_SetDestRect(stars,0, 0, 12, 12);
+				ObjRender_SetPosition(stars, 3 + (i % 6) * 14, 16 + floor(i / 6) * 14, 0);
+				ObjSpriteList2D_AddVertex(stars);
+			}
+			ObjSpriteList2D_CloseVertex(stars);
+		}
+		CheckStarFade();
+
+		let lastRemStep = -1;
+		let countRemStep = ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT);
+		updateStars(countRemStep);
+		yield;
+		while (true) {
+			countRemStep = ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT);
+			if (lastRemStep != countRemStep) {
+				updateStars(countRemStep);
+				lastRemStep = countRemStep;
+			}
+			yield;
+		}
+
+		task CheckStarFade {
+			yield;
+			let objPlayer = GetPlayerObjectID();
+			while (!Obj_IsDeleted(stars)) {
+				if (ObjMove_GetX(objPlayer) < 100 && ObjMove_GetY(objPlayer) < 64) {
+					ObjRender_SetAlpha(stars, 128);
+					updateStars(ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT));
+					while (ObjMove_GetX(objPlayer) < 100 && ObjMove_GetY(objPlayer) < 64 && !Obj_IsDeleted(stars)) {
+						yield;
+					}
+					ObjRender_SetAlpha(stars, 256);
+					updateStars(ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT));
+				}
+				yield;
+			}
+		}
+
+		Obj_Delete(stars);
+	}
+	active = false;
 }
 task UpdateBossXPos (obj) {
 	let objBossMark = ObjPrim_Create(OBJ_SPRITE_2D);

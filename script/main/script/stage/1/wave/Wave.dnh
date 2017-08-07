@@ -1,0 +1,9 @@
+#include "script/main/script/system/Init.dnh"
+
+@Initialize {
+	
+}
+
+@MainLoop {
+	yield;
+}
