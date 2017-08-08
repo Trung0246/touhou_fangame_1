@@ -1,9 +1,11 @@
 #TouhouDanmakufu[Package]
 #Title["Package"]
 #Text["i.e the main menu"]
+#player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
 
 @Initialize {
 	LoadSaveData;
+	InitBGM;
 	DisplayTitle;
 }
 
@@ -26,6 +28,17 @@ task LoadSaveData{
 	LoadCommonDataAreaA2("Settings","script/main/save/Settings.dat");
 }
 
+task InitBGM{
+	let objBGM = ObjSound_Create();
+	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
+	ObjSound_Load(objBGM,"script/main/sound/bgm/01.ogg");
+	ObjSound_SetLoopEnable(objBGM,true);
+	ObjSound_SetLoopSampleCount(objBGM,0,4858681);
+	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
+	ObjSound_Play(objBGM);
+	SetCommonData("ObjBGM",objBGM);
+}
+
 //Constants! Please use those to refer to options!
 let OPTION_MAIN = -1;
 let OPTION_STARTGAME = 0;
@@ -41,18 +54,13 @@ let OPTION_MANUAL = 9;
 let OPTION_QUIT = 10;
 
 let OPTION_PLAYERSELECT = 11;
+let OPTION_GAMESTARTED = 255;
 
 
 task DisplayTitle{
 
 	let dir = "script/main/img/system/menu/";
 	//Create all objects
-
-	let objBGM = ObjSound_Create();
-	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
-	ObjSound_Load(objBGM,"script/main/sound/bgm/01.ogg");
-	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
-	ObjSound_Play(objBGM);
 
 	let titleImg = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(titleImg,20);
@@ -93,6 +101,8 @@ task DisplayTitle{
 	let prevMenu = OPTION_STARTGAME;
 
 	//Make sure to display the game title!!
+	let objTitle;
+	let objReimu;
 	TitleGraphics;
 
 	wait(100);
@@ -108,44 +118,43 @@ task DisplayTitle{
 	wheelSpin;
 
 	task TitleGraphics{
-		let title = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(title,dir ~ "title.png");
-		ObjSprite2D_SetSourceRect(title,0,0,722,477);
-		ObjSprite2D_SetDestRect(title,0,0,722,477);
-		ObjRender_SetScaleXYZ(title,0.5,0.5,0);
+		objTitle = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(objTitle,dir ~ "title.png");
+		ObjSprite2D_SetSourceRect(objTitle,0,0,722,477);
+		ObjSprite2D_SetDestRect(objTitle,0,0,722,477);
+		ObjRender_SetScaleXYZ(objTitle,0.5,0.5,0);
 
-		
-		let reimu = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(reimu,dir ~ "ReimuTitle.png");
-		ObjSprite2D_SetSourceRect(reimu,0,0,412,592);
-		ObjSprite2D_SetDestCenter(reimu);
-		ObjRender_SetScaleXYZ(reimu,0.6,0.6,0);
+		objReimu = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(objReimu,dir ~ "ReimuTitle.png");
+		ObjSprite2D_SetSourceRect(objReimu,0,0,412,592);
+		ObjSprite2D_SetDestCenter(objReimu);
+		ObjRender_SetScaleXYZ(objReimu,0.6,0.6,0);
 
 		descent(i in 0..96){
-			ObjRender_SetAlpha(title,256-i*3);
-			ObjRender_SetAlpha(reimu,256-i*3);
-			ObjRender_SetPosition(title,30+i*(i/30),-20,0);
-			ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+			ObjRender_SetAlpha(objTitle,256-i*3);
+			ObjRender_SetAlpha(objReimu,256-i*3);
+			ObjRender_SetPosition(objTitle,30+i*(i/30),-20,0);
+			ObjRender_SetPosition(objReimu,484,260+i*(i/50),0);
 			yield;
 		}
 		
-		loop{
-			while(currMenu == OPTION_MAIN){yield;}
+		while(!Obj_IsDeleted(objReimu)){
+			while(currMenu == OPTION_MAIN && !Obj_IsDeleted(objReimu)){yield;}
 			ascent(i in 0..32){
-				if(currMenu == OPTION_MAIN){break;}
-				ObjRender_SetAlpha(title,256-i*9);
-				ObjRender_SetAlpha(reimu,256-i*9);
-				ObjRender_SetPosition(title,30-i*(i/10),-20,0);
-				ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+				if(currMenu == OPTION_MAIN || Obj_IsDeleted(objReimu)){break;}
+				ObjRender_SetAlpha(objTitle,256-i*9);
+				ObjRender_SetAlpha(objReimu,256-i*9);
+				ObjRender_SetPosition(objTitle,30-i*(i/10),-20,0);
+				ObjRender_SetPosition(objReimu,484,260+i*(i/50),0);
 				yield;
 			}
-			while(currMenu != OPTION_MAIN){yield;}
+			while(currMenu != OPTION_MAIN && !Obj_IsDeleted(objReimu)){yield;}
 			descent(i in 0..32){
-				if(currMenu != OPTION_MAIN){break;}
-				ObjRender_SetAlpha(title,256-i*9);
-				ObjRender_SetAlpha(reimu,256-i*9);
-				ObjRender_SetPosition(title,30-i*(i/30),-20,0);
-				ObjRender_SetPosition(reimu,484,260+i*(i/50),0);
+				if(currMenu != OPTION_MAIN || Obj_IsDeleted(objReimu)){break;}
+				ObjRender_SetAlpha(objTitle,256-i*9);
+				ObjRender_SetAlpha(objReimu,256-i*9);
+				ObjRender_SetPosition(objTitle,30-i*(i/30),-20,0);
+				ObjRender_SetPosition(objReimu,484,260+i*(i/50),0);
 				yield;
 			}
 		}
@@ -238,9 +247,9 @@ task DisplayTitle{
 		ascent(i in 0..4){
 			let option = ObjPrim_Create(OBJ_SPRITE_2D);
 			ObjPrim_SetTexture(option,dir ~ "difficulty.png");
-			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
+			ObjSprite2D_SetSourceRect(option,256,i*128,512,(i+1)*128);
 			ObjSprite2D_SetDestCenter(option);
-			ObjRender_SetScaleXYZ(option,0.9,0.9,1);
+			//ObjRender_SetScaleXYZ(option,0.9,0.9,1);
 			ObjRender_SetPosition(option,420,500,1);
 			options[i] = option;
 		}
@@ -254,6 +263,18 @@ task DisplayTitle{
 
 		//Listen to controls
 		while(currMenu == OPTION_STARTGAME){
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%4;
+				SelectOption;
+				destAngle -= 45;
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%4;
+				SelectOption;
+				destAngle += 45;
+			}
+
 			//Actual actions
 			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
 				destAngle = origAngle;
@@ -272,26 +293,14 @@ task DisplayTitle{
 				fadeWheel;
 				MainMenu;
 			}
-			
-			//Movement
-			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
-				selected = (selected + 1)%4;
-				SelectOption;
-				destAngle -= 45;
-			}
-			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
-				selected = (selected - 1)%4;
-				SelectOption;
-				destAngle += 45;
-			}
 			yield;
 		}
 
 		task SelectOption{
-			ascent(i in 0..4){
-				ObjSprite2D_SetSourceRect(options[i],512,i*160,1024,(i+1)*160);
+			ascent(i in 0..length(options)){
+				ObjSprite2D_SetSourceRect(options[i],256,i*128,512,(i+1)*128);
 			}
-			ObjSprite2D_SetSourceRect(options[selected],0,selected*160,512,(selected+1)*160);
+			ObjSprite2D_SetSourceRect(options[selected],0,selected*128,256,(selected+1)*128);
 			
 			destPos = 240-selected*200;
 		}
@@ -354,8 +363,8 @@ task DisplayTitle{
 		let options = [0,0];
 		ascent(i in 0..2){
 			let option = ObjPrim_Create(OBJ_SPRITE_2D);
-			ObjPrim_SetTexture(option,dir ~ "difficulty-ex.png");
-			ObjSprite2D_SetSourceRect(option,512,i*160,1024,(i+1)*160);
+			ObjPrim_SetTexture(option,dir ~ "difficulty.png");
+			ObjSprite2D_SetSourceRect(option,256,(i+4)*128,512,(i+5)*128);
 			ObjSprite2D_SetDestCenter(option);
 			ObjRender_SetScaleXYZ(option,0.9,0.9,1);
 			ObjRender_SetPosition(option,420,500,1);
@@ -401,9 +410,9 @@ task DisplayTitle{
 
 		task SelectOption{
 			ascent(i in 0..2){
-				ObjSprite2D_SetSourceRect(options[i],512,i*160,1024,(i+1)*160);
+				ObjSprite2D_SetSourceRect(options[i],256,(i+4)*128,512,(i+5)*128);
 			}
-			ObjSprite2D_SetSourceRect(options[selected],0,selected*160,512,(selected+1)*160);
+			ObjSprite2D_SetSourceRect(options[selected],0,(selected+4)*128,256,(selected+5)*128);
 			
 			destPos = 240-selected*200;
 		}
@@ -468,18 +477,7 @@ task DisplayTitle{
 		wait(5);
 
 		//Listen to controls
-		while(currMenu == OPTION_PLAYERSELECT){
-			//Actual actions
-			//if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
-				
-			//}
-			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
-				DeleteOptions;
-				currMenu = OPTION_STARTGAME;
-				prevMenu = OPTION_PLAYERSELECT;
-				DifficultyMenu(difficulty);
-			}
-			
+		while(currMenu == OPTION_PLAYERSELECT){			
 			//Movement
 			if (GetVirtualKeyState(VK_LEFT) == KEY_PUSH) {
 				UnselectOption(option,portraits[selected]);
@@ -490,6 +488,19 @@ task DisplayTitle{
 				UnselectOption(option,portraits[selected]);
 				selected = (selected + 1)%4;
 				SelectOption;
+			}
+
+			//Actual actions
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				DeleteOptions;
+				currMenu = OPTION_GAMESTARTED;
+				StartMainGame(selected);
+			}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				DeleteOptions;
+				currMenu = OPTION_STARTGAME;
+				prevMenu = OPTION_PLAYERSELECT;
+				DifficultyMenu(difficulty);
 			}
 			yield;
 		}
@@ -688,7 +699,7 @@ task DisplayTitle{
 				case(1){
 					BGMVolume = (BGMVolume+5)%105;
 					DrawNumber(numbers[1],BGMVolume,1,0);
-					ObjSound_SetVolumeRate(objBGM,BGMVolume);
+					ObjSound_SetVolumeRate(GetCommonData("ObjBGM",ID_INVALID),BGMVolume);
 				}
 			}
 
@@ -701,7 +712,7 @@ task DisplayTitle{
 				case(1){
 					BGMVolume = (BGMVolume-5)%105;
 					DrawNumber(numbers[1],BGMVolume,1,0);
-					ObjSound_SetVolumeRate(objBGM,BGMVolume);
+					ObjSound_SetVolumeRate(GetCommonData("ObjBGM",ID_INVALID),BGMVolume);
 				}
 			}
 
@@ -771,7 +782,7 @@ task DisplayTitle{
 	task wheelSpin{
 		optionsSpin;
 		ObjRender_SetAngleZ(objWheel,0);
-		loop{
+		while(!Obj_IsDeleted(objWheel)){
 			currAngle = ObjRender_GetAngleZ(objWheel);
 			if(currAngle != destAngle){
 				let displace = (destAngle - currAngle)/7;
@@ -815,6 +826,40 @@ task DisplayTitle{
 			}
 		}
 	}
+
+	task DestroyMainMenu{
+		Obj_Delete(objWheel);
+		Obj_Delete(objWheelOverlap);
+		Obj_Delete(objWheelOptions);
+		Obj_Delete(titleImg);
+		Obj_Delete(objTitle);
+		Obj_Delete(objReimu);
+	}
+
+	task StartMainGame(player){
+		DestroyMainMenu;
+		InitializeStageScene();
+		SetStageIndex(1);
+		SetStagePlayerScript(GetPlayerScriptForNumber(player));
+		SetStageMainScript("script/main/script/stage/1/Stage.dnh");
+		StartStageScene();
+	}
+
+	function GetPlayerScriptForNumber(player){
+		let script;
+		alternative(player)
+			case(0){
+				script = "script/main/script/player/reimu/Reimu.dnh";
+			}
+			case(1){
+				script = "script/main/script/player/marisa/Marisa.dnh";
+			}
+			others{
+				RaiseError("Not implemented yet!");
+			}
+		return script;
+	}
+
 }
 
 
