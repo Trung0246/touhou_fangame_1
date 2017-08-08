@@ -3,7 +3,10 @@
 #Text["i.e the main menu"]
 #player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
 
+#include "script/main/script/lib/BGM.dnh"
+
 @Initialize {
+	InstallFont("script/main/text/font/malgunsl.ttf");
 	LoadSaveData;
 	InitBGM;
 	DisplayTitle;
@@ -33,10 +36,9 @@ task InitBGM{
 	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
 	ObjSound_Load(objBGM,"script/main/sound/bgm/01.ogg");
 	ObjSound_SetLoopEnable(objBGM,true);
-	ObjSound_SetLoopSampleCount(objBGM,0,4858681);
 	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
-	ObjSound_Play(objBGM);
 	SetCommonData("ObjBGM",objBGM);
+	BGM_Play(1);
 }
 
 //Constants! Please use those to refer to options!
@@ -104,6 +106,14 @@ task DisplayTitle{
 	let objTitle;
 	let objReimu;
 	TitleGraphics;
+
+	//Screen darkening thing for non-main menus
+	let darkness = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(darkness, dir ~ "black.png");
+	ObjSprite2D_SetSourceRect(darkness,0,0,32,32);
+	ObjSprite2D_SetDestRect(darkness,0,0,640,480);
+	Obj_SetRenderPriorityI(darkness,24);
+	ObjRender_SetAlpha(darkness,0);
 
 	wait(100);
 	//Wheel angle handling stuff you probably shouldn't mess with
@@ -187,6 +197,11 @@ task DisplayTitle{
 					currMenu = OPTION_EXTRA;
 					fadeWheel;
 					ExtraStartMenu;
+				}
+				case(OPTION_MUSICROOM){
+					currMenu = OPTION_MUSICROOM;
+					fadeWheel;
+					MusicRoomMenu;
 				}
 				case(OPTION_OPTIONS){
 					currMenu = OPTION_OPTIONS;
@@ -470,9 +485,6 @@ task DisplayTitle{
 		let option;
 		SelectOption;
 		MoveToBottom(diffObj);
-
-		let darkness;
-		DarkenScreen;
 		
 		wait(5);
 
@@ -580,24 +592,11 @@ task DisplayTitle{
 			portraits[3] = portrait;
 		}
 
-		task DarkenScreen{
-			darkness = ObjPrim_Create(OBJ_SPRITE_2D);
-			ObjPrim_SetTexture(darkness, dir ~ "black.png");
-			ObjSprite2D_SetSourceRect(darkness,0,0,32,32);
-			ObjSprite2D_SetDestRect(darkness,0,0,640,480);
-			Obj_SetRenderPriorityI(darkness,24);
-			ascent(i in 0..17){
-				ObjRender_SetAlpha(darkness,i*8);
-				yield;
-			}
-		}
-
 		task DeleteOptions{
 			descent(i in 0..32){
 				ObjRender_SetAlpha(option,i*4);
 				ObjRender_SetAlpha(diffObj,i*4);
 				ObjRender_SetAlpha(portraits[selected],i*4);
-				ObjRender_SetAlpha(darkness,i*4);
 				yield;
 			}
 			Obj_Delete(option);
@@ -607,6 +606,138 @@ task DisplayTitle{
 			}
 		}
 	}
+
+	//------------------------------------------------------------------------
+	//Music Room
+	//------------------------------------------------------------------------
+	task MusicRoomMenu{
+
+		let SONG_MAX = 3;
+
+		//Currently selected option
+		let selected = 0;
+
+		//Currently playing song
+		let playing = 0;
+
+		//Angle of wheel as of when entering this menu
+		let origAngle = destAngle;
+
+		//Position of wheel as of when entering this menu
+		let origPosition = position;
+
+		//Create the menu objects
+		let songdata = ObjFile_Create(OBJ_FILE_TEXT);
+		ObjFile_Open(songdata, "script/main/script/data/songdata.txt");
+		let songcomments = ObjFile_Create(OBJ_FILE_TEXT);
+		ObjFile_Open(songcomments, "script/main/script/data/songcomment.txt");
+
+		let options = [];
+		ascent(i in 0..SONG_MAX){
+			let data = SplitString(ObjFileT_GetLineText(songdata, i+1),"/");
+			let name = ObjFileT_GetLineText(songcomments,atoi(data[3])+1);
+			let option = ObjText_Create();
+			ObjRender_SetPosition(option,60,60+i*25,0);
+
+			//This is why I hate working with text objects
+			ObjText_SetFontType(option,"malgunsl");
+			ObjText_SetText(option,name);
+			ObjText_SetFontBold(option,true);
+			ObjText_SetFontSize(option,18);
+			ObjText_SetFontBorderType(option,BORDER_FULL);
+			ObjText_SetFontBorderWidth(option,2);
+			ObjText_SetFontBorderColor(option,0,0,0);
+			options = options ~ [option];
+		}
+
+		let comment = ObjText_Create();
+		ObjRender_SetPosition(comment,20,300,0);
+		ObjText_SetFontType(comment,"malgunsl");
+		ObjText_SetFontBold(comment,true);
+		ObjText_SetFontSize(comment,16);
+		ObjText_SetFontBorderType(comment,BORDER_FULL);
+		ObjText_SetFontBorderWidth(comment,2);
+		ObjText_SetFontBorderColor(comment,0,0,0);
+
+		SelectOption;
+
+		wait(5);
+
+		//Listen to controls
+		while(currMenu == OPTION_MUSICROOM){
+			//Actual actions
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				BGM_Play(selected+1);
+				playing = selected+1;
+				DisplayComment;
+			}
+			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
+				cancelMenu;
+			}
+
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%SONG_MAX;
+				SelectOption;
+				destAngle -= 45;
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%SONG_MAX;
+				SelectOption;
+				destAngle += 45;
+			}
+			yield;
+		}
+
+		task DisplayComment{
+			let data = SplitString(ObjFileT_GetLineText(songdata, playing),"/");
+			let line = atoi(data[3])+1;
+			let linetext = ObjFileT_GetLineText(songcomments,line);
+			let text = "";
+			while(linetext != "@bgm"){
+				text = text ~ linetext ~ "[r]";
+				line++;
+				linetext = ObjFileT_GetLineText(songcomments,line);
+			}
+			ObjText_SetText(comment,text);
+		}
+
+		task SelectOption{
+			ascent(i in 0..SONG_MAX){
+				ObjRender_SetColor(options[i],128,128,128);
+			}
+			ObjRender_SetColor(options[selected],256,256,256);
+		}
+		
+
+		task DeleteOptions{
+			Obj_Delete(songdata);
+			Obj_Delete(songcomments);
+			descent(i in 0..32){
+				ObjRender_SetAlpha(comment,i*4);
+				ascent(j in 0..length(options)){
+					ObjRender_SetAlpha(options[j],i*4);
+				}
+				yield;
+			}
+			ascent(i in 0..length(options)){
+				Obj_Delete(options[i]);
+			}
+			Obj_Delete(comment);
+		}
+
+		task cancelMenu{
+			destAngle = origAngle;
+			position = origPosition;
+			DeleteOptions;
+			currMenu = OPTION_MAIN;
+			prevMenu = OPTION_MUSICROOM;
+			fadeWheel;
+			if(playing != 1){BGM_Play(1);}
+			MainMenu;
+		}
+	}
+
 	//------------------------------------------------------------------------
 	//Options menu
 	//------------------------------------------------------------------------
@@ -808,6 +939,7 @@ task DisplayTitle{
 	let cancelFade;
 
 	task fadeWheel{
+		darkenMenu;
 		cancelFade = true;
 		yield;
 		cancelFade = false;
@@ -827,6 +959,25 @@ task DisplayTitle{
 		}
 	}
 
+	task darkenMenu{
+		if(Obj_GetValueD(darkness,"intro",true)){
+			Obj_SetValue(darkness,"intro",false);
+			return;
+		}
+		if(currMenu == OPTION_MAIN){
+			descent(i in 0..17){
+				ObjRender_SetAlpha(darkness,i*8);
+				yield;
+			}
+		}
+		else{
+			ascent(i in 0..17){
+				ObjRender_SetAlpha(darkness,i*8);
+				yield;
+			}
+		}
+	}
+
 	task DestroyMainMenu{
 		Obj_Delete(objWheel);
 		Obj_Delete(objWheelOverlap);
@@ -834,6 +985,7 @@ task DisplayTitle{
 		Obj_Delete(titleImg);
 		Obj_Delete(objTitle);
 		Obj_Delete(objReimu);
+		Obj_Delete(darkness);
 	}
 
 	task StartMainGame(player){
