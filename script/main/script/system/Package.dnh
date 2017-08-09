@@ -7,6 +7,7 @@
 
 @Initialize {
 	InstallFont("script/main/text/font/malgunsl.ttf");
+	InstallFont("script/main/text/font/03SmartFontUI.ttf");
 	LoadSaveData;
 	InitBGM;
 	DisplayTitle;
@@ -57,7 +58,6 @@ let OPTION_QUIT = 10;
 
 let OPTION_PLAYERSELECT = 11;
 let OPTION_GAMESTARTED = 255;
-
 
 task DisplayTitle{
 
@@ -126,6 +126,9 @@ task DisplayTitle{
 	//Start actually responding to controls
 	MainMenu;
 	wheelSpin;
+
+	//Spawn some bubbles while you're at it
+	SpawnBubbles;
 
 	task TitleGraphics{
 		objTitle = ObjPrim_Create(OBJ_SPRITE_2D);
@@ -266,6 +269,7 @@ task DisplayTitle{
 			ObjSprite2D_SetDestCenter(option);
 			//ObjRender_SetScaleXYZ(option,0.9,0.9,1);
 			ObjRender_SetPosition(option,420,500,1);
+			Obj_SetRenderPriorityI(option,28);
 			options[i] = option;
 		}
 
@@ -485,6 +489,8 @@ task DisplayTitle{
 		let option;
 		SelectOption;
 		MoveToBottom(diffObj);
+
+		MenuHeader;
 		
 		wait(5);
 
@@ -513,6 +519,7 @@ task DisplayTitle{
 				currMenu = OPTION_STARTGAME;
 				prevMenu = OPTION_PLAYERSELECT;
 				DifficultyMenu(difficulty);
+				MenuHeader;
 			}
 			yield;
 		}
@@ -522,7 +529,7 @@ task DisplayTitle{
 			ObjPrim_SetTexture(option,dir ~ "shottypes.png");
 			ObjSprite2D_SetSourceRect(option,(selected%2)*384,floor(selected/2)*384,384+(selected%2)*384,384+floor(selected/2)*384);
 			ObjSprite2D_SetDestCenter(option);
-			ObjRender_SetPosition(option,455,192,1);
+			ObjRender_SetPosition(option,455,232,1);
 
 			let originalOption = selected;
 			ascent(i in 0..11){
@@ -547,9 +554,9 @@ task DisplayTitle{
 		task MoveToBottom(obj){
 			let pos = ObjRender_GetY(obj);
 			let movement = (430-pos)/20;
-			ascent(i in 0..20){
+			ascent(i in 0..21){
 				ObjRender_SetScaleXYZ(obj,0.9-i*0.015,0.9-i*0.015,0);
-				ObjRender_SetPosition(obj,420+i*4,pos+movement*i,0);
+				ObjRender_SetPosition(obj,420-i*5,pos+movement*i,0);
 				yield;
 			}
 		}
@@ -618,7 +625,7 @@ task DisplayTitle{
 		let selected = 0;
 
 		//Currently playing song
-		let playing = 0;
+		let playing = 1;
 
 		//Angle of wheel as of when entering this menu
 		let origAngle = destAngle;
@@ -645,19 +652,20 @@ task DisplayTitle{
 			ObjText_SetFontBold(option,true);
 			ObjText_SetFontSize(option,18);
 			ObjText_SetFontBorderType(option,BORDER_FULL);
-			ObjText_SetFontBorderWidth(option,2);
+			ObjText_SetFontBorderWidth(option,1);
 			ObjText_SetFontBorderColor(option,0,0,0);
 			options = options ~ [option];
 		}
 
 		let comment = ObjText_Create();
 		ObjRender_SetPosition(comment,20,300,0);
-		ObjText_SetFontType(comment,"malgunsl");
+		ObjText_SetFontType(comment,"03SmartFontUI");
 		ObjText_SetFontBold(comment,true);
-		ObjText_SetFontSize(comment,16);
+		ObjText_SetFontSize(comment,15);
 		ObjText_SetFontBorderType(comment,BORDER_FULL);
-		ObjText_SetFontBorderWidth(comment,2);
+		ObjText_SetFontBorderWidth(comment,1);
 		ObjText_SetFontBorderColor(comment,0,0,0);
+		DisplayComment;
 
 		SelectOption;
 
@@ -700,6 +708,10 @@ task DisplayTitle{
 				linetext = ObjFileT_GetLineText(songcomments,line);
 			}
 			ObjText_SetText(comment,text);
+			ascent(i in 0..10){
+				ObjRender_SetAlpha(comment,26*i);
+				yield;
+			}
 		}
 
 		task SelectOption{
@@ -940,6 +952,7 @@ task DisplayTitle{
 
 	task fadeWheel{
 		darkenMenu;
+		MenuHeader;
 		cancelFade = true;
 		yield;
 		cancelFade = false;
@@ -975,6 +988,57 @@ task DisplayTitle{
 				ObjRender_SetAlpha(darkness,i*8);
 				yield;
 			}
+		}
+	}
+
+	task MenuHeader{
+		//List of corresponding header for each menu
+		let headers = [0,0,0,-1,4,5,6,9,-1,10,-1,1];
+		let menu = currMenu;
+		if(currMenu == -1 || headers[menu] == -1){return;}
+		let which = headers[menu];
+		let header = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(header,dir ~ "titles_tp.png");
+		ObjSprite2D_SetSourceRect(header,0,which*64,256,(which+1)*64);
+		ObjSprite2D_SetDestCenter(header);
+		Obj_SetRenderPriorityI(header,29);
+		ObjRender_SetX(header,320);
+		ascent(i in 0..16){
+			ObjRender_SetAlpha(header,i*16);
+			ObjRender_SetY(header,10+i*2);
+			yield;
+		}
+		while(menu == currMenu){yield;}
+		descent(i in 0..16){
+			ObjRender_SetAlpha(header,i*16);
+			ObjRender_SetY(header,10+i*2);
+			yield;
+		}
+		Obj_Delete(header);
+	}
+
+	task SpawnBubbles{
+		while(currMenu != OPTION_GAMESTARTED){
+			CreateBubble;
+			wait(floor(rand(60,120)));
+		}
+
+		task CreateBubble{
+			let bubble = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(bubble,dir ~ "bubbles.png");
+			ObjSprite2D_SetSourceRect(bubble,0,0,64,64);
+			ObjSprite2D_SetDestCenter(bubble);
+			ObjRender_SetPosition(bubble,rand(10,630),520,0);
+			Obj_SetRenderPriorityI(bubble,20);	
+			let n = rand(0,360);
+			let mult = rand(0.5,1);
+			while(ObjRender_GetY(bubble) > -64){
+				n++;
+				ObjRender_SetX(bubble,ObjRender_GetX(bubble)+sin(n)*mult);
+				ObjRender_SetY(bubble,ObjRender_GetY(bubble)-1);
+				yield;
+			}
+			Obj_Delete(bubble);
 		}
 	}
 
