@@ -1,10 +1,278 @@
+//Frame related function
 function wait(i) {
-	loop (i) {
+	loop(i) {
 		yield;
 	}
 }
 
-function AddScoreSmooth (val) {
+//Math function
+
+//Special coordinate accessors (Python)
+function GetCenterX() {
+	let calc = GetStgFrameWidth / 2;
+	return calc;
+}
+
+function GetCenterY() {
+	let calc = GetStgFrameHeight / 2;
+	return calc;
+}
+
+function GetClipMinX() {
+	let calc = GetStgFrameWidth - GetStgFrameWidth;
+	return calc;
+}
+
+function GetClipMaxX() {
+	let calc = GetStgFrameWidth;
+	return calc;
+}
+
+function GetClipMinY() {
+	let calc = GetStgFrameHeight - GetStgFrameHeight;
+	return calc;
+}
+
+function GetClipMaxY() {
+	let calc = GetStgFrameHeight;
+	return calc;
+}
+
+//Returns a random integer (Python)
+function rand_int(min, max) {
+	return round(rand(min, max))
+}
+
+//Returns the angle between two points (Ultima)
+function GetPointAngle(x1, y1, x2, y2) {
+	let angle = atan2(y1 - y2, x1 - x2);
+	return angle;
+}
+
+//(Blargel)
+function NormalizeAngle(angle) {
+	angle %= 360;
+
+	if (angle < 0) {
+		angle += 360;
+	}
+
+	return angle
+}
+
+//(Blargel)
+function AngularDistance(angle1, angle2) {
+	let distance = NormalizeAngle(angle2 - angle1);
+	if (distance > 180) {
+		distance -= 360;
+	}
+	return distance;
+}
+
+//Returns the intersection point of two lines (Naut)
+function GetLineIntersectionPoint(
+	let x1,
+	let y1,
+	let x2,
+	let y2,
+	let x3,
+	let y3,
+	let x4,
+	let y4
+) {
+	let point = [0, 0];
+	point[0] = (((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)));
+	point[1] = (((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)));
+	return point;
+}
+
+//Returns the intersection point of a line with the screen border (Trickysticks)
+function GetLineBorderPoint(px, py, tx, ty) {
+	let ta = atan2(ty - py, tx - px);
+
+	if (ta >= atan2(GetClipMinY - py, GetClipMinX - px) && ta <= atan2(GetClipMinY - py, GetClipMaxX - px)) {
+		return [px - (GetClipMinY - py) * tan(ta + 90), GetClipMinY];
+	}
+	if (ta >= atan2(GetClipMinY - py, GetClipMaxX - px) && ta <= atan2(GetClipMaxY - py, GetClipMaxX - px)) {
+		return [GetClipMaxX, py + (GetClipMaxX - px) * tan(ta)];
+	}
+	if (ta >= atan2(GetClipMaxY - py, GetClipMaxX - px) && ta <= atan2(GetClipMaxY - py, GetClipMinX - px)) {
+		return [px - (GetClipMaxY - py) * tan(ta - 90), GetClipMaxY];
+	}
+	if (ta > atan2(GetClipMaxY - py, GetClipMinX - px) || ta < atan2(GetClipMinY - py, GetClipMinX - px)) {
+		return [GetClipMinX, py + (GetClipMinX - px) * tan(ta + 180)];
+	}
+}
+
+function GetDistance(x1, y1, x2, y2) {
+	return ((x1 - x2) ^ 2 + (y1 - y2) ^ 2) ^ (1 / 2);
+}
+
+function NumberLength(number) {
+	if (number == 0) {
+		return 0;
+	}
+	return floor(log10(number));
+}
+
+function isInterger(number) {
+	return floor(number) == number;
+}
+
+function roundNumber(x, e) {
+	let factor = power(10, e);
+	return round((x) * factor) / factor;
+}
+
+function ReflectionAngle(angle, mirror) {
+	return 2 * mirror - angle;
+}
+
+//Render function
+
+task ObjRender_SetMoveFromBackground(obj, time, startscale, endscale) {
+	let s = startscale;
+	Obj_SetValue(obj, "IsSpawning", true);
+	Obj_SetRenderPriorityI(obj, 24);
+	loop(time) {
+		ObjRender_SetScaleXYZ(obj, s, s, 0);
+		s += (endscale - startscale) / time;
+		yield;
+	}
+	Obj_SetValue(obj, "IsSpawning", false);
+	Obj_SetRenderPriorityI(obj, 30);
+}
+
+task ObjRender_SetTrueAlpha(obj, alpha) {
+	Obj_SetValue(obj, "ALPHA", alpha);
+	alternative(ObjRender_GetBlendType(obj))
+	case (BLEND_ALPHA) {
+		ObjRender_SetAlpha(obj, alpha);
+	}
+	case (BLEND_ADD_ARGB) {
+		ObjRender_SetAlpha(obj, alpha);
+	}
+	case (BLEND_ADD_RGB) {
+		ObjRender_SetColor(obj, alpha, alpha, alpha);
+	}
+	case (BLEND_SUBTRACT) {
+		ObjRender_SetColor(obj, alpha, alpha, alpha);
+	}
+	case (BLEND_MULTIPLY) {
+		ObjRender_SetColor(obj, alpha, alpha, alpha);
+	}
+	case (BLEND_SHADOW) {
+		ObjRender_SetColor(obj, alpha, alpha, alpha);
+	}
+	others {
+		ObjRender_SetAlpha(obj, alpha);
+	}
+}
+
+function ObjRender_GetAlpha(obj) {
+	return Obj_GetValueD(obj, "ALPHA", 256);
+}
+
+//Move function
+
+//Border reflectors (Python)
+task ObjMove_ReflectCeiling(obj, limit) {
+	let count = 0;
+	while (!Obj_IsDeleted(obj)) {
+		if (ObjMove_GetY(obj) <= 0 && ObjMove_GetY(obj) >= -20 && count < limit) {
+			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj));
+			count++;
+		}
+		yield;
+	}
+}
+task ObjMove_ReflectBottom(obj, limit) {
+	let count = 0;
+	while (!Obj_IsDeleted(obj)) {
+		if (ObjMove_GetY(obj) >= GetClipMaxY && ObjMove_GetY(obj) <= GetClipMaxY + 20 && count < limit) {
+			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj));
+			count++;
+		}
+		yield;
+	}
+}
+task ObjMove_ReflectWalls(obj, limit) {
+	let count = 0;
+	while (!Obj_IsDeleted(obj)) {
+		if (ObjMove_GetX(obj) <= 0 && ObjMove_GetX(obj) >= -20 && count < limit) {
+			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj) + 180);
+			count++;
+		}
+
+		if (ObjMove_GetX(obj) >= GetClipMaxX && ObjMove_GetX(obj) <= GetClipMaxX + 20 && count < limit) {
+			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj) + 180);
+			count++;
+		}
+		yield;
+	}
+}
+
+//Warp functions
+task ObjMove_WarpHorizontal(obj, limit) {
+	let count = 0;
+	while (!Obj_IsDeleted(obj)) {
+		if (ObjMove_GetX(obj) <= -32 && count < limit) {
+			ObjMove_SetX(obj, GetClipMaxX + 30);
+			count++;
+		}
+
+		if (ObjMove_GetX(obj) >= GetClipMaxX + 32 && count < limit) {
+			ObjMove_SetX(obj, -30);
+			count++;
+		}
+		yield;
+	}
+}
+task ObjMove_WarpVertical(obj, limit) {
+	let count = 0;
+	while (!Obj_IsDeleted(obj)) {
+		if (ObjMove_GetY(obj) <= -32 && count < limit) {
+			ObjMove_SetY(obj, GetClipMaxY + 30);
+			count++;
+		}
+
+		if (ObjMove_GetY(obj) >= GetClipMaxY + 32 && count < limit) {
+			ObjMove_SetY(obj, -30);
+			count++;
+		}
+		yield;
+	}
+}
+
+task ObjMove_SetDestAtWarp(obj, destX, destY) {
+	let xscale = ObjRender_GetScaleX(obj);
+	let yscale = ObjRender_GetScaleY(obj);
+
+	let ori = [xscale, yscale];
+
+	Obj_SetValue(obj, "Warping", true);
+	Obj_SetValue(obj, "Destination", [destX, destY]);
+
+	loop(20) {
+		ObjRender_SetScaleXYZ(obj, xscale, yscale, 0);
+		xscale += ori[0] / 20;
+		yscale -= ori[1] / 20;
+		yield;
+	}
+	ObjRender_SetPosition(obj, destX, destY, 0);
+	loop(20) {
+		ObjRender_SetScaleXYZ(obj, xscale, yscale, 0);
+		xscale -= ori[0] / 20;
+		yscale += ori[1] / 20;
+		yield;
+	}
+	Obj_SetValue(obj, "Warping", false);
+	ObjRender_SetScaleXYZ(obj, ori[0], ori[1], 0);
+}
+
+//Other function
+
+function AddScoreSmooth(val) {
 	SetCommonData("player_score_change", GetCommonData("player_score_change", 0) + val);
 }
 
@@ -27,7 +295,7 @@ function DigitToArray(digit, count) {
 	}
 
 	if (count > -1) {
-		loop (max(0, count - length(res))) {
+		loop(max(0, count - length(res))) {
 			res = [0] ~ res;
 		}
 	}
@@ -35,18 +303,89 @@ function DigitToArray(digit, count) {
 	return res;
 }
 
-function NumberLength(number) {
-	if (number == 0) {
-		return 0;
+function IsValueInArray(array, value) { //all values in the array must be of the same type for this to work
+	ascent(i in 0..length(array)) {
+		if (value == array[i]) {
+			return true;
+		}
 	}
-	return floor(log10(number));
+	return false;
 }
 
-function isInterger(number) {
-	return floor(number) == number;
+//Makes the screen shake (gt_bot)
+task ScreenShakeA1(shaketime, intensity) {
+	let x = Get2DCameraX;
+	let y = Get2DCameraY;
+	while (shaketime > 0) {
+		Set2DCameraFocusX(GetStgFrameWidth / 2 + rand(-intensity, intensity));
+		Set2DCameraFocusY(GetStgFrameHeight / 2 + rand(-intensity, intensity));
+		shaketime--;
+		yield;
+	}
+	Set2DCameraFocusX(GetStgFrameWidth / 2);
+	Set2DCameraFocusY(GetStgFrameHeight / 2);
+	yield;
 }
 
-function roundNumber(x, e) {
-  let factor = power(10, e);
-  return round((x) * factor) / factor;
+//Returns true if the object is within the given boundaries (gt_bot)
+function Obj_IsInArea(obj, left, top, right, bottom) {
+	if (ObjMove_GetX(obj) < left) {
+		return false;
+	}
+
+	if (ObjMove_GetX(obj) > right) {
+		return false;
+	}
+
+	if (ObjMove_GetY(obj) < top) {
+		return false;
+	}
+
+	if (ObjMove_GetY(obj) > bottom) {
+		return false;
+	}
+	return true
 }
+
+//Makes the object spin around the XYZ axes (Python)
+task Obj_SpinXYZ(obj, xspin, yspin, zspin, i) {
+	if (i <= 0) {
+		while (!Obj_IsDeleted(obj)) {
+			ObjRender_SetAngleXYZ(obj, ObjRender_GetAngleX(obj) + xspin, ObjRender_GetAngleY(obj) + yspin, ObjRender_GetAngleZ(obj) + zspin);
+			yield;
+		}
+		return;
+	} else {
+		while (i > 0) {
+			ObjRender_SetAngleXYZ(obj, ObjRender_GetAngleX(obj) + xspin, ObjRender_GetAngleY(obj) + yspin, ObjRender_GetAngleZ(obj) + zspin);
+			i--;
+			yield;
+		}
+		ObjRender_SetAngleXYZ(obj, 0, 0, 0);
+		return;
+	}
+}
+
+//Undefined function, do not touch
+
+/*
+task Move(obj, objs, a, s){
+	let si = s;
+	let speed = 3;
+	let angle = a-180;
+
+	if(ObjMove_GetSpeed(obj) == 0){angle = 270;}
+
+	let mx = speed*cos(angle);
+	let my = speed*sin(angle);
+
+	while(si >0){
+		si-=0.07;
+		if(si < 0){Obj_Delete(objs);}
+		ObjRender_SetPosition(objs,ObjRender_GetX(objs)+mx,ObjRender_GetY(objs)+my,0);
+
+		ObjRender_SetScaleXYZ(objs,si,si,0);
+		yield;
+	}
+}
+*/
