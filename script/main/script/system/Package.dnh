@@ -4,13 +4,15 @@
 #player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
 
 #include "script/main/script/lib/BGM.dnh"
+#include "script/main/script/system/Loading.dnh"
 
 @Initialize {
 	InstallFont("script/main/text/font/malgunsl.ttf");
 	InstallFont("script/main/text/font/03SmartFontUI.ttf");
 	LoadSaveData;
 	InitBGM;
-	DisplayTitle;
+	LoadAndThenStartTheGame;
+	//DisplayTitle;
 }
 
 
@@ -22,11 +24,6 @@
 
 }
 
-//TODO: implement event calling
-/*@Event {
-	alternative(GetEventType)
-}*/
-
 task LoadSaveData{
 	CreateCommonDataArea("Settings");
 	LoadCommonDataAreaA2("Settings","script/main/save/Settings.dat");
@@ -35,11 +32,10 @@ task LoadSaveData{
 task InitBGM{
 	let objBGM = ObjSound_Create();
 	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
-	ObjSound_Load(objBGM,"script/main/sound/bgm/01.ogg");
 	ObjSound_SetLoopEnable(objBGM,true);
 	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
 	SetCommonData("ObjBGM",objBGM);
-	BGM_Play(1);
+	//BGM_Play(1);
 }
 
 //Constants! Please use those to refer to options!
@@ -61,6 +57,7 @@ let OPTION_GAMESTARTED = 255;
 
 task DisplayTitle{
 
+	BGM_Play(1);
 	let dir = "script/main/img/system/menu/";
 	//Create all objects
 
@@ -1032,7 +1029,7 @@ task DisplayTitle{
 			Obj_SetRenderPriorityI(bubble,20);	
 			let n = rand(0,360);
 			let mult = rand(0.5,1);
-			while(ObjRender_GetY(bubble) > -64){
+			while(ObjRender_GetY(bubble) > -64 && !Obj_IsDeleted(objWheel)){
 				n++;
 				ObjRender_SetX(bubble,ObjRender_GetX(bubble)+sin(n)*mult);
 				ObjRender_SetY(bubble,ObjRender_GetY(bubble)-1);
@@ -1053,12 +1050,15 @@ task DisplayTitle{
 	}
 
 	task StartMainGame(player){
+		LoadingStageTransition;
+		wait(180);
 		DestroyMainMenu;
 		InitializeStageScene();
 		SetStageIndex(1);
 		SetStagePlayerScript(GetPlayerScriptForNumber(player));
 		SetStageMainScript("script/main/script/stage/1/Stage.dnh");
 		StartStageScene();
+		SetCommonData("loading",false);
 	}
 
 	function GetPlayerScriptForNumber(player){
