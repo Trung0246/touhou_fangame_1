@@ -13,11 +13,14 @@ function LoadGlobal{
 		LoadTexture(paths[i]);
 		yield;
 	}
-	//Todo: load enemy graphics
+	paths = GetFilePathList("script/main/img/enemy/stage/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
 }
 
 function LoadStage(id){
-	let dir = "script/main/img/stage/" ~ itoa(id);
 	let paths = GetFilePathList("script/main/img/face/" ~ itoa(id) ~ "/");
 	ascent(i in 0..length(paths)){
 		LoadTexture(paths[i]);
@@ -41,7 +44,7 @@ task LoadAndThenStartTheGame{
 	wait(90);
 	LoadGlobal;
 	LoadMainMenu;
-	SetCommonData("loading",false);
+	SetAreaCommonData("GameState","loading",false);
 	descent(i in 0..65){
 		ObjRender_SetColor(bg,i*4,i*4,i*4);
 		yield;
@@ -55,6 +58,8 @@ task LoadAndThenStartTheGame{
 }
 
 task LoadingStageTransition{
+	BGM_Stop;
+	SetAreaCommonData("GameState","NoBGM",true);
 	LoadingIndicator;
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj,"script/main/img/system/menu/black.png");
@@ -74,7 +79,7 @@ task LoadingStageTransition{
 		ObjRender_SetPosition(obj,0,sin(i*1.5)*736-256,0);
 		yield;
 	}
-	while(GetCommonData("loading",false)){yield;}
+	while(GetAreaCommonData("GameState","loading",false)){yield;}
 	ascent(i in 0..60){
 		ObjRender_SetPosition(obj,0,sin(i*1.5)*736-256,0);
 		yield;
@@ -83,7 +88,7 @@ task LoadingStageTransition{
 }
 
 task LoadingIndicator{
-	SetCommonData("loading",true);
+	SetAreaCommonData("GameState","loading",true);
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	Obj_SetRenderPriorityI(obj,95);
 	ObjPrim_SetTexture(obj, "script/main/img/system/loading.png");
@@ -91,9 +96,9 @@ task LoadingIndicator{
  	ObjSprite2D_SetDestRect(obj,0,0,128,64);
 	ObjRender_SetPosition(obj,448,384,0);
 	JustAddWater;
-	while(GetCommonData("loading",false)){
+	while(GetAreaCommonData("GameState","loading",false)){
 		ascent(i in 0..120){
-			if(!GetCommonData("loading",false)){break;}
+			if(!GetAreaCommonData("GameState","loading",false)){break;}
 			let color = 192+sin(i*3)*64;
 			ObjRender_SetColor(obj,color,color,color);
 			yield;
@@ -107,7 +112,7 @@ task LoadingIndicator{
 
 	task JustAddWater{
 		let n;
-		while(GetCommonData("loading",false)){
+		while(GetAreaCommonData("GameState","loading",false)){
 			let raindrop = ObjPrim_Create(OBJ_SPRITE_2D);
 			Obj_SetRenderPriorityI(raindrop,93);
 			ObjPrim_SetTexture(raindrop, "script/main/img/system/loading.png");

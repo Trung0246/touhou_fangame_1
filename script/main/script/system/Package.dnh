@@ -9,6 +9,7 @@
 @Initialize {
 	InstallFont("script/main/text/font/malgunsl.ttf");
 	InstallFont("script/main/text/font/03SmartFontUI.ttf");
+	CreateCommonDataArea("GameState");
 	LoadSaveData;
 	InitBGM;
 	LoadAndThenStartTheGame;
@@ -35,8 +36,13 @@ task InitBGM{
 	ObjSound_SetLoopEnable(objBGM,true);
 	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
 	SetCommonData("ObjBGM",objBGM);
-	//BGM_Play(1);
 }
+
+//Used to recognize what exactly is running
+let GAMETYPE_MAINGAME = 0;
+let GAMETYPE_EXTRA = 1;
+let GAMETYPE_PRACTICE = 2;
+let GAMETYPE_SPELLPRACTICE = 3;
 
 //Constants! Please use those to refer to options!
 let OPTION_MAIN = -1;
@@ -506,17 +512,21 @@ task DisplayTitle{
 			}
 
 			//Actual actions
-			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
-				DeleteOptions;
-				currMenu = OPTION_GAMESTARTED;
-				StartMainGame(selected);
-			}
 			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
 				DeleteOptions;
 				currMenu = OPTION_STARTGAME;
 				prevMenu = OPTION_PLAYERSELECT;
 				DifficultyMenu(difficulty);
 				MenuHeader;
+			}
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				DeleteOptions;
+				currMenu = OPTION_GAMESTARTED;
+				SetAreaCommonData("GameState","GameType",GAMETYPE_MAINGAME);
+				SetAreaCommonData("GameState","Player",selected);
+				StartGame;
+				wait(60);
+				DestroyMainMenu;
 			}
 			yield;
 		}
@@ -1049,17 +1059,20 @@ task DisplayTitle{
 		Obj_Delete(darkness);
 	}
 
-	task StartMainGame(player){
-		LoadingStageTransition;
-		wait(180);
-		DestroyMainMenu;
-		InitializeStageScene();
-		SetStageIndex(1);
-		SetStagePlayerScript(GetPlayerScriptForNumber(player));
-		SetStageMainScript("script/main/script/stage/1/Stage.dnh");
-		StartStageScene();
-		SetCommonData("loading",false);
-	}
+}
+
+
+task StartGame{
+	LoadingStageTransition;
+	wait(120);
+	InitializeStageScene;
+	SetStageIndex(GetAreaCommonData("GameState","Stage",1));
+	SetStagePlayerScript(GetPlayerScriptForNumber(GetAreaCommonData("GameState","Player",0)));
+	SetStageMainScript("script/main/script/stage/" ~ itoa(GetAreaCommonData("GameState","Stage",1)) ~ "/Stage.dnh");
+	StartStageScene();
+	SetAreaCommonData("GameState","loading",false);
+	SetAreaCommonData("GameState","InGame",true);
+	GameHandler;
 
 	function GetPlayerScriptForNumber(player){
 		let script;
@@ -1075,9 +1088,48 @@ task DisplayTitle{
 			}
 		return script;
 	}
-
 }
 
+task GameHandler{
+	while(GetAreaCommonData("GameState","InGame",false)){
+		if(GetVirtualKeyState(VK_PAUSE) == KEY_PUSH){
+			RenderToTextureA1(GetTransitionRenderTargetName(), 0, 100, true);
+			yield;
+			BGM_Stop;
+			PauseStageScene(true);
+			let pauseScript = LoadScript("script/default_system/Default_Pause.txt");
+			StartScript(pauseScript);
+			while(!IsCloseScript(pauseScript)){yield;}
+			alternative(GetScriptResult(pauseScript))
+				case(RESULT_CANCEL){
+					BGM_Resume;
+					PauseStageScene(false);
+				}
+				case(RESULT_RETRY){
+					alternative(GetAreaCommonData("GameState","GameType",GAMETYPE_MAINGAME))
+						case(GAMETYPE_MAINGAME){
+							SetAreaCommonData("GameState","Stage",1);
+						}
+						SetAreaCommonData("GameState","InGame",false);
+						StartGame;
+						wait(60);
+						TerminateStageScene;
+				}
+				case(RESULT_END){
+					LoadingStageTransition;
+					SetAreaCommonData("GameState","InGame",false);
+					wait(60);
+					TerminateStageScene;
+					DisplayTitle;
+					SetAreaCommonData("GameState","loading",false);
+					
+				
+				PauseStageScene(false);
+			}
+		}
+		yield;
+	}
+}
 
 //Wheel intro task
 task WheelFade(objFake,objReal){
