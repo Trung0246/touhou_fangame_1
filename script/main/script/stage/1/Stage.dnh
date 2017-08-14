@@ -8,6 +8,7 @@
 
 //Everything is included in this file and if you need to include something ask me
 #include "script/main/script/system/Init.dnh"
+#include "script/main/script/lib/Stage.dnh"
 
 //DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
 
@@ -30,6 +31,8 @@
 }
 
 task Stage_Main() {
+	wait(120);
+	StageTitle(1);
 	let dir = GetCurrentScriptDirectory();
 	let step = [
 		dir ~ "/wave/Wave.dnh",

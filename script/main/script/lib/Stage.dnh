@@ -1,0 +1,68 @@
+task StageTitle(id){
+	id -= 1;
+	let dir = "script/main/img/stage/stage_sp.png";
+
+	let xpos = id%2;
+	let ypos = floor(id/2);
+
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,dir);
+	ObjSprite2D_SetSourceRect(back,xpos*256,36+ypos*128,(xpos+1)*256,60+ypos*128);
+	ObjSprite2D_SetDestCenter(back);
+	ObjRender_SetPosition(back,192,180,0);
+
+	let title = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(title,dir);
+	ObjSprite2D_SetSourceRect(title,xpos*256,ypos*128,(xpos+1)*256,32+ypos*128);
+	ObjSprite2D_SetDestCenter(title);
+	ObjRender_SetAlpha(title,0);
+	ObjRender_SetPosition(title,192,170,0);
+
+	let stage = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(stage,dir);
+	ObjSprite2D_SetSourceRect(stage,(xpos)*256,96+ypos*128,(xpos+1)*256,104+ypos*128);
+	ObjSprite2D_SetDestCenter(stage);
+	ObjRender_SetAlpha(stage,0);
+	ObjRender_SetPosition(stage,192,195,0);
+
+	let descx = (xpos*256);
+	let descy = 60+ypos*128;
+	let desc = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(desc,dir);
+	ObjSprite2D_SetSourceRect(desc,descx,descy,descx+256,descy+32);
+	ObjRender_SetPosition(desc,192,220,0);
+
+	ascent(i in 0..32){
+		ObjRender_SetScaleY(back,i/32);
+		ObjRender_SetAlpha(stage,i*8);
+		yield;
+	}
+
+	wait(20);
+	ascent(i in 0..32){
+		ObjRender_SetAlpha(title,i*8);
+		yield;
+	}
+
+	wait(20);
+	ascent(i in 0..32){
+		ObjSprite2D_SetSourceRect(desc,descx,descy,descx+256,descy+i);
+		ObjSprite2D_SetDestRect(desc,-128,-16,128,i-16);
+		yield;
+	}
+
+	wait(180);
+
+	descent(i in 0..32){
+		ObjRender_SetAlpha(title,i*8);
+		ObjRender_SetScaleY(back,i/32);
+		ObjRender_SetAlpha(stage,i*8);
+		ObjRender_SetAlpha(desc,i*8);
+		yield;
+	}
+	Obj_Delete(title);
+	Obj_Delete(back);
+	Obj_Delete(stage);
+	Obj_Delete(desc);
+
+}
