@@ -1,5 +1,5 @@
 @bgm
-No. 1 Saline Petrichor
+Saline Petrichor
 
 This is the title theme.
 
@@ -8,7 +8,7 @@ This time I tried to capture the smell of rain and put into music.
 The world is refreshing after heavy showers. But only when it isn't humid.
 
 @bgm
-No. 2 The Sky Wanders Closer
+The Sky Wanders Closer
 
 The stage 1 theme.
 
@@ -17,7 +17,7 @@ It's weird to see fairies in Gensokyo with any half-decent intelligence.
 But it doesn't make a difference. 
 
 @bgm
-No. 3 Fae Rising From Seafoam
+Fae Rising From Seafoam
 
 Azure Swirl's theme.
 
@@ -26,7 +26,7 @@ when you throw it into a song name? What? No?
 Her formal speech is on purpose, by the way. (lol)
 
 @bgm
-No. 4 Seeping Through the Blue Canopy
+Seeping Through the Blue Canopy
 
 The stage 2 theme.
 
@@ -35,7 +35,7 @@ to stay inside a lot more. That's just human nature.
 Once when I was a kid, I had to spend a whole week indoors because of a typhoon...
 
 @bgm
-No. 5 Seeping Through the Blue Canopy
+Seeping Through the Blue Canopy
 
 Sakkagumi Happyaku's theme.
 
@@ -44,7 +44,7 @@ Nyudo are quite like that. The quiet type, I mean.
 ...Usually.
 
 @bgm
-No. 6 A Mermaid Chasing a Shrine Maiden's Tail
+A Mermaid Chasing a Shrine Maiden's Tail
 
 The stage 3 theme.
 
@@ -53,7 +53,7 @@ The ocean is either horrifically murky or quite beautiful, depending on which le
 I'm talking about the real ocean, but it applies to the Expanse, too.
 
 @bgm
-No. 7 Circe Sitting in the Sea Cloud
+Circe Sitting in the Sea Cloud
 
 Saga Kuramu's theme.
 
@@ -62,7 +62,7 @@ They weren't kidding kidding when they called her, well, a witch.
 Does her danmaku convey that well?
 
 @bgm
-No. 24 Score's Resting Place
+Score's Resting Place
 
 Score Input theme.
 

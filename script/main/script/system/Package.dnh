@@ -655,7 +655,7 @@ task DisplayTitle{
 
 			//This is why I hate working with text objects
 			ObjText_SetFontType(option,"malgunsl");
-			ObjText_SetText(option,name);
+			ObjText_SetText(option,"No. " ~ itoa(i+1) ~ " " ~ name);
 			ObjText_SetFontBold(option,true);
 			ObjText_SetFontSize(option,18);
 			ObjText_SetFontBorderType(option,BORDER_FULL);
@@ -724,8 +724,10 @@ task DisplayTitle{
 		task SelectOption{
 			ascent(i in 0..SONG_MAX){
 				ObjRender_SetColor(options[i],128,128,128);
+				ObjRender_SetX(options[i],60);
 			}
 			ObjRender_SetColor(options[selected],256,256,256);
+			ObjRender_SetX(options[selected],57);
 		}
 		
 
