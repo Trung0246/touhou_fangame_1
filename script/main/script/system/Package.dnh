@@ -626,7 +626,7 @@ task DisplayTitle{
 	//------------------------------------------------------------------------
 	task MusicRoomMenu{
 
-		let SONG_MAX = 3;
+		let SONG_MAX = 4;
 
 		//Currently selected option
 		let selected = 0;

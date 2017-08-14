@@ -63,7 +63,10 @@ Does her danmaku convey that well?
 
 @bgm
 No. 24 Score's Resting Place
+
 Score Input theme.
 
 Lay your score to rest.
 This song is both haunting and relieving.
+
+@bgm
