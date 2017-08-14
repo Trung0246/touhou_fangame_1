@@ -1,0 +1,142 @@
+//Loading functions to be included in the package
+function LoadMainMenu{
+	let paths = GetFilePathList("script/main/img/system/menu/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
+}
+
+function LoadGlobal{
+	let paths = GetFilePathList("script/main/img/system/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
+	paths = GetFilePathList("script/main/img/enemy/stage/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
+}
+
+function LoadStage(id){
+	let paths = GetFilePathList("script/main/img/face/" ~ itoa(id) ~ "/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
+	paths = GetFilePathList("script/main/img/enemy/boss/" ~ itoa(id) ~ "/");
+	ascent(i in 0..length(paths)){
+		LoadTexture(paths[i]);
+		yield;
+	}
+}
+
+//Loading transitions and effects
+task LoadAndThenStartTheGame{
+	let bg = ObjPrim_Create(OBJ_SPRITE_2D);
+	Obj_SetRenderPriorityI(bg,30);
+	ObjPrim_SetTexture(bg, "script/main/img/system/menu/SplashTemp.png");
+	ObjSprite2D_SetSourceRect(bg,0,0,1280,960);
+ 	ObjSprite2D_SetDestRect(bg,0,0,640,480);
+	LoadingIndicator;
+	wait(90);
+	LoadGlobal;
+	LoadMainMenu;
+	SetAreaCommonData("GameState","loading",false);
+	descent(i in 0..65){
+		ObjRender_SetColor(bg,i*4,i*4,i*4);
+		yield;
+	}
+	DisplayTitle;
+	descent(i in 0..17){
+		ObjRender_SetAlpha(bg,i*16);
+		yield;
+	}
+	Obj_Delete(bg);
+}
+
+task LoadingStageTransition{
+	BGM_Stop;
+	SetAreaCommonData("GameState","NoBGM",true);
+	LoadingIndicator;
+	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(obj,"script/main/img/system/menu/black.png");
+	ObjSpriteList2D_SetSourceRect(obj,0,0,32,32);
+	Obj_SetRenderPriorityI(obj,91);
+	ascent(i in 0..16){
+		ObjSpriteList2D_SetDestRect(obj,0,i*16,640,(i+1)*16);
+		ObjRender_SetAlpha(obj,i*16);
+		ObjSpriteList2D_AddVertex(obj);
+	}
+	ObjSpriteList2D_SetDestRect(obj,0,256,640,768);
+	ObjRender_SetAlpha(obj,256);
+	ObjSpriteList2D_AddVertex(obj);
+	ObjSpriteList2D_CloseVertex(obj);
+	
+	descent(i in 0..60){
+		ObjRender_SetPosition(obj,0,sin(i*1.5)*736-256,0);
+		yield;
+	}
+	while(GetAreaCommonData("GameState","loading",false)){yield;}
+	ascent(i in 0..60){
+		ObjRender_SetPosition(obj,0,sin(i*1.5)*736-256,0);
+		yield;
+	}
+	Obj_Delete(obj);
+}
+
+task LoadingIndicator{
+	SetAreaCommonData("GameState","loading",true);
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	Obj_SetRenderPriorityI(obj,95);
+	ObjPrim_SetTexture(obj, "script/main/img/system/loading.png");
+	ObjSprite2D_SetSourceRect(obj,0,0,256,128);
+ 	ObjSprite2D_SetDestRect(obj,0,0,128,64);
+	ObjRender_SetPosition(obj,448,384,0);
+	JustAddWater;
+	while(GetAreaCommonData("GameState","loading",false)){
+		ascent(i in 0..120){
+			if(!GetAreaCommonData("GameState","loading",false)){break;}
+			let color = 192+sin(i*3)*64;
+			ObjRender_SetColor(obj,color,color,color);
+			yield;
+		}
+	}
+	descent(i in 0..17){
+		ObjRender_SetAlpha(obj,i*16);
+		yield;
+	}
+	Obj_Delete(obj);
+
+	task JustAddWater{
+		let n;
+		while(GetAreaCommonData("GameState","loading",false)){
+			let raindrop = ObjPrim_Create(OBJ_SPRITE_2D);
+			Obj_SetRenderPriorityI(raindrop,93);
+			ObjPrim_SetTexture(raindrop, "script/main/img/system/loading.png");
+			n = floor(rand(0,2));
+			ObjSprite2D_SetSourceRect(raindrop,n*64,128,(n+1)*64,192);
+ 			ObjSprite2D_SetDestCenter(raindrop);
+			ObjRender_SetScaleXYZ(raindrop,0.5,0.5,1);
+			ObjRender_SetPosition(raindrop,448+rand(0,128),384,0);
+			DropRainDrop(raindrop);
+			wait(2);
+		}
+
+		task DropRainDrop(rain){
+			ascent(i in 0..8){
+				ObjRender_SetY(rain,384+i*2);
+				ObjRender_SetAlpha(rain,i*32);
+				yield;
+			}
+			ascent(i in 0..16){
+				ObjRender_SetY(rain,400+i*2);
+				ObjRender_SetAlpha(rain,256-i*16);
+				yield;
+			}
+			Obj_Delete(rain);
+		}
+	}
+}
