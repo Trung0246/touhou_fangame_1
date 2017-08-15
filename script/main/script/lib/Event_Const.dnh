@@ -1,0 +1,5 @@
+//Constants for events everywhere
+let EV_RAINDROP_SPAWN = EV_USER+100; //Called in stage scripts to spawn raindrops
+let EV_BGM_STOP = EV_USER+101; //Pause BGM
+let EV_BGM_RESUME = EV_USER+102; //Resume BGM
+let EV_BGM_PLAY = EV_USER+103; //Play BGM

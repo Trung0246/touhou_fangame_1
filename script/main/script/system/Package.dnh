@@ -5,6 +5,8 @@
 
 #include "script/main/script/lib/BGM.dnh"
 #include "script/main/script/system/Loading.dnh"
+#include "script/main/script/system/Init.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
 @Initialize {
 	InstallFont("script/main/text/font/malgunsl.ttf");
@@ -23,6 +25,19 @@
 
 @Finalize {
 
+}
+
+@Event{
+	alternative(GetEventType)
+	case(EV_BGM_STOP){
+		BGM_Stop;
+	}
+	case(EV_BGM_RESUME){
+		BGM_Resume;
+	}
+	case(EV_BGM_PLAY){
+		BGM_Play(GetEventArgument(0));
+	}
 }
 
 task LoadSaveData{
@@ -1074,6 +1089,12 @@ task StartGame{
 	StartStageScene();
 	SetAreaCommonData("GameState","loading",false);
 	SetAreaCommonData("GameState","InGame",true);
+	Base_Init;
+	alternative(GetAreaCommonData("GameState","GameType",GAMETYPE_MAINGAME))
+		case(GAMETYPE_MAINGAME){Maingame_Init;}
+		case(GAMETYPE_EXTRA){Extra_Init;}
+		case(GAMETYPE_PRACTICE){Practice_Init;}
+		case(GAMETYPE_SPELLPRACTICE){SpellPractice_Init;}
 	GameHandler;
 
 	function GetPlayerScriptForNumber(player){

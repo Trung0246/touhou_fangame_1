@@ -9,7 +9,7 @@ LoadTexture(dirWaterFairy);
 	LoadTexture(GetCurrentScriptDirectory() ~ "./system/RainDrop_Fairies.png");
 }*/
 
-task AnimateSmallWaterFairy (obj,color) {
+task AnimateSmallFairy (obj,color) {
 	Obj_SetValue(obj,"Anim",0);
 	ObjPrim_SetTexture(obj, dirWaterFairy);
 	ObjSprite2D_SetDestRect(obj,-16,-16,16,16);
@@ -54,7 +54,7 @@ task AnimateSmallWaterFairy (obj,color) {
 	}
 }
 
-task AnimateBigWaterFairy (obj,color) {
+task AnimateBigFairy (obj,color) {
 	Obj_SetValue(obj,"Anim",0);
 	ObjPrim_SetTexture(obj, dirWaterFairy);
 	ObjSprite2D_SetDestRect(obj,-24,-24,24,24);

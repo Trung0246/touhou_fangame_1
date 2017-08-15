@@ -5,7 +5,7 @@ task BGM_Stop{
 
 task BGM_Resume{
 	let objBGM = GetCommonData("ObjBGM",ID_INVALID);
-	if(!GetAreaCommonData("GameState","NoBGM",false)){
+	if(GetAreaCommonData("GameState","NoBGM",false)){
 		ObjSound_Play(objBGM);
 	}
 }
@@ -15,7 +15,7 @@ task BGM_Play(id){
 	let file = ObjFile_Create(OBJ_FILE_TEXT);
 	ObjFile_Open(file, "script/main/script/data/songdata.txt");
 	let data = SplitString(ObjFileT_GetLineText(file, id),"/");
-	
+
 	let objBGM = GetCommonData("ObjBGM",ID_INVALID);
 	
 	SetAreaCommonData("GameState","NoBGM",false);
