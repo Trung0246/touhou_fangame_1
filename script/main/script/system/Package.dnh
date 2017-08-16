@@ -1086,15 +1086,15 @@ task StartGame{
 	SetStageIndex(GetAreaCommonData("GameState","Stage",1));
 	SetStagePlayerScript(GetPlayerScriptForNumber(GetAreaCommonData("GameState","Player",0)));
 	SetStageMainScript("script/main/script/stage/" ~ itoa(GetAreaCommonData("GameState","Stage",1)) ~ "/Stage.dnh");
-	StartStageScene();
-	SetAreaCommonData("GameState","loading",false);
-	SetAreaCommonData("GameState","InGame",true);
 	Base_Init;
 	alternative(GetAreaCommonData("GameState","GameType",GAMETYPE_MAINGAME))
 		case(GAMETYPE_MAINGAME){Maingame_Init;}
 		case(GAMETYPE_EXTRA){Extra_Init;}
 		case(GAMETYPE_PRACTICE){Practice_Init;}
 		case(GAMETYPE_SPELLPRACTICE){SpellPractice_Init;}
+	StartStageScene();
+	SetAreaCommonData("GameState","loading",false);
+	SetAreaCommonData("GameState","InGame",true);
 	GameHandler;
 
 	function GetPlayerScriptForNumber(player){

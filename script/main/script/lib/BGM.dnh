@@ -5,7 +5,7 @@ task BGM_Stop{
 
 task BGM_Resume{
 	let objBGM = GetCommonData("ObjBGM",ID_INVALID);
-	if(GetAreaCommonData("GameState","NoBGM",false)){
+	if(!GetAreaCommonData("GameState","NoBGM",false)){
 		ObjSound_Play(objBGM);
 	}
 }

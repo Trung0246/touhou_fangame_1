@@ -11,6 +11,7 @@
 #include "script/main/script/lib/Utils.dnh"
 #include "script/main/script/lib/Stage.dnh"
 #include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/script/lib/Raindrop.dnh"
 
 //DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
 //^Heck with you, I'm trying to make a game and this file is my next target
@@ -31,8 +32,16 @@
 
 @Event{
 	alternative(GetEventType())
-	case(EV_RAINDROP_SPAWN){
-		//Then you make an alternative here to spawn raindrops with
+	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y]
+		let arg = GetEventArgument(0);
+		alternative(arg[0])
+		case(FAIRY_STREAM){
+			loop(5){
+				CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			}
+			CreateShotRaindrop(arg[1],arg[2],0,0,0,0.01,0,1,RAINDROP_RED,0);
+		}
 	}
 }
 

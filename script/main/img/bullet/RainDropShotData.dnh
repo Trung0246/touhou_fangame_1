@@ -1,26 +1,41 @@
 #UserShotData
 
-shot_image = "./items.png"
+shot_image = "./drops.png"
 //delay_rect = (209, 474, 240, 505)
 
 
 ShotData{ //red
 	id = 512
-	rect = (288,48,303,63)
 	render = ADD_ARGB
 	delay_color = (255,63,63)
+	AnimationData{
+		animation_data=(4,32,0,48,16)
+		animation_data=(4,32,16,48,32)
+		animation_data=(4,32,32,48,48)
+		animation_data=(4,32,0,48,16)
+	}
 }
 
 ShotData{ //green
 	id = 513
-	rect = (256,48,271,63)
 	render = ADD_ARGB
 	delay_color = (63,255,63)
+	AnimationData{
+		animation_data=(4,0,0,16,16)
+		animation_data=(4,0,16,16,32)
+		animation_data=(4,0,32,16,48)
+		animation_data=(4,0,0,16,16)
+	}
 }
 
 ShotData{ //blue
 	id = 514
-	rect = (272,48,287,63)
 	render = ADD_ARGB
 	delay_color = (63,63,255)
+	AnimationData{
+		animation_data=(4,16,0,32,16)
+		animation_data=(4,16,16,32,32)
+		animation_data=(4,16,32,32,48)
+		animation_data=(4,16,0,32,16)
+	}
 }

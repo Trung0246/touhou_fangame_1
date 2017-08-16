@@ -7,7 +7,7 @@ task StageEnemyHitbox(enemy,shotsize,playersize,health,type){
 		if(ObjEnemy_GetInfo(enemy,INFO_LIFE) <= 0){
 			if(!Obj_IsDeleted(enemy)){
 				//SpawnRaindrops(ObjMove_GetX(enemy),ObjMove_GetY(enemy));
-				NotifyEvent(GetOwnScriptID(),EV_RAINDROP_SPAWN,[type,ObjMove_GetX(enemy),ObjMove_GetY(enemy)]);
+				NotifyEvent(GetOwnScriptID(),EV_ENEMY_SHOOTDOWN,[type,ObjMove_GetX(enemy),ObjMove_GetY(enemy)]);
 				Obj_Delete(enemy);
 			}
 		}

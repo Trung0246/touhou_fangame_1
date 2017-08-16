@@ -1,5 +1,6 @@
 #include "script/main/script/lib/Event.dnh"
 #include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
@@ -66,7 +67,7 @@
 				AddScoreSmooth(tempScore);
 			}
 		}
-		case (EV_USER + 100) {
+		case (EV_RAINDROP_COLLECT) {
 			alternative (GetEventArgument(0))			
 				case (512) { //Raindrop red
 					SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
