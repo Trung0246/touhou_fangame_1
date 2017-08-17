@@ -1,0 +1,55 @@
+function SPShotA1(x,y,speed,angle,graphic,delay){
+	let shot = ObjShot_Create(OBJ_SHOT);
+	ObjShot_SetGraphic(shot,graphic);
+	ObjMove_SetPosition(shot,x,y);
+	ObjMove_SetSpeed(shot,speed);
+	ObjMove_SetAngle(shot,angle);
+	ObjShot_Regist(shot);
+	SPBulletDelay(shot,delay);
+	return shot;
+}
+
+function SPShotA2(x,y,speed,angle,accel,maxspd,graphic,delay){
+	let shot = ObjShot_Create(OBJ_SHOT);
+	ObjShot_SetGraphic(shot,graphic);
+	ObjMove_SetPosition(shot,x,y);
+	ObjMove_SetSpeed(shot,speed);
+	ObjMove_SetAngle(shot,angle);
+	ObjMove_SetAcceleration(shot,accel);
+	ObjMove_SetMaxSpeed(shot,maxspd);
+	ObjShot_Regist(shot);
+	SPBulletDelay(shot,delay);
+	return shot;
+}
+
+function SPShotB1(x,y,xmove,ymove,graphic,delay){
+	let shot = ObjShot_Create(OBJ_SHOT);
+	ObjShot_SetGraphic(shot,graphic);
+	ObjMove_SetPosition(shot,x,y);
+	ObjMove_AddPatternB1(shot,0,xmove,ymove);
+	ObjShot_Regist(shot);
+	SPBulletDelay(shot,delay);
+	return shot;
+}
+
+function SPShotB2(x,y,xmove,ymove,xaccel,yaccel,xmax,ymax,graphic,delay){
+	let shot = ObjShot_Create(OBJ_SHOT);
+	ObjShot_SetGraphic(shot,graphic);
+	ObjMove_SetPosition(shot,x,y);
+	ObjMove_AddPatternB2(shot,0,xmove,ymove,xaccel,yaccel,xmax,ymax);
+	ObjShot_Regist(shot);
+	SPBulletDelay(shot,delay);
+	return shot;
+}
+
+task SPBulletDelay(obj,time){
+	let scale = 1.5/time;
+	let alpha = 256/time;
+	let n;
+	descent(i in 0..time){
+		n = 1+scale*i;
+		ObjRender_SetScaleXYZ(obj,n,n,1);
+		ObjRender_SetAlpha(obj,256-i*alpha);
+		yield;
+	}
+}

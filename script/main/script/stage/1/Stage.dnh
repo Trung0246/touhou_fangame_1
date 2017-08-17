@@ -12,6 +12,7 @@
 #include "script/main/script/lib/Stage.dnh"
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/script/lib/Raindrop.dnh"
+#include "script/main/script/lib/Shot.dnh"
 
 //DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
 //^Heck with you, I'm trying to make a game and this file is my next target
@@ -99,7 +100,7 @@ task StreamFairyBehavior(enemy,extra){
 	loop(5){
 		ascent(i in -5..6){
 			if(Obj_IsDeleted(enemy)){break;}
-			let shot = CreateShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*8),99+absolute(i)%2,10);
+			let shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*8),99+absolute(i)%2,10);
 			ObjMove_AddPatternB2(shot,180,NO_CHANGE,NO_CHANGE,0,0.05,NO_CHANGE,5);
 		}
 		wait(50);
