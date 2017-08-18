@@ -141,6 +141,8 @@ task LoadingStageTransition(checkQuit) {
 		scaleCount -= 18.375 / 480;
 		yield;
 	}
+	
+	isScroll = false;
 
 	Obj_Delete(objBackground);
 	Obj_Delete(objSwitch);
