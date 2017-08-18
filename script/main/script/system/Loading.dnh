@@ -1,3 +1,5 @@
+#include "script/main/script/lib/Mask.dnh"
+
 //Loading functions to be included in the package
 function LoadMainMenu {
 	let paths = GetFilePathList("script/main/img/system/menu/");
@@ -57,11 +59,94 @@ task LoadAndThenStartTheGame {
 	Obj_Delete(bg);
 }
 
-task LoadingStageTransition {
+task LoadingStageTransition(checkQuit) {
 	BGM_Stop();
 	SetAreaCommonData("GameState", "NoBGM", true);
 	LoadingIndicator();
-	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	
+	let objBackground = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(objBackground, "script/main/img/system/menu/transitionBG.jpg");
+	ObjSprite2D_SetSourceRect(objBackground, 0, 0, 1023, 1023);
+	ObjSprite2D_SetDestRect(objBackground, 0, 0, 640, 640);
+	Obj_SetRenderPriorityI(objBackground, 92);
+
+	let objSwitch = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(objSwitch, "script/main/img/system/menu/transition.png");
+	ObjSprite2D_SetSourceRect(objSwitch, 0, 0, 64, 64);
+	ObjSprite2D_SetDestRect(objSwitch, 0, 0, 640, 480);
+	Obj_SetRenderPriorityI(objSwitch, 91);
+	ObjRender_SetAlpha(objSwitch, 255);
+
+	let objSwitch2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(objSwitch2, "script/main/img/system/menu/transition.png");
+	ObjSprite2D_SetSourceRect(objSwitch2, 0, 0, 64, 64);
+	ObjSprite2D_SetDestRect(objSwitch2, 0, 0, 640, 480);
+	Obj_SetRenderPriorityI(objSwitch2, 91);
+	ObjRender_SetAlpha(objSwitch2, 255 * (1 / 3));
+
+	ObjRender_CreateMask(objBackground);
+	ObjRender_InitMask(objBackground, 1, [1, 1]);
+	ObjRender_AddMask(objBackground, objSwitch);
+	ObjRender_AddMask(objBackground, objSwitch2);
+
+	let scrollCount = 0;
+	let yCount = 0;
+	let scaleCount = 0;
+
+	let isScroll = true;
+
+	task ScrollBackground() {
+		while (isScroll) {
+			ObjSprite2D_SetSourceRect(objBackground, 0 + scrollCount, 0 + scrollCount, 511 * 4 + scrollCount, 511 * 4 + scrollCount);
+			ObjSprite2D_SetSourceRect(objSwitch, 0 + scrollCount * 0.7, 0 + 1, 64 + scrollCount * 0.7, 64 + 0);
+			ObjSprite2D_SetSourceRect(objSwitch2, 0 + scrollCount * 0.35, 0 + 1, 64 + scrollCount * 0.35, 64 + 0);
+			scrollCount += 3;
+			ObjRender_UpdateMask(objBackground);
+			yield;
+		}
+	}
+	ScrollBackground();
+
+	if (checkQuit) {
+		yCount = -18.365 * 80;
+		scaleCount = 18.375 / 480 * 80;
+
+		ObjRender_SetY(objSwitch, 480 + yCount);
+		ObjRender_SetY(objSwitch2, 480 + yCount);
+		ObjRender_SetScaleY(objSwitch, scaleCount);
+		ObjRender_SetScaleY(objSwitch2, scaleCount);
+	} else {
+		loop (80) {
+			ObjRender_SetY(objSwitch, 480 + yCount);
+			ObjRender_SetY(objSwitch2, 480 + yCount);
+			ObjRender_SetScaleY(objSwitch, scaleCount);
+			ObjRender_SetScaleY(objSwitch2, scaleCount);
+
+			yCount -= 18.365;
+			scaleCount += 18.375 / 480;
+			yield;
+		}
+	}
+	//Waiting for shit to load here ...
+	while (GetAreaCommonData("GameState","loading",false)) {
+		yield;
+	}
+	loop (81) {
+		ObjRender_SetY(objSwitch, 480 + yCount);
+		ObjRender_SetY(objSwitch2, 480 + yCount);
+		ObjRender_SetScaleY(objSwitch, scaleCount);
+		ObjRender_SetScaleY(objSwitch2, scaleCount);
+
+		yCount += 18.365;
+		scaleCount -= 18.375 / 480;
+		yield;
+	}
+
+	Obj_Delete(objBackground);
+	Obj_Delete(objSwitch);
+	Obj_Delete(objSwitch2);
+	
+	/*let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, "script/main/img/system/menu/black.png");
 	ObjSpriteList2D_SetSourceRect(obj, 0, 0, 32, 32);
 	Obj_SetRenderPriorityI(obj, 91);
@@ -86,7 +171,7 @@ task LoadingStageTransition {
 		ObjRender_SetPosition(obj, 0, sin(i * 1.5) * 736 - 256, 0);
 		yield;
 	}
-	Obj_Delete(obj);
+	Obj_Delete(obj);*/
 }
 
 task LoadingIndicator {
