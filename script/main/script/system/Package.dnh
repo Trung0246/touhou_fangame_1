@@ -1092,7 +1092,7 @@ task DisplayTitle {
 
 
 task StartGame {
-	LoadingStageTransition;
+	LoadingStageTransition(false);
 	wait(120);
 	InitializeStageScene;
 	SetStageIndex(GetAreaCommonData("GameState", "Stage", 1));
@@ -1147,7 +1147,7 @@ task GameHandler {
 				TerminateStageScene();
 			}
 			case (RESULT_END) {
-				LoadingStageTransition();
+				LoadingStageTransition(true);
 				SetAreaCommonData("GameState", "InGame", false);
 				wait(60);
 				TerminateStageScene();
