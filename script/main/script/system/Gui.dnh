@@ -605,7 +605,7 @@ task UpdateBossTimer {
 
 	let time;
 	let sec = 0;
-	active = true;
+	//active = true;
 
 	//CheckSpell;
 	CheckRemainingTime();
