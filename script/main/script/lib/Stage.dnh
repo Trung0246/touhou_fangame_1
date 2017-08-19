@@ -169,6 +169,13 @@ task StageTitle(id){
 
 }
 
+let bossActive = false;
+task CheckBossActive(script){
+	bossActive = true;
+	while(!IsCloseScript(script)){yield;}
+	bossActive = false;
+}
+
 //To be called at the start of every stage because there's no way to do this more efficiently for some reason???
 function Stage_Init() {
 	StartShotScript("script/main/script/system/Shot.dnh");

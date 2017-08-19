@@ -21,6 +21,19 @@
 }
 
 task Plural_Main() {
+	SetAreaCommonData("GameState","CurrentBoss",0);
+	let obj = ObjEnemyBossScene_Create();
+	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "MidNon1.txt");
+	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "MidNon1.txt");
+	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "MidNon1.txt");
+	ObjEnemyBossScene_LoadInThread(obj);
+	ObjEnemyBossScene_Regist(obj);
+
+	while (!Obj_IsDeleted(obj)) {
+		yield;
+	}
+
+	CloseScript(GetOwnScriptID());
 	/*let dir = GetModuleDirectory() ~ "script/main/script/stage/1/boss/";
 
 	let obj = ObjEnemyBossScene_Create();

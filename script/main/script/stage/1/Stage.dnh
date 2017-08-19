@@ -13,9 +13,7 @@
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/script/lib/Raindrop.dnh"
 #include "script/main/script/lib/Shot.dnh"
-
-//DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
-//^Heck with you, I'm trying to make a game and this file is my next target
+#include "script/main/script/stage/1/Enemy.dnh"
 
 @Initialize {
 	Stage_Init;
@@ -47,6 +45,10 @@
 }
 
 task Stage_Main() {
+	//Init boss scripts
+	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/Plural.dnh");
+
+	//Stage content
 	wait(60);
 	NotifyEventAll(EV_BGM_PLAY,2);
 	ascent(i in 0..3){
@@ -57,149 +59,10 @@ task Stage_Main() {
 	}
 	wait(360);
 	StageTitle(1);
-	let dir = GetCurrentScriptDirectory();
-	let step = [
-		dir ~ "/wave/Wave.dnh",
-		dir ~ "/boss/Plural.dnh"
-	];
-	let idScript = ID_INVALID;
 
-	ascent (i in 0..length(step)) {
-		idScript = LoadScriptInThread(step[i]);
-		StartScript(idScript);
-		while (!IsCloseScript(idScript) && GetPlayerState() != STATE_END) {
-			yield;
-		}
-	}
+	StartScript(midboss);
+	CheckBossActive(midboss);
+	while(!IsCloseScript(midboss)){yield;}
 
-	//TODO: do shit with this wait loop
-	loop(240){yield;}
-
-	CloseStgScene();
+	//CloseStgScene();
 }
-
-let FAIRY_STREAM = 1;
-task StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
-	let enemy = ObjEnemy_Create(OBJ_ENEMY);
-	ObjEnemy_Regist(enemy);
-	ObjMove_SetPosition(enemy,x,y);
-	StageEnemyHitbox(enemy,shotHitbox,playerHitbox,health,type);
-	alternative(type)
-		case(FAIRY_STREAM){StreamFairyBehavior(enemy,extra);} //[xdest,ydest,color]
-
-}
-
-task StreamFairyBehavior(enemy,extra){
-	AnimateSmallFairy(enemy,extra[2]);
-	ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
-	if(extra[0] > ObjMove_GetX(enemy)){Obj_SetValue(enemy,"Anim",4);}
-	else{Obj_SetValue(enemy,"Anim",3);}
-	wait(60);
-	Obj_SetValue(enemy,"Anim",0);
-	wait(40);
-	loop(5){
-		ascent(i in -5..6){
-			if(Obj_IsDeleted(enemy)){break;}
-			let shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*8),99+absolute(i)%2,10);
-			ObjMove_AddPatternB2(shot,180,NO_CHANGE,NO_CHANGE,0,0.05,NO_CHANGE,5);
-		}
-		wait(50);
-	}
-	wait(60);
-	if(ObjMove_GetX(enemy) < 192){
-		Obj_SetValue(enemy,"Anim",1);
-		ObjMove_SetAngle(enemy,220);
-	}
-	else{
-		Obj_SetValue(enemy,"Anim",2);
-		ObjMove_SetAngle(enemy,-40);
-	}
-	ObjMove_SetAcceleration(enemy,0.05);
-	ObjMove_SetMaxSpeed(enemy,3);
-	wait(120);
-	Obj_Delete(enemy);
-}
-
-/*task StageEnemy(x,y,type,extra){
-	let enemy = ObjEnemy_Create(OBJ_ENEMY);
-	ObjEnemy_Regist(enemy);
-	ObjMove_SetPosition(enemy,x,y);
-	alternative(type)
-	case(FAIRY_TEST){ //[xdest,ydest,color]
-
-	}
-	case(FAIRY_RAIN){ //[destx,desty,dir] //todo: implement variable direction
-		AnimateBigFairy(enemy,1);
-		ObjEnemy_SetLife(enemy,200);
-		Obj_SetValue(enemy,"Anim",4);
-		ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
-		extra[0] = extra[0] - 5;
-		let angle = rand(0,360);
-		let n = 0;
-		let continueRain = true;
-		RainSpiral;
-		while(ObjMove_GetX(enemy) < extra[0] && !Obj_IsDeleted(enemy)){yield;}
-		if(!Obj_IsDeleted(enemy)){
-			Obj_SetValue(enemy,"Anim",0);
-			while(angle%60 >= 5){yield;}
-			continueRain = false;
-			wait(180);
-			ObjMove_SetAngle(enemy,270);
-			ObjMove_SetAcceleration(enemy,0.05);
-			ObjMove_SetMaxSpeed(enemy,3);
-			wait(120);
-			Obj_Delete(enemy);
-		}
-
-		task RainSpiral{
-			while(continueRain){
-				loop(4){
-					if(Obj_IsDeleted(enemy)){
-						continueRain = false;
-						break;
-					}
-					ascent(j in 0..6){
-						let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*40,ObjMove_GetY(enemy)+sin(angle+j*60)*40,0,90,DS_RICE_S_BLUE,15);
-						InstaDelete(trail);
-					}
-					angle += 5;
-					wait(2);
-				}
-				if(Obj_IsDeleted(enemy)){break;}
-				ascent(j in 0..3){
-					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,10);
-					ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
-				}
-				n++;
-			}
-			ascent(i in 0..60){
-				if(Obj_IsDeleted(enemy)){break;}
-				ascent(j in 0..6){
-					let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),0,90,DS_RICE_S_BLUE,15);
-					InstaDelete(trail);
-				}
-				if(i%5 == 0){
-					ascent(j in 0..6){
-						let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),rand(2,3),90,DS_RICE_S_BLUE,10);
-						ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
-					}
-				}
-				yield;
-			}
-		}
-
-		task InstaDelete(shot){
-			wait(ObjShot_GetDelay(shot)-1);
-			Obj_Delete(shot);
-		}
-	}
-
-	task SpawnRaindrops(xpos,ypos){
-		alternative(type)
-			case(FAIRY_TEST){
-				ascent(i in -1..2){
-					CreateShotRaindrop(xpos,ypos,cos(90+i*120)*0.2,sin(90+i*120),0,0.1,0,2,RAINDROP_RED-absolute(i)*2,5);
-				}
-			}
-	}
-}*/
