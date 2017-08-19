@@ -14,10 +14,10 @@
 #include "script/main/script/lib/Raindrop.dnh"
 #include "script/main/script/lib/Shot.dnh"
 #include "script/main/script/stage/1/Enemy.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
 
 @Initialize {
 	Stage_Init;
-	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
 	Stage_Main();
 }
 

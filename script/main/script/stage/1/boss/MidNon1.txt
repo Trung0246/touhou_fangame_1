@@ -5,6 +5,7 @@
 
 #include"script/default_system/Default_Effect.txt"
 #include "script/main/script/lib/Shot.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
 
 let objBoss;
 @Initialize
@@ -54,7 +55,7 @@ task TWork
 	ActualFiring;
 	while(!Obj_IsDeleted(objBoss)){
 		ascent(i in 0..6){
-			shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,1,0,0,0,0,0,51,5);
+			shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,1,0,0,0,0,0,RBALL_BLUE,5);
 			InstaDelete(shot);
 		}
 		angle -= 5;
@@ -64,7 +65,7 @@ task TWork
 	task ActualFiring{
 		while(!Obj_IsDeleted(objBoss)){
 			ascent(i in 0..6){
-				shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,179,10);
+				shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DROP_BLUE,10);
 			}
 			wait(floor(rand(9,12)));
 		}
