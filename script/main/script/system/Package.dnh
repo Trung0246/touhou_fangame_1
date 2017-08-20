@@ -4,6 +4,7 @@
 #player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
 
 #include "script/main/script/lib/BGM.dnh"
+#include "script/main/script/lib/SFX.dnh"
 #include "script/main/script/system/Loading.dnh"
 #include "script/main/script/system/Init.dnh"
 #include "script/main/script/lib/Event_Const.dnh"
@@ -37,6 +38,10 @@
 	}
 	case(EV_BGM_PLAY){
 		BGM_Play(GetEventArgument(0));
+	}
+	case(EV_SFX_PLAY){
+		let sounds = GetCommonData("SoundList",[]); //Can and will explode if it's not set up properly for some reason
+		ObjSound_Play(sounds[GetEventArgument(0)]);
 	}
 }
 
@@ -203,6 +208,22 @@ task DisplayTitle{
 
 		//Listen to controls
 		while(currMenu == OPTION_MAIN){
+			//Movement
+			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
+				selected = (selected + 1)%11;
+				position++;
+				destAngle -= 45;
+				redrawMainOptions;
+				PlaySFX(SFX_MENUSELECT);
+			}
+			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
+				selected = (selected - 1)%11;
+				position--;
+				destAngle += 45;
+				redrawMainOptions;
+				PlaySFX(SFX_MENUSELECT);
+			}
+
 			//Actual actions
 			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
 				alternative(selected)
@@ -229,20 +250,6 @@ task DisplayTitle{
 					fadeWheel;
 					OptionsMenu;
 				}
-			}
-			
-			//Movement
-			if (GetVirtualKeyState(VK_DOWN) == KEY_PUSH) {
-				selected = (selected + 1)%11;
-				position++;
-				destAngle -= 45;
-				redrawMainOptions;
-			}
-			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
-				selected = (selected - 1)%11;
-				position--;
-				destAngle += 45;
-				redrawMainOptions;
 			}
 			yield;
 		}
@@ -305,11 +312,13 @@ task DisplayTitle{
 				selected = (selected + 1)%4;
 				SelectOption;
 				destAngle -= 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
 				selected = (selected - 1)%4;
 				SelectOption;
 				destAngle += 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 
 			//Actual actions
@@ -519,11 +528,13 @@ task DisplayTitle{
 				UnselectOption(option,portraits[selected]);
 				selected = (selected - 1)%4;
 				SelectOption;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			if (GetVirtualKeyState(VK_RIGHT) == KEY_PUSH) {
 				UnselectOption(option,portraits[selected]);
 				selected = (selected + 1)%4;
 				SelectOption;
+				PlaySFX(SFX_MENUSELECT);
 			}
 
 			//Actual actions
@@ -710,11 +721,13 @@ task DisplayTitle{
 				selected = (selected + 1)%SONG_MAX;
 				SelectOption;
 				destAngle -= 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
 				selected = (selected - 1)%SONG_MAX;
 				SelectOption;
 				destAngle += 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			yield;
 		}
@@ -858,10 +871,12 @@ task DisplayTitle{
 			}
 			
 			if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH) {
+				PlaySFX(SFX_MENUSELECT);
 				alternative(selected)
 				case(0){
 					sndVolume = (sndVolume+5)%105;
 					DrawNumber(numbers[0],sndVolume,0,0);
+					UpdateSoundVolumes;
 				}
 				case(1){
 					BGMVolume = (BGMVolume+5)%105;
@@ -871,10 +886,12 @@ task DisplayTitle{
 			}
 
 			if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH) {
+				PlaySFX(SFX_MENUSELECT);
 				alternative(selected)
 				case(0){
 					sndVolume = (sndVolume-5)%105;
 					DrawNumber(numbers[0],sndVolume,0,0);
+					UpdateSoundVolumes;
 				}
 				case(1){
 					BGMVolume = (BGMVolume-5)%105;
@@ -888,11 +905,13 @@ task DisplayTitle{
 				selected = (selected + 1)%3;
 				SelectOption;
 				destAngle -= 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			if (GetVirtualKeyState(VK_UP) == KEY_PUSH) {
 				selected = (selected - 1)%3;
 				SelectOption;
 				destAngle += 45;
+				PlaySFX(SFX_MENUSELECT);
 			}
 			yield;
 		}
@@ -931,6 +950,7 @@ task DisplayTitle{
 			SetAreaCommonData("Settings","sound_fx_volume",sndVolume);
 			SetAreaCommonData("Settings","sound_bgm_volume",BGMVolume);
 			SaveCommonDataAreaA2("Settings","script/main/save/Settings.dat");
+			UpdateSoundVolumes;
 
 			destAngle = origAngle;
 			position = origPosition;
@@ -939,6 +959,13 @@ task DisplayTitle{
 			prevMenu = OPTION_OPTIONS;
 			fadeWheel;
 			MainMenu;
+		}
+
+		task UpdateSoundVolumes{
+			let sounds = GetCommonData("SoundList",[]);
+			ascent(i in 0..length(sounds)){
+				ObjSound_SetVolumeRate(sounds[i],sndVolume);
+			}
 		}
 	}
 

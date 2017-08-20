@@ -1,5 +1,7 @@
 //How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/Gui.dnh"]
 #include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
 let dir = GetModuleDirectory() ~ "script/main/img/system/";
 let guiPath = dir ~ "front00.png";
@@ -591,10 +593,6 @@ task UpdateBossLife {
 }
 task UpdateBossTimer {
 	yield;
-	/*let timeout1 = ObjSound_Create;
-	ObjSound_Load(timeout1, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout1.wav");
-	let timeout2 = ObjSound_Create;
-	ObjSound_Load(timeout2, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout2.wav");*/
 
 	let active = true;
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -605,7 +603,6 @@ task UpdateBossTimer {
 
 	let time;
 	let sec = 0;
-	active = true;
 
 	//CheckSpell;
 	CheckRemainingTime();
@@ -684,13 +681,13 @@ task UpdateBossTimer {
 
 		task Beep {
 			if (sec > 5) {
-				//ObjSound_Play(timeout1);
+				PlaySFX(SFX_TIMEOUT1);
 				descent(i in 0..5) {
 					ObjRender_SetScaleXYZ(obj, 1 + i / 20, 1 + i / 20, 0);
 					yield;
 				}
 			} else {
-				//ObjSound_Play(timeout2);
+				PlaySFX(SFX_TIMEOUT2);
 				descent(i in 0..5) {
 					ObjRender_SetScaleXYZ(obj, 1 + i / 10, 1 + i / 10, 0);
 					yield;

@@ -1,0 +1,14 @@
+let SFX_MENUSELECT = 0;
+let SFX_MENUOK = 1;
+let SFX_MENUINVALID = 2;
+let SFX_TIMEOUT1 = 3;
+let SFX_TIMEOUT2 = 4;
+let SFX_ITEM = 5;
+let SFX_ENEMYDOWN = 6;
+let SFX_NODAMAGE = 7;
+let SFX_MISSILE = 8;
+let SFX_PLDEAD = 9;
+
+task PlaySFX(id){
+	NotifyEventAll(EV_SFX_PLAY,id);
+}

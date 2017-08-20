@@ -26,5 +26,6 @@ task BGM_Play(id){
 	ObjSound_SetLoopEnable(objBGM,true);
 	ObjSound_Play(objBGM);
 	ObjSound_SetRestartEnable(objBGM,true);
+	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
 	Obj_Delete(file);
 }

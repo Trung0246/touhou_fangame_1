@@ -44,6 +44,7 @@ task LoadAndThenStartTheGame{
 	wait(90);
 	LoadGlobal;
 	LoadMainMenu;
+	LoadSounds;
 	SetAreaCommonData("GameState","loading",false);
 	descent(i in 0..65){
 		ObjRender_SetColor(bg,i*4,i*4,i*4);
@@ -86,6 +87,22 @@ task LoadingStageTransition{
 	}
 	Obj_Delete(obj);
 }
+
+task LoadSounds{
+	let sfxlist = ["menusel.wav","menuok.wav","menuinvalid.wav",
+			"timeout1.wav","timeout2.wav","Item.wav",
+			"enemydown.wav","nodamage.wav","missil.wav","pldead.wav"];
+	let sounds = [];
+	ascent(i in 0..length(sfxlist)){
+		let snd = ObjSound_Create;
+		ObjSound_Load(snd,"script/main/sound/sfx/" ~ sfxlist[i]);
+	//	ObjSound_SetSoundDivision(snd,SOUND_SFX);
+		ObjSound_SetVolumeRate(snd,GetAreaCommonData("Settings","sound_fx_volume",100));
+		sounds = sounds ~ [snd];
+	}
+	SetCommonData("SoundList",sounds);
+}
+
 
 task LoadingIndicator{
 	SetAreaCommonData("GameState","loading",true);
