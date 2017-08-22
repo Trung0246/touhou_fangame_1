@@ -238,8 +238,11 @@ task Player_Render() {
 
 task Hitbox_Render() {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	let obj2 = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, dir ~ "img/hitbox.png");
 	Obj_SetRenderPriority(obj, 0.7);
+	ObjPrim_SetTexture(obj2, dir ~ "img/hitbox.png");
+	Obj_SetRenderPriorityI(obj2, 21);
 	let angle = 22.5;
 	let scale = 2.75;
 	let alpha = 0;
@@ -249,6 +252,7 @@ task Hitbox_Render() {
 	while (!Obj_IsDeleted(objPlayer)) {
 		let playerState = GetPlayerState();
 		ObjSpriteList2D_ClearVertexCount(obj);
+		ObjSpriteList2D_ClearVertexCount(obj2);
 		if (isFocus && playerState == STATE_NORMAL) {
 			Render();
 			scale = max(scale - 2 / 10, 64 / (64 - hitBox * 4.5));
@@ -291,23 +295,23 @@ task Hitbox_Render() {
 	}
 
 	function Render2() {
-		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
-		ObjRender_SetX(obj, GetPlayerX());
-		ObjRender_SetY(obj, GetPlayerY());
-		ObjRender_SetAngleZ(obj, angle2);
-		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj, alpha2);
-		ObjSpriteList2D_AddVertex(obj);
+		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
+		ObjRender_SetX(obj2, GetPlayerX());
+		ObjRender_SetY(obj2, GetPlayerY());
+		ObjRender_SetAngleZ(obj2, angle2);
+		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj2, alpha2);
+		ObjSpriteList2D_AddVertex(obj2);
 
-		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
-		ObjRender_SetX(obj, GetPlayerX());
-		ObjRender_SetY(obj, GetPlayerY());
-		ObjRender_SetAngleZ(obj, -angle2);
-		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj, alpha2);
-		ObjSpriteList2D_AddVertex(obj);
+		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
+		ObjRender_SetX(obj2, GetPlayerX());
+		ObjRender_SetY(obj2, GetPlayerY());
+		ObjRender_SetAngleZ(obj2, -angle2);
+		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj2, alpha2);
+		ObjSpriteList2D_AddVertex(obj2);
 	}
 }
 
