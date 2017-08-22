@@ -5,36 +5,54 @@ function wait(i) {
 	}
 }
 
+function wait_f(label, frame) {
+	let time = GetCommonData("__wait_f_" ~ label, 0);
+	if (frame < 1) {
+		time += frame;
+		if (time >= 1) {
+			time -= 1;
+			yield;
+		}
+	} else {
+		while (time < frame) {
+			time += 1;
+			yield;
+		}
+		time -= frame;
+	}
+	SetCommonData("__wait_f_" ~ label, time);
+}
+
 //Math function
 
 //Special coordinate accessors (Python)
 function GetCenterX() {
-	let calc = GetStgFrameWidth / 2;
+	let calc = GetStgFrameWidth() / 2;
 	return calc;
 }
 
 function GetCenterY() {
-	let calc = GetStgFrameHeight / 2;
+	let calc = GetStgFrameHeight() / 2;
 	return calc;
 }
 
 function GetClipMinX() {
-	let calc = GetStgFrameWidth - GetStgFrameWidth;
+	let calc = GetStgFrameWidth() - GetStgFrameWidth();
 	return calc;
 }
 
 function GetClipMaxX() {
-	let calc = GetStgFrameWidth;
+	let calc = GetStgFrameWidth();
 	return calc;
 }
 
 function GetClipMinY() {
-	let calc = GetStgFrameHeight - GetStgFrameHeight;
+	let calc = GetStgFrameHeight() - GetStgFrameHeight();
 	return calc;
 }
 
 function GetClipMaxY() {
-	let calc = GetStgFrameHeight;
+	let calc = GetStgFrameHeight();
 	return calc;
 }
 
@@ -51,13 +69,20 @@ function GetPointAngle(x1, y1, x2, y2) {
 
 //(Blargel)
 function NormalizeAngle(angle) {
+	/*
 	angle %= 360;
-
 	if (angle < 0) {
 		angle += 360;
 	}
+	*/
 
-	return angle
+	angle = (360 + (angle % 360)) % 360;
+	
+	if (angle > 180) {
+          angle -= 360;
+        }
+
+	return angle;
 }
 
 //(Blargel)
@@ -90,17 +115,17 @@ function GetLineIntersectionPoint(
 function GetLineBorderPoint(px, py, tx, ty) {
 	let ta = atan2(ty - py, tx - px);
 
-	if (ta >= atan2(GetClipMinY - py, GetClipMinX - px) && ta <= atan2(GetClipMinY - py, GetClipMaxX - px)) {
-		return [px - (GetClipMinY - py) * tan(ta + 90), GetClipMinY];
+	if (ta >= atan2(GetClipMinY() - py, GetClipMinX() - px) && ta <= atan2(GetClipMinY() - py, GetClipMaxX() - px)) {
+		return [px - (GetClipMinY() - py) * tan(ta + 90), GetClipMinY()];
 	}
-	if (ta >= atan2(GetClipMinY - py, GetClipMaxX - px) && ta <= atan2(GetClipMaxY - py, GetClipMaxX - px)) {
-		return [GetClipMaxX, py + (GetClipMaxX - px) * tan(ta)];
+	if (ta >= atan2(GetClipMinY() - py, GetClipMaxX() - px) && ta <= atan2(GetClipMaxY() - py, GetClipMaxX() - px)) {
+		return [GetClipMaxX(), py + (GetClipMaxX() - px) * tan(ta)];
 	}
-	if (ta >= atan2(GetClipMaxY - py, GetClipMaxX - px) && ta <= atan2(GetClipMaxY - py, GetClipMinX - px)) {
-		return [px - (GetClipMaxY - py) * tan(ta - 90), GetClipMaxY];
+	if (ta >= atan2(GetClipMaxY() - py, GetClipMaxX() - px) && ta <= atan2(GetClipMaxY() - py, GetClipMinX() - px)) {
+		return [px - (GetClipMaxY() - py) * tan(ta - 90), GetClipMaxY()];
 	}
-	if (ta > atan2(GetClipMaxY - py, GetClipMinX - px) || ta < atan2(GetClipMinY - py, GetClipMinX - px)) {
-		return [GetClipMinX, py + (GetClipMinX - px) * tan(ta + 180)];
+	if (ta > atan2(GetClipMaxY() - py, GetClipMinX() - px) || ta < atan2(GetClipMinY() - py, GetClipMinX() - px)) {
+		return [GetClipMinX(), py + (GetClipMinX() - px) * tan(ta + 180)];
 	}
 }
 
@@ -178,8 +203,8 @@ function ObjRender_GetAlpha(obj) {
 //Border reflectors (Python)
 task ObjMove_ReflectCeiling(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj)) {
-		if (ObjMove_GetY(obj) <= 0 && ObjMove_GetY(obj) >= -20 && count < limit) {
+	while (!Obj_IsDeleted(obj) && count < limit) {
+		if (ObjMove_GetY(obj) <= 0 && ObjMove_GetY(obj) >= -20) {
 			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj));
 			count++;
 		}
@@ -188,8 +213,8 @@ task ObjMove_ReflectCeiling(obj, limit) {
 }
 task ObjMove_ReflectBottom(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj)) {
-		if (ObjMove_GetY(obj) >= GetClipMaxY && ObjMove_GetY(obj) <= GetClipMaxY + 20 && count < limit) {
+	while (!Obj_IsDeleted(obj) && count < limmit) {
+		if (ObjMove_GetY(obj) >= GetClipMaxY && ObjMove_GetY(obj) <= GetClipMaxY + 20) {
 			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj));
 			count++;
 		}
@@ -198,13 +223,13 @@ task ObjMove_ReflectBottom(obj, limit) {
 }
 task ObjMove_ReflectWalls(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj)) {
-		if (ObjMove_GetX(obj) <= 0 && ObjMove_GetX(obj) >= -20 && count < limit) {
+	while (!Obj_IsDeleted(obj) && count < limit) {
+		if (ObjMove_GetX(obj) <= 0 && ObjMove_GetX(obj) >= -20) {
 			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj) + 180);
 			count++;
 		}
 
-		if (ObjMove_GetX(obj) >= GetClipMaxX && ObjMove_GetX(obj) <= GetClipMaxX + 20 && count < limit) {
+		if (ObjMove_GetX(obj) >= GetClipMaxX && ObjMove_GetX(obj) <= GetClipMaxX + 20) {
 			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj) + 180);
 			count++;
 		}
@@ -215,13 +240,13 @@ task ObjMove_ReflectWalls(obj, limit) {
 //Warp functions
 task ObjMove_WarpHorizontal(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj)) {
-		if (ObjMove_GetX(obj) <= -32 && count < limit) {
+	while (!Obj_IsDeleted(obj) && count < limit) {
+		if (ObjMove_GetX(obj) <= -32) {
 			ObjMove_SetX(obj, GetClipMaxX + 30);
 			count++;
 		}
 
-		if (ObjMove_GetX(obj) >= GetClipMaxX + 32 && count < limit) {
+		if (ObjMove_GetX(obj) >= GetClipMaxX + 32) {
 			ObjMove_SetX(obj, -30);
 			count++;
 		}
@@ -230,13 +255,13 @@ task ObjMove_WarpHorizontal(obj, limit) {
 }
 task ObjMove_WarpVertical(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj)) {
-		if (ObjMove_GetY(obj) <= -32 && count < limit) {
+	while (!Obj_IsDeleted(obj) && count < limit) {
+		if (ObjMove_GetY(obj) <= -32) {
 			ObjMove_SetY(obj, GetClipMaxY + 30);
 			count++;
 		}
 
-		if (ObjMove_GetY(obj) >= GetClipMaxY + 32 && count < limit) {
+		if (ObjMove_GetY(obj) >= GetClipMaxY + 32) {
 			ObjMove_SetY(obj, -30);
 			count++;
 		}
@@ -317,13 +342,13 @@ task ScreenShakeA1(shaketime, intensity) {
 	let x = Get2DCameraX;
 	let y = Get2DCameraY;
 	while (shaketime > 0) {
-		Set2DCameraFocusX(GetStgFrameWidth / 2 + rand(-intensity, intensity));
-		Set2DCameraFocusY(GetStgFrameHeight / 2 + rand(-intensity, intensity));
+		Set2DCameraFocusX(GetStgFrameWidth() / 2 + rand(-intensity, intensity));
+		Set2DCameraFocusY(GetStgFrameHeight() / 2 + rand(-intensity, intensity));
 		shaketime--;
 		yield;
 	}
-	Set2DCameraFocusX(GetStgFrameWidth / 2);
-	Set2DCameraFocusY(GetStgFrameHeight / 2);
+	Set2DCameraFocusX(GetStgFrameWidth() / 2);
+	Set2DCameraFocusY(GetStgFrameHeight() / 2);
 	yield;
 }
 
