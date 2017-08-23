@@ -1,4 +1,5 @@
 let FAIRY_STREAM = 1;
+let FAIRY_RAINCIRCLE = 2;
 task StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
 	if(bossActive){return;}
 	let enemy = ObjEnemy_Create(OBJ_ENEMY);
@@ -7,6 +8,7 @@ task StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
 	StageEnemyHitbox(enemy,shotHitbox,playerHitbox,health,type);
 	alternative(type)
 		case(FAIRY_STREAM){StreamFairyBehavior(enemy,extra);} //[xdest,ydest,color]
+		case(FAIRY_RAINCIRCLE){RainFairyBehavior(enemy,extra);} //[xdest,ydest]
 
 }
 
@@ -41,6 +43,47 @@ task StreamFairyBehavior(enemy,extra){
 	Obj_Delete(enemy);
 }
 
+task RainFairyBehavior(enemy,extra){
+	AnimateSmallFairy(enemy,0);
+	ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+	if(extra[0] > ObjMove_GetX(enemy)){Obj_SetValue(enemy,"Anim",4);}
+	else{Obj_SetValue(enemy,"Anim",3);}
+	wait(60);
+	Obj_SetValue(enemy,"Anim",0);
+	wait(40);
+	ascent(i in 0..5){
+		if(Obj_IsDeleted(enemy)){break;}
+		let n = rand(0,90);
+		let a = GetAngleToPlayer(enemy);
+		ascent(j in 0..4){
+			let shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),2+i/2,n+j*90,-0.1,0,BALL_BLUE,5);
+			RainTransform(shot,a,j);
+		}
+		wait(60);
+	}
+	wait(120);
+	ObjMove_SetAngle(enemy,270);
+	ObjMove_SetAcceleration(enemy,0.05);
+	ObjMove_SetMaxSpeed(enemy,3);
+	wait(240);
+	Obj_Delete(enemy);
+
+	task RainTransform(shot,angle,delay){
+		wait(rand(30,40));
+		if(Obj_IsDeleted(shot)){return;}
+		let rain = SPShotA2(ObjMove_GetX(shot),ObjMove_GetY(shot),2,angle,0.1,4,DROP_BLUE,10);
+		ObjMove_AddPatternB2(rain,0,NO_CHANGE,NO_CHANGE,0,0.05,0,5);
+
+		//Could use this later
+		//let dir = floor((((ObjMove_GetAngle(shot))+90)%360)/180)*2-1;
+		//ObjMove_AddPatternB2(rain,10,NO_CHANGE,NO_CHANGE,0.05*dir,0.2,rand(-0.5,0.5),4);
+		
+		descent(i in 0..10){
+			ObjRender_SetAlpha(shot,i*25);
+		}
+		Obj_Delete(shot);
+	}
+}
 
 
 //Keeping this because I have yet to update the rainfall fairy

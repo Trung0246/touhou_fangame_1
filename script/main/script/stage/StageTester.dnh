@@ -1,0 +1,35 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["The stage tester"]
+#Text["Debug script magic go!!"]
+#System["script/main/script/system/Gui.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
+#Background["script/main/script/stage/1/background/Background.dnh"]
+
+//#include "script/main/script/system/Init.dnh"
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/system/Init.dnh"
+
+@Initialize {
+	Base_Init;
+	Maingame_Init;
+	SetCommonData("player_power", 1.00);
+	let stage = LoadScript("script/main/script/stage/1/Stage.dnh");
+	StartScript(stage);
+
+	//Normalize player power
+	let objPlayer = GetPlayerObjectID();
+	CreateItemU1(7,ObjMove_GetX(objPlayer),ObjMove_GetY(objPlayer),0);
+}
+
+@MainLoop {
+	yield;
+}
+ 
+@Finalize {
+	
+}
+
+@Event{
+}

@@ -176,6 +176,12 @@ task CheckBossActive(script){
 	bossActive = false;
 }
 
+function stageWait(n){
+	wait(n);
+	SetCommonData("StageWaitTime",GetCommonData("StageWaitTime",0)+n);
+	WriteLog("Total stage time: " ~ itoa(GetCommonData("StageWaitTime",0)));
+}
+
 //To be called at the start of every stage because there's no way to do this more efficiently for some reason???
 function Stage_Init() {
 	StartShotScript("script/main/script/system/Shot.dnh");

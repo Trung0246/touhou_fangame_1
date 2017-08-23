@@ -280,24 +280,13 @@ task DisplayTitle{
 			Obj_SetRenderPriorityI(option,23);
 			ObjSprite2D_SetSourceRect(option,0,selected*57,300,(selected+1)*57);
 			ObjSprite2D_SetDestRect(option,80,-14,210,14);
-			Flash;
+			OptionSelectFlash(option);
 			let offset = position*45;
 			loop(30){
 				ObjRender_SetAngleZ(option,offset+ObjRender_GetAngleZ(objWheel));
 				yield;
 			}
 			Obj_Delete(option);
-			
-			
-			
-			task Flash{
-				loop(5){
-					ObjRender_SetColor(option,128,128,128);
-					wait(3);
-					ObjRender_SetColor(option,256,256,256);
-					wait(3);
-				}
-			}
 		}
 	}
 
@@ -352,15 +341,6 @@ task DisplayTitle{
 			}
 
 			//Actual actions
-			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
-				PlaySFX(SFX_MENUOK);
-				destAngle = origAngle;
-				position = origPosition;
-				currMenu = OPTION_PLAYERSELECT;
-				PlayerSelectMenu(selected,options[selected]);
-				options = erase(options,selected);
-				DeleteOptions;
-			}
 			if (GetVirtualKeyState(VK_CANCEL) == KEY_PUSH) {
 				destAngle = origAngle;
 				position = origPosition;
@@ -369,6 +349,16 @@ task DisplayTitle{
 				prevMenu = OPTION_STARTGAME;
 				fadeWheel;
 				MainMenu;
+			}
+			if (GetVirtualKeyState(VK_OK) == KEY_PUSH) {
+				PlaySFX(SFX_MENUOK);
+				destAngle = origAngle;
+				position = origPosition;
+				currMenu = OPTION_PLAYERSELECT;
+				PlayerSelectMenu(selected,options[selected]);
+				options[selected] = ObjPrim_Create(OBJ_SPRITE_2D); //Fun with dummy objects
+				SetAreaCommonData("GameState","Difficulty",selected);
+				DeleteOptions;
 			}
 			yield;
 		}
@@ -545,8 +535,9 @@ task DisplayTitle{
 		MakePortraits;
 
 		let option;
-		MoveToBottom(diffObj);
+		OptionSelectFlash(diffObj);
 		wait(30);
+		MoveToBottom(diffObj);
 
 		SelectOption;
 		MenuHeader;
@@ -618,12 +609,6 @@ task DisplayTitle{
 		}
 
 		task MoveToBottom(obj){
-			loop(5){
-				ObjRender_SetColor(obj,128,128,128);
-				wait(3);
-				ObjRender_SetColor(obj,256,256,256);
-				wait(3);
-			}
 			let pos = ObjRender_GetY(obj);
 			let movement = (430-pos)/20;
 			ascent(i in 0..21){
@@ -1105,6 +1090,15 @@ task DisplayTitle{
 			yield;
 		}
 		Obj_Delete(header);
+	}
+
+	task OptionSelectFlash(obj){
+		loop(5){
+			ObjRender_SetColor(obj,128,128,128);
+			wait(3);
+			ObjRender_SetColor(obj,256,256,256);
+			wait(3);
+		}
 	}
 
 	task SpawnBubbles{

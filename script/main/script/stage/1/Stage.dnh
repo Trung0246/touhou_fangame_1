@@ -39,7 +39,20 @@
 				CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 				CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 			}
-			CreateShotRaindrop(arg[1],arg[2],0,0,0,0.01,0,1,RAINDROP_RED,0);
+			let dir = (floor(arg[1]/192)%2)*2-1;
+			ascent(i in -1..2){
+				CreateShotRaindrop(arg[1],arg[2],(-3-i/2)*dir,-2-i,0.05*dir,0.05,0,2,RAINDROP_RED+absolute(i),0);
+			}
+		}
+		case(FAIRY_RAINCIRCLE){
+			loop(2){
+				CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			}
+			ascent(i in 0..2){
+				let dir = i*2-1;
+				CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
+			}
 		}
 	}
 }
@@ -48,17 +61,37 @@ task Stage_Main() {
 	//Init boss scripts
 	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/Plural.dnh");
 
+	SetCommonData("StageWaitTime",0);
 	//Stage content
 	wait(60);
 	NotifyEventAll(EV_BGM_PLAY,2);
+	//Opening wave
 	ascent(i in 0..3){
 		ascent(j in 0..2){
 			StageEnemy(100+j*184,-50,FAIRY_STREAM,16,12,100,[284-j*184,100+i*32,i%2+2]);
 		}
-		wait(10);
+		stageWait(10);
 	}
-	wait(360);
+	stageWait(360);
 	StageTitle(1);
+	stageWait(300);
+	//StageEnemy(212,-100,FAIRY_RAINCIRCLE,16,12,100,[192,100]);
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,50,[192-i*120,60-absolute(i)*10]);
+	}
+	stageWait(180);
+	ascent(i in -2..3){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,50,[192-i*80,100-absolute(i)*10]);
+	}
+	stageWait(180);
+	ascent(i in -3..4){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,50,[192-i*60,140-absolute(i)*10]);
+	}
+	stageWait(180);
+	ascent(i in -4..5){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,50,[192-i*40,180-absolute(i)*10]);
+	}
+	wait(600);
 
 	StartScript(midboss);
 	CheckBossActive(midboss);
