@@ -1,446 +1,432 @@
 #UserShotData
-shot_image = "./shots.png"
+shot_image = "./img/shots.png"
 
 //Dots
-ShotData{	id = 1	rect = (0, 0, 7, 7)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 2	rect = (8, 0, 15, 7)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 3	rect = (16, 0, 23, 7)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 4	rect = (24, 0, 31, 7)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 5	rect = (32, 0, 39, 7)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 6	rect = (40, 0, 47, 7)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 7	rect = (48, 0, 55, 7)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 8	rect = (56, 0, 63, 7)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 9	rect = (64, 0, 71, 7)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 10	rect = (72, 0, 79, 7)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 11	rect = (80, 0, 87, 7)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 12	rect = (88, 0, 95, 7)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 13	rect = (96, 0, 103, 7)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 14	rect = (104, 0, 111, 7)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 15	rect = (112, 0, 119, 7)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 16	rect = (120, 0, 127, 7)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 1	rect = (0, 0, 7, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Red
+ShotData{	id = 2	rect = (8, 0, 15, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Magenta
+ShotData{	id = 3	rect = (16, 0, 23, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Blue
+ShotData{	id = 4	rect = (24, 0, 31, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Cyan
+ShotData{	id = 5	rect = (32, 0, 39, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Green
+ShotData{	id = 6	rect = (40, 0, 47, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Yellow
+ShotData{	id = 7	rect = (48, 0, 55, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Orange
+ShotData{	id = 8	rect = (56, 0, 63, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Grey
 
 //Dark Dots
-ShotData{	id = 17	rect = (0, 8, 7, 15)	angular_velocity = 8	collision = 2	}	//Red
-ShotData{	id = 18	rect = (8, 8, 15, 15)	angular_velocity = 8	collision = 2	}	//Magenta
-ShotData{	id = 19	rect = (16, 8, 23, 15)	angular_velocity = 8	collision = 2	}	//Blue
-ShotData{	id = 20	rect = (24, 8, 31, 15)	angular_velocity = 8	collision = 2	}	//Cyan
-ShotData{	id = 21	rect = (32, 8, 39, 15)	angular_velocity = 8	collision = 2	}	//Green
-ShotData{	id = 22	rect = (40, 8, 47, 15)	angular_velocity = 8	collision = 2	}	//Yellow
-ShotData{	id = 23	rect = (48, 8, 55, 15)	angular_velocity = 8	collision = 2	}	//Orange
-ShotData{	id = 24	rect = (56, 8, 63, 15)	angular_velocity = 8	collision = 2	}	//Grey
-ShotData{	id = 25	rect = (64, 8, 71, 15)	angular_velocity = 8	collision = 2	}	//Dark Red
-ShotData{	id = 26	rect = (72, 8, 79, 15)	angular_velocity = 8	collision = 2	}	//Dark Magenta
-ShotData{	id = 27	rect = (80, 8, 87, 15)	angular_velocity = 8	collision = 2	}	//Dark Blue
-ShotData{	id = 28	rect = (88, 8, 95, 15)	angular_velocity = 8	collision = 2	}	//Dark Cyan
-ShotData{	id = 29	rect = (96, 8, 103, 15)	angular_velocity = 8	collision = 2	}	//Dark Green
-ShotData{	id = 30	rect = (104, 8, 111, 15)	angular_velocity = 8	collision = 2	}	//Dark Yellow
-ShotData{	id = 31	rect = (112, 8, 119, 15)	angular_velocity = 8	collision = 2	}	//Dark Orange
-ShotData{	id = 32	rect = (120, 8, 127, 15)	angular_velocity = 8	collision = 2	}	//Dark Grey
+ShotData{	id = 9	rect = (0, 8, 7, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Red
+ShotData{	id = 10	rect = (8, 8, 15, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Magenta
+ShotData{	id = 11	rect = (16, 8, 23, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Blue
+ShotData{	id = 12	rect = (24, 8, 31, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Cyan
+ShotData{	id = 13	rect = (32, 8, 39, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Green
+ShotData{	id = 14	rect = (40, 8, 47, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Yellow
+ShotData{	id = 15	rect = (48, 8, 55, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Orange
+ShotData{	id = 16	rect = (56, 8, 63, 15)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Grey
 
 //Balls
-ShotData{	id = 33	rect = (0, 16, 15, 31)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 34	rect = (16, 16, 31, 31)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 35	rect = (32, 16, 47, 31)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 36	rect = (48, 16, 63, 31)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 37	rect = (64, 16, 79, 31)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 38	rect = (80, 16, 95, 31)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 39	rect = (96, 16, 111, 31)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 40	rect = (112, 16, 127, 31)	angular_velocity = 0	collision = 4	}	//Grey
-ShotData{	id = 41	rect = (128, 16, 143, 31)	angular_velocity = 0	collision = 4	}	//Dark Red
-ShotData{	id = 42	rect = (144, 16, 159, 31)	angular_velocity = 0	collision = 4	}	//Dark Magenta
-ShotData{	id = 43	rect = (160, 16, 175, 31)	angular_velocity = 0	collision = 4	}	//Dark Blue
-ShotData{	id = 44	rect = (176, 16, 191, 31)	angular_velocity = 0	collision = 4	}	//Dark Cyan
-ShotData{	id = 45	rect = (192, 16, 207, 31)	angular_velocity = 0	collision = 4	}	//Dark Green
-ShotData{	id = 46	rect = (208, 16, 223, 31)	angular_velocity = 0	collision = 4	}	//Dark Yellow
-ShotData{	id = 47	rect = (224, 16, 239, 31)	angular_velocity = 0	collision = 4	}	//Dark Orange
-ShotData{	id = 48	rect = (240, 16, 255, 31)	angular_velocity = 0	collision = 4	}	//Dark Grey
+ShotData{	id = 17	rect = (0, 16, 15, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Red
+ShotData{	id = 18	rect = (16, 16, 31, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Magenta
+ShotData{	id = 19	rect = (32, 16, 47, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Blue
+ShotData{	id = 20	rect = (48, 16, 63, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Cyan
+ShotData{	id = 21	rect = (64, 16, 79, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Green
+ShotData{	id = 22	rect = (80, 16, 95, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Yellow
+ShotData{	id = 23	rect = (96, 16, 111, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Orange
+ShotData{	id = 24	rect = (112, 16, 127, 31)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Grey
 
 //Ringed Balls
-ShotData{	id = 49	rect = (0, 32, 15, 47)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 50	rect = (16, 32, 31, 47)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 51	rect = (32, 32, 47, 47)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 52	rect = (48, 32, 63, 47)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 53	rect = (64, 32, 79, 47)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 54	rect = (80, 32, 95, 47)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 55	rect = (96, 32, 111, 47)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 56	rect = (112, 32, 127, 47)	angular_velocity = 0	collision = 4	}	//Grey
-ShotData{	id = 57	rect = (128, 32, 143, 47)	angular_velocity = 0	collision = 4	}	//Dark Red
-ShotData{	id = 58	rect = (144, 32, 159, 47)	angular_velocity = 0	collision = 4	}	//Dark Magenta
-ShotData{	id = 59	rect = (160, 32, 175, 47)	angular_velocity = 0	collision = 4	}	//Dark Blue
-ShotData{	id = 60	rect = (176, 32, 191, 47)	angular_velocity = 0	collision = 4	}	//Dark Cyan
-ShotData{	id = 61	rect = (192, 32, 207, 47)	angular_velocity = 0	collision = 4	}	//Dark Green
-ShotData{	id = 62	rect = (208, 32, 223, 47)	angular_velocity = 0	collision = 4	}	//Dark Yellow
-ShotData{	id = 63	rect = (224, 32, 239, 47)	angular_velocity = 0	collision = 4	}	//Dark Orange
-ShotData{	id = 64	rect = (240, 32, 255, 47)	angular_velocity = 0	collision = 4	}	//Dark Grey
+ShotData{	id = 25	rect = (0, 32, 15, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Red
+ShotData{	id = 26	rect = (16, 32, 31, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Magenta
+ShotData{	id = 27	rect = (32, 32, 47, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Blue
+ShotData{	id = 28	rect = (48, 32, 63, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Cyan
+ShotData{	id = 29	rect = (64, 32, 79, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Green
+ShotData{	id = 30	rect = (80, 32, 95, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Yellow
+ShotData{	id = 31	rect = (96, 32, 111, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Orange
+ShotData{	id = 32	rect = (112, 32, 127, 47)	angular_velocity = 0	collision = 4	fixed_angle = true	}	//Grey
 
 //Rice
-ShotData{	id = 65	rect = (0, 48, 15, 63)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 66	rect = (16, 48, 31, 63)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 67	rect = (32, 48, 47, 63)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 68	rect = (48, 48, 63, 63)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 69	rect = (64, 48, 79, 63)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 70	rect = (80, 48, 95, 63)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 71	rect = (96, 48, 111, 63)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 72	rect = (112, 48, 127, 63)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 73	rect = (128, 48, 143, 63)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 74	rect = (144, 48, 159, 63)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 75	rect = (160, 48, 175, 63)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 76	rect = (176, 48, 191, 63)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 77	rect = (192, 48, 207, 63)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 78	rect = (208, 48, 223, 63)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 79	rect = (224, 48, 239, 63)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 80	rect = (240, 48, 255, 63)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 33	rect = (0, 48, 15, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 34	rect = (16, 48, 31, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 35	rect = (32, 48, 47, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 36	rect = (48, 48, 63, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 37	rect = (64, 48, 79, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 38	rect = (80, 48, 95, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 39	rect = (96, 48, 111, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 40	rect = (112, 48, 127, 63)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Dark Rice
-ShotData{	id = 81	rect = (0, 64, 15, 79)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 82	rect = (16, 64, 31, 79)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 83	rect = (32, 64, 47, 79)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 84	rect = (48, 64, 63, 79)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 85	rect = (64, 64, 79, 79)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 86	rect = (80, 64, 95, 79)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 87	rect = (96, 64, 111, 79)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 88	rect = (112, 64, 127, 79)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 89	rect = (128, 64, 143, 79)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 90	rect = (144, 64, 159, 79)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 91	rect = (160, 64, 175, 79)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 92	rect = (176, 64, 191, 79)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 93	rect = (192, 64, 207, 79)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 94	rect = (208, 64, 223, 79)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 95	rect = (224, 64, 239, 79)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 96	rect = (240, 64, 255, 79)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 41	rect = (0, 64, 15, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 42	rect = (16, 64, 31, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 43	rect = (32, 64, 47, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 44	rect = (48, 64, 63, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 45	rect = (64, 64, 79, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 46	rect = (80, 64, 95, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 47	rect = (96, 64, 111, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 48	rect = (112, 64, 127, 79)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Scales
-ShotData{	id = 97	rect = (0, 80, 15, 95)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 98	rect = (16, 80, 31, 95)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 99	rect = (32, 80, 47, 95)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 100	rect = (48, 80, 63, 95)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 101	rect = (64, 80, 79, 95)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 102	rect = (80, 80, 95, 95)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 103	rect = (96, 80, 111, 95)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 104	rect = (112, 80, 127, 95)	angular_velocity = 0	collision = 4	}	//Grey
-ShotData{	id = 105	rect = (128, 80, 143, 95)	angular_velocity = 0	collision = 4	}	//Dark Red
-ShotData{	id = 106	rect = (144, 80, 159, 95)	angular_velocity = 0	collision = 4	}	//Dark Magenta
-ShotData{	id = 107	rect = (160, 80, 175, 95)	angular_velocity = 0	collision = 4	}	//Dark Blue
-ShotData{	id = 108	rect = (176, 80, 191, 95)	angular_velocity = 0	collision = 4	}	//Dark Cyan
-ShotData{	id = 109	rect = (192, 80, 207, 95)	angular_velocity = 0	collision = 4	}	//Dark Green
-ShotData{	id = 110	rect = (208, 80, 223, 95)	angular_velocity = 0	collision = 4	}	//Dark Yellow
-ShotData{	id = 111	rect = (224, 80, 239, 95)	angular_velocity = 0	collision = 4	}	//Dark Orange
-ShotData{	id = 112	rect = (240, 80, 255, 95)	angular_velocity = 0	collision = 4	}	//Dark Grey
+ShotData{	id = 49	rect = (0, 80, 15, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 50	rect = (16, 80, 31, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 51	rect = (32, 80, 47, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 52	rect = (48, 80, 63, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 53	rect = (64, 80, 79, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 54	rect = (80, 80, 95, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 55	rect = (96, 80, 111, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 56	rect = (112, 80, 127, 95)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Kunai
-ShotData{	id = 113	rect = (0, 96, 15, 111)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 114	rect = (16, 96, 31, 111)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 115	rect = (32, 96, 47, 111)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 116	rect = (48, 96, 63, 111)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 117	rect = (64, 96, 79, 111)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 118	rect = (80, 96, 95, 111)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 119	rect = (96, 96, 111, 111)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 120	rect = (112, 96, 127, 111)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 121	rect = (128, 96, 143, 111)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 122	rect = (144, 96, 159, 111)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 123	rect = (160, 96, 175, 111)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 124	rect = (176, 96, 191, 111)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 125	rect = (192, 96, 207, 111)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 126	rect = (208, 96, 223, 111)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 127	rect = (224, 96, 239, 111)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 128	rect = (240, 96, 255, 111)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 57	rect = (0, 96, 15, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 58	rect = (16, 96, 31, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 59	rect = (32, 96, 47, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 60	rect = (48, 96, 63, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 61	rect = (64, 96, 79, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 62	rect = (80, 96, 95, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 63	rect = (96, 96, 111, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 64	rect = (112, 96, 127, 111)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Icicles
-ShotData{	id = 129	rect = (0, 112, 15, 127)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 130	rect = (16, 112, 31, 127)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 131	rect = (32, 112, 47, 127)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 132	rect = (48, 112, 63, 127)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 133	rect = (64, 112, 79, 127)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 134	rect = (80, 112, 95, 127)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 135	rect = (96, 112, 111, 127)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 136	rect = (112, 112, 127, 127)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 137	rect = (128, 112, 143, 127)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 138	rect = (144, 112, 159, 127)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 139	rect = (160, 112, 175, 127)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 140	rect = (176, 112, 191, 127)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 141	rect = (192, 112, 207, 127)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 142	rect = (208, 112, 223, 127)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 143	rect = (224, 112, 239, 127)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 144	rect = (240, 112, 255, 127)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 65	rect = (0, 112, 15, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 66	rect = (16, 112, 31, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 67	rect = (32, 112, 47, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 68	rect = (48, 112, 63, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 69	rect = (64, 112, 79, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 70	rect = (80, 112, 95, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 71	rect = (96, 112, 111, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 72	rect = (112, 112, 127, 127)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Missiles
-ShotData{	id = 145	rect = (0, 128, 15, 143)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 146	rect = (16, 128, 31, 143)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 147	rect = (32, 128, 47, 143)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 148	rect = (48, 128, 63, 143)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 149	rect = (64, 128, 79, 143)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 150	rect = (80, 128, 95, 143)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 151	rect = (96, 128, 111, 143)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 152	rect = (112, 128, 127, 143)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 153	rect = (128, 128, 143, 143)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 154	rect = (144, 128, 159, 143)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 155	rect = (160, 128, 175, 143)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 156	rect = (176, 128, 191, 143)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 157	rect = (192, 128, 207, 143)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 158	rect = (208, 128, 223, 143)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 159	rect = (224, 128, 239, 143)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 160	rect = (240, 128, 255, 143)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 73	rect = (0, 128, 15, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 74	rect = (16, 128, 31, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 75	rect = (32, 128, 47, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 76	rect = (48, 128, 63, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 77	rect = (64, 128, 79, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 78	rect = (80, 128, 95, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 79	rect = (96, 128, 111, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 80	rect = (112, 128, 127, 143)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Amulets
-ShotData{	id = 161	rect = (0, 144, 15, 159)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 162	rect = (16, 144, 31, 159)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 163	rect = (32, 144, 47, 159)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 164	rect = (48, 144, 63, 159)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 165	rect = (64, 144, 79, 159)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 166	rect = (80, 144, 95, 159)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 167	rect = (96, 144, 111, 159)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 168	rect = (112, 144, 127, 159)	angular_velocity = 0	collision = 4	}	//Grey
-ShotData{	id = 169	rect = (128, 144, 143, 159)	angular_velocity = 0	collision = 4	}	//Dark Red
-ShotData{	id = 170	rect = (144, 144, 159, 159)	angular_velocity = 0	collision = 4	}	//Dark Magenta
-ShotData{	id = 171	rect = (160, 144, 175, 159)	angular_velocity = 0	collision = 4	}	//Dark Blue
-ShotData{	id = 172	rect = (176, 144, 191, 159)	angular_velocity = 0	collision = 4	}	//Dark Cyan
-ShotData{	id = 173	rect = (192, 144, 207, 159)	angular_velocity = 0	collision = 4	}	//Dark Green
-ShotData{	id = 174	rect = (208, 144, 223, 159)	angular_velocity = 0	collision = 4	}	//Dark Yellow
-ShotData{	id = 175	rect = (224, 144, 239, 159)	angular_velocity = 0	collision = 4	}	//Dark Orange
-ShotData{	id = 176	rect = (240, 144, 255, 159)	angular_velocity = 0	collision = 4	}	//Dark Grey
+ShotData{	id = 81	rect = (0, 144, 15, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Red
+ShotData{	id = 82	rect = (16, 144, 31, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Magenta
+ShotData{	id = 83	rect = (32, 144, 47, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Blue
+ShotData{	id = 84	rect = (48, 144, 63, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Cyan
+ShotData{	id = 85	rect = (64, 144, 79, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Green
+ShotData{	id = 86	rect = (80, 144, 95, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Yellow
+ShotData{	id = 87	rect = (96, 144, 111, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Orange
+ShotData{	id = 88	rect = (112, 144, 127, 159)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Grey
 
 //Droplets
-ShotData{	id = 177	rect = (0, 160, 15, 175)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 178	rect = (16, 160, 31, 175)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 179	rect = (32, 160, 47, 175)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 180	rect = (48, 160, 63, 175)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 181	rect = (64, 160, 79, 175)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 182	rect = (80, 160, 95, 175)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 183	rect = (96, 160, 111, 175)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 184	rect = (112, 160, 127, 175)	angular_velocity = 0	collision = 2	}	//Grey
-ShotData{	id = 185	rect = (128, 160, 143, 175)	angular_velocity = 0	collision = 2	}	//Dark Red
-ShotData{	id = 186	rect = (144, 160, 159, 175)	angular_velocity = 0	collision = 2	}	//Dark Magenta
-ShotData{	id = 187	rect = (160, 160, 175, 175)	angular_velocity = 0	collision = 2	}	//Dark Blue
-ShotData{	id = 188	rect = (176, 160, 191, 175)	angular_velocity = 0	collision = 2	}	//Dark Cyan
-ShotData{	id = 189	rect = (192, 160, 207, 175)	angular_velocity = 0	collision = 2	}	//Dark Green
-ShotData{	id = 190	rect = (208, 160, 223, 175)	angular_velocity = 0	collision = 2	}	//Dark Yellow
-ShotData{	id = 191	rect = (224, 160, 239, 175)	angular_velocity = 0	collision = 2	}	//Dark Orange
-ShotData{	id = 192	rect = (240, 160, 255, 175)	angular_velocity = 0	collision = 2	}	//Dark Grey
+ShotData{	id = 89	rect = (0, 160, 15, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 90	rect = (16, 160, 31, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 91	rect = (32, 160, 47, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 92	rect = (48, 160, 63, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 93	rect = (64, 160, 79, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 94	rect = (80, 160, 95, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 95	rect = (96, 160, 111, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 96	rect = (112, 160, 127, 175)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Stars
-ShotData{	id = 193	rect = (0, 176, 15, 191)	angular_velocity = 8	collision = 2	}	//Red
-ShotData{	id = 194	rect = (16, 176, 31, 191)	angular_velocity = 8	collision = 2	}	//Magenta
-ShotData{	id = 195	rect = (32, 176, 47, 191)	angular_velocity = 8	collision = 2	}	//Blue
-ShotData{	id = 196	rect = (48, 176, 63, 191)	angular_velocity = 8	collision = 2	}	//Cyan
-ShotData{	id = 197	rect = (64, 176, 79, 191)	angular_velocity = 8	collision = 2	}	//Green
-ShotData{	id = 198	rect = (80, 176, 95, 191)	angular_velocity = 8	collision = 2	}	//Yellow
-ShotData{	id = 199	rect = (96, 176, 111, 191)	angular_velocity = 8	collision = 2	}	//Orange
-ShotData{	id = 200	rect = (112, 176, 127, 191)	angular_velocity = 8	collision = 2	}	//Grey
-ShotData{	id = 201	rect = (128, 176, 143, 191)	angular_velocity = 8	collision = 2	}	//Dark Red
-ShotData{	id = 202	rect = (144, 176, 159, 191)	angular_velocity = 8	collision = 2	}	//Dark Magenta
-ShotData{	id = 203	rect = (160, 176, 175, 191)	angular_velocity = 8	collision = 2	}	//Dark Blue
-ShotData{	id = 204	rect = (176, 176, 191, 191)	angular_velocity = 8	collision = 2	}	//Dark Cyan
-ShotData{	id = 205	rect = (192, 176, 207, 191)	angular_velocity = 8	collision = 2	}	//Dark Green
-ShotData{	id = 206	rect = (208, 176, 223, 191)	angular_velocity = 8	collision = 2	}	//Dark Yellow
-ShotData{	id = 207	rect = (224, 176, 239, 191)	angular_velocity = 8	collision = 2	}	//Dark Orange
-ShotData{	id = 208	rect = (240, 176, 255, 191)	angular_velocity = 8	collision = 2	}	//Dark Grey
+ShotData{	id = 97	rect = (0, 176, 15, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Red
+ShotData{	id = 98	rect = (16, 176, 31, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Magenta
+ShotData{	id = 99	rect = (32, 176, 47, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Blue
+ShotData{	id = 100	rect = (48, 176, 63, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Cyan
+ShotData{	id = 101	rect = (64, 176, 79, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Green
+ShotData{	id = 102	rect = (80, 176, 95, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Yellow
+ShotData{	id = 103	rect = (96, 176, 111, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Orange
+ShotData{	id = 104	rect = (112, 176, 127, 191)	angular_velocity = 8	collision = 2	fixed_angle = true	}	//Grey
 
 //Coins
-ShotData{	id = 209	rect = (0, 192, 15, 207)	angular_velocity = 8	collision = 4	}	//Red
-ShotData{	id = 210	rect = (16, 192, 31, 207)	angular_velocity = 8	collision = 4	}	//Magenta
-ShotData{	id = 211	rect = (32, 192, 47, 207)	angular_velocity = 8	collision = 4	}	//Blue
-ShotData{	id = 212	rect = (48, 192, 63, 207)	angular_velocity = 8	collision = 4	}	//Cyan
-ShotData{	id = 213	rect = (64, 192, 79, 207)	angular_velocity = 8	collision = 4	}	//Green
-ShotData{	id = 214	rect = (80, 192, 95, 207)	angular_velocity = 8	collision = 4	}	//Yellow
-ShotData{	id = 215	rect = (96, 192, 111, 207)	angular_velocity = 8	collision = 4	}	//Orange
-ShotData{	id = 216	rect = (112, 192, 127, 207)	angular_velocity = 8	collision = 4	}	//Grey
-ShotData{	id = 217	rect = (128, 192, 143, 207)	angular_velocity = 8	collision = 4	}	//Dark Red
-ShotData{	id = 218	rect = (144, 192, 159, 207)	angular_velocity = 8	collision = 4	}	//Dark Magenta
-ShotData{	id = 219	rect = (160, 192, 175, 207)	angular_velocity = 8	collision = 4	}	//Dark Blue
-ShotData{	id = 220	rect = (176, 192, 191, 207)	angular_velocity = 8	collision = 4	}	//Dark Cyan
-ShotData{	id = 221	rect = (192, 192, 207, 207)	angular_velocity = 8	collision = 4	}	//Dark Green
-ShotData{	id = 222	rect = (208, 192, 223, 207)	angular_velocity = 8	collision = 4	}	//Dark Yellow
-ShotData{	id = 223	rect = (224, 192, 239, 207)	angular_velocity = 8	collision = 4	}	//Dark Orange
-ShotData{	id = 224	rect = (240, 192, 255, 207)	angular_velocity = 8	collision = 4	}	//Dark Grey
+ShotData{	id = 105	rect = (0, 192, 15, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Red
+ShotData{	id = 106	rect = (16, 192, 31, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Magenta
+ShotData{	id = 107	rect = (32, 192, 47, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Blue
+ShotData{	id = 108	rect = (48, 192, 63, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Cyan
+ShotData{	id = 109	rect = (64, 192, 79, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Green
+ShotData{	id = 110	rect = (80, 192, 95, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Yellow
+ShotData{	id = 111	rect = (96, 192, 111, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Orange
+ShotData{	id = 112	rect = (112, 192, 127, 207)	angular_velocity = 8	collision = 4	fixed_angle = true	}	//Grey
 
 //Big Balls
-ShotData{	id = 225	rect = (0, 208, 31, 239)	angular_velocity = 0	collision = 8	}	//Red
-ShotData{	id = 226	rect = (32, 208, 63, 239)	angular_velocity = 0	collision = 8	}	//Magenta
-ShotData{	id = 227	rect = (64, 208, 95, 239)	angular_velocity = 0	collision = 8	}	//Blue
-ShotData{	id = 228	rect = (96, 208, 127, 239)	angular_velocity = 0	collision = 8	}	//Cyan
-ShotData{	id = 229	rect = (128, 208, 159, 239)	angular_velocity = 0	collision = 8	}	//Green
-ShotData{	id = 230	rect = (160, 208, 191, 239)	angular_velocity = 0	collision = 8	}	//Yellow
-ShotData{	id = 231	rect = (192, 208, 223, 239)	angular_velocity = 0	collision = 8	}	//Orange
-ShotData{	id = 232	rect = (224, 208, 255, 239)	angular_velocity = 0	collision = 8	}	//Grey
+ShotData{	id = 113	rect = (0, 208, 31, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Red
+ShotData{	id = 114	rect = (32, 208, 63, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Magenta
+ShotData{	id = 115	rect = (64, 208, 95, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Blue
+ShotData{	id = 116	rect = (96, 208, 127, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Cyan
+ShotData{	id = 117	rect = (128, 208, 159, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Green
+ShotData{	id = 118	rect = (160, 208, 191, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Yellow
+ShotData{	id = 119	rect = (192, 208, 223, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Orange
+ShotData{	id = 120	rect = (224, 208, 255, 239)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Grey
 
 //Big Rice
-ShotData{	id = 233	rect = (0, 240, 31, 271)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 234	rect = (32, 240, 63, 271)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 235	rect = (64, 240, 95, 271)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 236	rect = (96, 240, 127, 271)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 237	rect = (128, 240, 159, 271)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 238	rect = (160, 240, 191, 271)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 239	rect = (192, 240, 223, 271)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 240	rect = (224, 240, 255, 271)	angular_velocity = 0	collision = 4	}	//Grey
+ShotData{	id = 121	rect = (0, 240, 31, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Red
+ShotData{	id = 122	rect = (32, 240, 63, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Magenta
+ShotData{	id = 123	rect = (64, 240, 95, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Blue
+ShotData{	id = 124	rect = (96, 240, 127, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Cyan
+ShotData{	id = 125	rect = (128, 240, 159, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Green
+ShotData{	id = 126	rect = (160, 240, 191, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Yellow
+ShotData{	id = 127	rect = (192, 240, 223, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Orange
+ShotData{	id = 128	rect = (224, 240, 255, 271)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Grey
 
 //Butterflies
-ShotData{	id = 241	rect = (0, 272, 31, 303)	angular_velocity = 0	collision = 4	}	//Red
-ShotData{	id = 242	rect = (32, 272, 63, 303)	angular_velocity = 0	collision = 4	}	//Magenta
-ShotData{	id = 243	rect = (64, 272, 95, 303)	angular_velocity = 0	collision = 4	}	//Blue
-ShotData{	id = 244	rect = (96, 272, 127, 303)	angular_velocity = 0	collision = 4	}	//Cyan
-ShotData{	id = 245	rect = (128, 272, 159, 303)	angular_velocity = 0	collision = 4	}	//Green
-ShotData{	id = 246	rect = (160, 272, 191, 303)	angular_velocity = 0	collision = 4	}	//Yellow
-ShotData{	id = 247	rect = (192, 272, 223, 303)	angular_velocity = 0	collision = 4	}	//Orange
-ShotData{	id = 248	rect = (224, 272, 255, 303)	angular_velocity = 0	collision = 4	}	//Grey
+ShotData{	id = 129	rect = (0, 272, 31, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Red
+ShotData{	id = 130	rect = (32, 272, 63, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Magenta
+ShotData{	id = 131	rect = (64, 272, 95, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Blue
+ShotData{	id = 132	rect = (96, 272, 127, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Cyan
+ShotData{	id = 133	rect = (128, 272, 159, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Green
+ShotData{	id = 134	rect = (160, 272, 191, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Yellow
+ShotData{	id = 135	rect = (192, 272, 223, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Orange
+ShotData{	id = 136	rect = (224, 272, 255, 303)	angular_velocity = 0	collision = 4	fixed_angle = false	}	//Grey
 
 //Knives
-ShotData{	id = 249	rect = (0, 304, 31, 335)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 250	rect = (32, 304, 63, 335)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 251	rect = (64, 304, 95, 335)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 252	rect = (96, 304, 127, 335)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 253	rect = (128, 304, 159, 335)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 254	rect = (160, 304, 191, 335)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 255	rect = (192, 304, 223, 335)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 256	rect = (224, 304, 255, 335)	angular_velocity = 0	collision = 2	}	//Grey
+ShotData{	id = 137	rect = (0, 304, 31, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 138	rect = (32, 304, 63, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 139	rect = (64, 304, 95, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 140	rect = (96, 304, 127, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 141	rect = (128, 304, 159, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 142	rect = (160, 304, 191, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 143	rect = (192, 304, 223, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 144	rect = (224, 304, 255, 335)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Hearts
-ShotData{	id = 257	rect = (0, 336, 31, 367)	angular_velocity = 0	collision = 6	}	//Red
-ShotData{	id = 258	rect = (32, 336, 63, 367)	angular_velocity = 0	collision = 6	}	//Magenta
-ShotData{	id = 259	rect = (64, 336, 95, 367)	angular_velocity = 0	collision = 6	}	//Blue
-ShotData{	id = 260	rect = (96, 336, 127, 367)	angular_velocity = 0	collision = 6	}	//Cyan
-ShotData{	id = 261	rect = (128, 336, 159, 367)	angular_velocity = 0	collision = 6	}	//Green
-ShotData{	id = 262	rect = (160, 336, 191, 367)	angular_velocity = 0	collision = 6	}	//Yellow
-ShotData{	id = 263	rect = (192, 336, 223, 367)	angular_velocity = 0	collision = 6	}	//Orange
-ShotData{	id = 264	rect = (224, 336, 255, 367)	angular_velocity = 0	collision = 6	}	//Grey
+ShotData{	id = 145	rect = (0, 336, 31, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Red
+ShotData{	id = 146	rect = (32, 336, 63, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Magenta
+ShotData{	id = 147	rect = (64, 336, 95, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Blue
+ShotData{	id = 148	rect = (96, 336, 127, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Cyan
+ShotData{	id = 149	rect = (128, 336, 159, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Green
+ShotData{	id = 150	rect = (160, 336, 191, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Yellow
+ShotData{	id = 151	rect = (192, 336, 223, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Orange
+ShotData{	id = 152	rect = (224, 336, 255, 367)	angular_velocity = 0	collision = 6	fixed_angle = false	}	//Grey
 
 //Arrows
-ShotData{	id = 265	rect = (0, 368, 31, 399)	angular_velocity = 0	collision = 2	}	//Red
-ShotData{	id = 266	rect = (32, 368, 63, 399)	angular_velocity = 0	collision = 2	}	//Magenta
-ShotData{	id = 267	rect = (64, 368, 95, 399)	angular_velocity = 0	collision = 2	}	//Blue
-ShotData{	id = 268	rect = (96, 368, 127, 399)	angular_velocity = 0	collision = 2	}	//Cyan
-ShotData{	id = 269	rect = (128, 368, 159, 399)	angular_velocity = 0	collision = 2	}	//Green
-ShotData{	id = 270	rect = (160, 368, 191, 399)	angular_velocity = 0	collision = 2	}	//Yellow
-ShotData{	id = 271	rect = (192, 368, 223, 399)	angular_velocity = 0	collision = 2	}	//Orange
-ShotData{	id = 272	rect = (224, 368, 255, 399)	angular_velocity = 0	collision = 2	}	//Grey
+ShotData{	id = 153	rect = (0, 368, 31, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Red
+ShotData{	id = 154	rect = (32, 368, 63, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Magenta
+ShotData{	id = 155	rect = (64, 368, 95, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Blue
+ShotData{	id = 156	rect = (96, 368, 127, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Cyan
+ShotData{	id = 157	rect = (128, 368, 159, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Green
+ShotData{	id = 158	rect = (160, 368, 191, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Yellow
+ShotData{	id = 159	rect = (192, 368, 223, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Orange
+ShotData{	id = 160	rect = (224, 368, 255, 399)	angular_velocity = 0	collision = 2	fixed_angle = false	}	//Grey
 
 //Big Stars
-ShotData{	id = 273	rect = (0, 400, 31, 431)	angular_velocity = 8	collision = 6	}	//Red
-ShotData{	id = 274	rect = (32, 400, 63, 431)	angular_velocity = 8	collision = 6	}	//Magenta
-ShotData{	id = 275	rect = (64, 400, 95, 431)	angular_velocity = 8	collision = 6	}	//Blue
-ShotData{	id = 276	rect = (96, 400, 127, 431)	angular_velocity = 8	collision = 6	}	//Cyan
-ShotData{	id = 277	rect = (128, 400, 159, 431)	angular_velocity = 8	collision = 6	}	//Green
-ShotData{	id = 278	rect = (160, 400, 191, 431)	angular_velocity = 8	collision = 6	}	//Yellow
-ShotData{	id = 279	rect = (192, 400, 223, 431)	angular_velocity = 8	collision = 6	}	//Orange
-ShotData{	id = 280	rect = (224, 400, 255, 431)	angular_velocity = 8	collision = 6	}	//Grey
+ShotData{	id = 161	rect = (0, 400, 31, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Red
+ShotData{	id = 162	rect = (32, 400, 63, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Magenta
+ShotData{	id = 163	rect = (64, 400, 95, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Blue
+ShotData{	id = 164	rect = (96, 400, 127, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Cyan
+ShotData{	id = 165	rect = (128, 400, 159, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Green
+ShotData{	id = 166	rect = (160, 400, 191, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Yellow
+ShotData{	id = 167	rect = (192, 400, 223, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Orange
+ShotData{	id = 168	rect = (224, 400, 255, 431)	angular_velocity = 8	collision = 6	fixed_angle = true	}	//Grey
+
+//Bubbles
+ShotData{	id = 169	rect = (0, 432, 63, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Red
+ShotData{	id = 170	rect = (64, 432, 127, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Magenta
+ShotData{	id = 171	rect = (128, 432, 191, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Blue
+ShotData{	id = 172	rect = (192, 432, 255, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Cyan
+ShotData{	id = 173	rect = (256, 432, 319, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Green
+ShotData{	id = 174	rect = (320, 432, 383, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Yellow
+ShotData{	id = 175	rect = (384, 432, 447, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Orange
+ShotData{	id = 176	rect = (448, 432, 511, 495)	angular_velocity = 0	collision = 8	fixed_angle = true	}	//Grey
+
+//Orbs
+ShotData{	id = 177	rect = (0, 496, 63, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Red
+ShotData{	id = 178	rect = (64, 496, 127, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Magenta
+ShotData{	id = 179	rect = (128, 496, 191, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Blue
+ShotData{	id = 180	rect = (192, 496, 255, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Cyan
+ShotData{	id = 181	rect = (256, 496, 319, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Green
+ShotData{	id = 182	rect = (320, 496, 383, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Yellow
+ShotData{	id = 183	rect = (384, 496, 447, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Orange
+ShotData{	id = 184	rect = (448, 496, 511, 559)	angular_velocity = 0	collision = 12	fixed_angle = true	}	//Grey
 
 //Fireballs
 ShotData{	//Red
-	id = 281
+	id = 185
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,0, 432, 31, 463)
-		animation_data = (4,0, 464, 31, 495)
-		animation_data = (4,0, 496, 31, 527)
-		animation_data = (4,0, 464, 31, 495)
+		animation_data = (4,0, 560, 31, 623)
+		animation_data = (4,0, 624, 31, 687)
+		animation_data = (4,0, 688, 31, 751)
+		animation_data = (4,0, 624, 31, 687)
 	}
 }
 ShotData{	//Magenta
-	id = 282
+	id = 186
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,32, 432, 63, 463)
-		animation_data = (4,32, 464, 63, 495)
-		animation_data = (4,32, 496, 63, 527)
-		animation_data = (4,32, 464, 63, 495)
+		animation_data = (4,32, 560, 63, 623)
+		animation_data = (4,32, 624, 63, 687)
+		animation_data = (4,32, 688, 63, 751)
+		animation_data = (4,32, 624, 63, 687)
 	}
 }
 ShotData{	//Blue
-	id = 283
+	id = 187
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,64, 432, 95, 463)
-		animation_data = (4,64, 464, 95, 495)
-		animation_data = (4,64, 496, 95, 527)
-		animation_data = (4,64, 464, 95, 495)
+		animation_data = (4,64, 560, 95, 623)
+		animation_data = (4,64, 624, 95, 687)
+		animation_data = (4,64, 688, 95, 751)
+		animation_data = (4,64, 624, 95, 687)
 	}
 }
 ShotData{	//Cyan
-	id = 284
+	id = 188
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,96, 432, 127, 463)
-		animation_data = (4,96, 464, 127, 495)
-		animation_data = (4,96, 496, 127, 527)
-		animation_data = (4,96, 464, 127, 495)
+		animation_data = (4,96, 560, 127, 623)
+		animation_data = (4,96, 624, 127, 687)
+		animation_data = (4,96, 688, 127, 751)
+		animation_data = (4,96, 624, 127, 687)
 	}
 }
 ShotData{	//Green
-	id = 285
+	id = 189
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,128, 432, 159, 463)
-		animation_data = (4,128, 464, 159, 495)
-		animation_data = (4,128, 496, 159, 527)
-		animation_data = (4,128, 464, 159, 495)
+		animation_data = (4,128, 560, 159, 623)
+		animation_data = (4,128, 624, 159, 687)
+		animation_data = (4,128, 688, 159, 751)
+		animation_data = (4,128, 624, 159, 687)
 	}
 }
 ShotData{	//Yellow
-	id = 286
+	id = 190
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,160, 432, 191, 463)
-		animation_data = (4,160, 464, 191, 495)
-		animation_data = (4,160, 496, 191, 527)
-		animation_data = (4,160, 464, 191, 495)
+		animation_data = (4,160, 560, 191, 623)
+		animation_data = (4,160, 624, 191, 687)
+		animation_data = (4,160, 688, 191, 751)
+		animation_data = (4,160, 624, 191, 687)
 	}
 }
 ShotData{	//Orange
-	id = 287
+	id = 191
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,192, 432, 223, 463)
-		animation_data = (4,192, 464, 223, 495)
-		animation_data = (4,192, 496, 223, 527)
-		animation_data = (4,192, 464, 223, 495)
+		animation_data = (4,192, 560, 223, 623)
+		animation_data = (4,192, 624, 223, 687)
+		animation_data = (4,192, 688, 223, 751)
+		animation_data = (4,192, 624, 223, 687)
 	}
 }
 ShotData{	//Grey
-	id = 288
+	id = 192
 	collision = 4
+	fixed_angle = false
 	AnimationData{
-		animation_data = (4,224, 432, 255, 463)
-		animation_data = (4,224, 464, 255, 495)
-		animation_data = (4,224, 496, 255, 527)
-		animation_data = (4,224, 464, 255, 495)
+		animation_data = (4,224, 560, 255, 623)
+		animation_data = (4,224, 624, 255, 687)
+		animation_data = (4,224, 688, 255, 751)
+		animation_data = (4,224, 624, 255, 687)
 	}
 }
 
-//Bubbles
-ShotData{	id = 289	rect = (0, 528, 63, 591)	angular_velocity = 0	collision = 8	}	//Red
-ShotData{	id = 290	rect = (64, 528, 127, 591)	angular_velocity = 0	collision = 8	}	//Magenta
-ShotData{	id = 291	rect = (128, 528, 191, 591)	angular_velocity = 0	collision = 8	}	//Blue
-ShotData{	id = 292	rect = (192, 528, 255, 591)	angular_velocity = 0	collision = 8	}	//Cyan
-ShotData{	id = 293	rect = (256, 528, 319, 591)	angular_velocity = 0	collision = 8	}	//Green
-ShotData{	id = 294	rect = (320, 528, 383, 591)	angular_velocity = 0	collision = 8	}	//Yellow
-ShotData{	id = 295	rect = (384, 528, 447, 591)	angular_velocity = 0	collision = 8	}	//Orange
-ShotData{	id = 296	rect = (448, 528, 511, 591)	angular_velocity = 0	collision = 8	}	//Grey
-
-//Orbs
-ShotData{	id = 297	rect = (0, 592, 63, 655)	angular_velocity = 0	collision = 12	}	//Red
-ShotData{	id = 298	rect = (64, 592, 127, 655)	angular_velocity = 0	collision = 12	}	//Magenta
-ShotData{	id = 299	rect = (128, 592, 191, 655)	angular_velocity = 0	collision = 12	}	//Blue
-ShotData{	id = 300	rect = (192, 592, 255, 655)	angular_velocity = 0	collision = 12	}	//Cyan
-ShotData{	id = 301	rect = (256, 592, 319, 655)	angular_velocity = 0	collision = 12	}	//Green
-ShotData{	id = 302	rect = (320, 592, 383, 655)	angular_velocity = 0	collision = 12	}	//Yellow
-ShotData{	id = 303	rect = (384, 592, 447, 655)	angular_velocity = 0	collision = 12	}	//Orange
-ShotData{	id = 304	rect = (448, 592, 511, 655)	angular_velocity = 0	collision = 12	}	//Grey
+//Musical Notes
+ShotData{	//Red
+	id = 193
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,0, 752, 31, 815)
+		animation_data = (8,0, 816, 31, 879)
+		animation_data = (8,0, 880, 31, 943)
+		animation_data = (8,0, 816, 31, 879)
+	}
+}
+ShotData{	//Magenta
+	id = 194
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,32, 752, 63, 815)
+		animation_data = (8,32, 816, 63, 879)
+		animation_data = (8,32, 880, 63, 943)
+		animation_data = (8,32, 816, 63, 879)
+	}
+}
+ShotData{	//Blue
+	id = 195
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,64, 752, 95, 815)
+		animation_data = (8,64, 816, 95, 879)
+		animation_data = (8,64, 880, 95, 943)
+		animation_data = (8,64, 816, 95, 879)
+	}
+}
+ShotData{	//Cyan
+	id = 196
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,96, 752, 127, 815)
+		animation_data = (8,96, 816, 127, 879)
+		animation_data = (8,96, 880, 127, 943)
+		animation_data = (8,96, 816, 127, 879)
+	}
+}
+ShotData{	//Green
+	id = 197
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,128, 752, 159, 815)
+		animation_data = (8,128, 816, 159, 879)
+		animation_data = (8,128, 880, 159, 943)
+		animation_data = (8,128, 816, 159, 879)
+	}
+}
+ShotData{	//Yellow
+	id = 198
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,160, 752, 191, 815)
+		animation_data = (8,160, 816, 191, 879)
+		animation_data = (8,160, 880, 191, 943)
+		animation_data = (8,160, 816, 191, 879)
+	}
+}
+ShotData{	//Orange
+	id = 199
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,192, 752, 223, 815)
+		animation_data = (8,192, 816, 223, 879)
+		animation_data = (8,192, 880, 223, 943)
+		animation_data = (8,192, 816, 223, 879)
+	}
+}
+ShotData{	//Grey
+	id = 200
+	collision = 2
+	fixed_angle = true
+	AnimationData{
+		animation_data = (8,224, 752, 255, 815)
+		animation_data = (8,224, 816, 255, 879)
+		animation_data = (8,224, 880, 255, 943)
+		animation_data = (8,224, 816, 255, 879)
+	}
+}
 
 //Straight Lasers
-ShotData{	id = 305	rect = (0, 656, 15, 687)	angular_velocity = 0	collision = 0	}	//Red
-ShotData{	id = 306	rect = (16, 656, 31, 687)	angular_velocity = 0	collision = 0	}	//Magenta
-ShotData{	id = 307	rect = (32, 656, 47, 687)	angular_velocity = 0	collision = 0	}	//Blue
-ShotData{	id = 308	rect = (48, 656, 63, 687)	angular_velocity = 0	collision = 0	}	//Cyan
-ShotData{	id = 309	rect = (64, 656, 79, 687)	angular_velocity = 0	collision = 0	}	//Green
-ShotData{	id = 310	rect = (80, 656, 95, 687)	angular_velocity = 0	collision = 0	}	//Yellow
-ShotData{	id = 311	rect = (96, 656, 111, 687)	angular_velocity = 0	collision = 0	}	//Orange
-ShotData{	id = 312	rect = (112, 656, 127, 687)	angular_velocity = 0	collision = 0	}	//Grey
+ShotData{	id = 201	rect = (0, 944, 15, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Red
+ShotData{	id = 202	rect = (16, 944, 31, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Magenta
+ShotData{	id = 203	rect = (32, 944, 47, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Blue
+ShotData{	id = 204	rect = (48, 944, 63, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Cyan
+ShotData{	id = 205	rect = (64, 944, 79, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Green
+ShotData{	id = 206	rect = (80, 944, 95, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Yellow
+ShotData{	id = 207	rect = (96, 944, 111, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Orange
+ShotData{	id = 208	rect = (112, 944, 127, 975)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Grey
 
 //Curved Lasers
-ShotData{	id = 313	rect = (0, 688, 15, 719)	angular_velocity = 0	collision = 0	}	//Red
-ShotData{	id = 314	rect = (16, 688, 31, 719)	angular_velocity = 0	collision = 0	}	//Magenta
-ShotData{	id = 315	rect = (32, 688, 47, 719)	angular_velocity = 0	collision = 0	}	//Blue
-ShotData{	id = 316	rect = (48, 688, 63, 719)	angular_velocity = 0	collision = 0	}	//Cyan
-ShotData{	id = 317	rect = (64, 688, 79, 719)	angular_velocity = 0	collision = 0	}	//Green
-ShotData{	id = 318	rect = (80, 688, 95, 719)	angular_velocity = 0	collision = 0	}	//Yellow
-ShotData{	id = 319	rect = (96, 688, 111, 719)	angular_velocity = 0	collision = 0	}	//Orange
-ShotData{	id = 320	rect = (112, 688, 127, 719)	angular_velocity = 0	collision = 0	}	//Grey
+ShotData{	id = 209	rect = (0, 976, 15, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Red
+ShotData{	id = 210	rect = (16, 976, 31, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Magenta
+ShotData{	id = 211	rect = (32, 976, 47, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Blue
+ShotData{	id = 212	rect = (48, 976, 63, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Cyan
+ShotData{	id = 213	rect = (64, 976, 79, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Green
+ShotData{	id = 214	rect = (80, 976, 95, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Yellow
+ShotData{	id = 215	rect = (96, 976, 111, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Orange
+ShotData{	id = 216	rect = (112, 976, 127, 1007)	angular_velocity = 0	collision = 0	fixed_angle = false	}	//Grey
