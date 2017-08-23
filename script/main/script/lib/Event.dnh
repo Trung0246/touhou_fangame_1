@@ -1,4 +1,4 @@
-//Made by Trung0246, version 1.1
+//Made by Trung0246, version 1.2
 
 //Constant
 let EV_OBJ_VISIBLE = EV_USER + 1;
@@ -54,8 +54,20 @@ let EV_COMMON_DATA_AREA_KEY_NEW = EV_USER + 50;
 let EV_COMMON_DATA_AREA_KEY_CHANGE = EV_USER + 51;
 let EV_COMMON_DATA_AREA_KEY_DELETE = EV_USER + 52;
 
+let _EV_PAUSE_ = false;
+let _EV_STOP_ = false;
+
 let COMMON_DATA_DEFAULT = "qweiunfajdsnfifowinciomxmfnewioufqcixofmxfzmcmxxqzed";
 let CURRRENT_EV_COUNT = EV_USER + 53;
+
+function Event_PauseAll(bool) {
+	_EV_PAUSE_ = bool;
+}
+task Event_StopAll() {
+	_EV_STOP_ = true;
+	yield;
+	_EV_STOP_ = false;
+}
 
 //Main library
 task Obj_Event (obj) {
@@ -63,8 +75,13 @@ task Obj_Event (obj) {
 	let render_piority = Obj_GetRenderPriority(obj);
 	let render_piority_i = Obj_GetRenderPriorityI(obj);
 	let type = Obj_GetType(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		let temp2;
 		let temp3;
@@ -102,6 +119,8 @@ task Obj_Event (obj) {
 		yield;
 	}
 	NotifyEventAll(EV_OBJ_DELETE, [obj]);
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjRender_Event (obj) {
@@ -115,8 +134,13 @@ task ObjRender_Event (obj) {
 	let y_scale = ObjRender_GetScaleY(obj);
 	let z_scale = ObjRender_GetScaleZ(obj);
 	let blend = ObjRender_GetBlendType(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjRender_GetX(obj);
 		if (x != temp) {
@@ -170,6 +194,8 @@ task ObjRender_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjShader_Event (obj) {
@@ -181,8 +207,13 @@ task ObjPrim_Event (obj) {
 	let count = ObjPrim_GetVertexCount(obj);
 	let pos;
 	a();
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjPrim_GetVertexCount(obj);
 		if (count != temp) {
@@ -201,6 +232,8 @@ task ObjPrim_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 
 	function a () {
 		pos = [];
@@ -223,9 +256,14 @@ task ObjText_Event (obj) {
 	let height = ObjText_GetTotalHeight(obj);
 
 	let temp_bool;
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		temp_bool = false;
 		let temp;
 		temp = ObjText_GetTextLengthCUL(obj);
@@ -252,6 +290,8 @@ task ObjText_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjShot_Event (obj) {
@@ -261,8 +301,13 @@ task ObjShot_Event (obj) {
 	let delay = ObjShot_GetDelay(obj);
 	let is_spell_resist = ObjShot_IsSpellResist(obj);
 	let imageID = ObjShot_GetImageID(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		let temp2;
 		let temp3;
@@ -306,12 +351,19 @@ task ObjShot_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjLaser_Event (obj) {
 	let length_ = ObjLaser_GetLength(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjLaser_GetLength(obj);
 		if (length_ != temp) {
@@ -320,12 +372,19 @@ task ObjLaser_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjStLaser_Event (obj) {
 	let angle = ObjStLaser_GetAngle(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjStLaser_GetAngle(obj);
 		if (angle != temp) {
@@ -334,6 +393,8 @@ task ObjStLaser_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjItem_Event (obj) {
@@ -345,8 +406,13 @@ task ObjEnemy_Event (obj) {
 	let life = ObjEnemy_GetInfo(obj, INFO_LIFE);
 	let damage_rate_shot = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SHOT);
 	let damage_rate_spell = ObjEnemy_GetInfo(obj, INFO_DAMAGE_RATE_SPELL);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjEnemy_GetInfo(obj, INFO_LIFE);
 		if (life != temp) {
@@ -365,6 +431,8 @@ task ObjEnemy_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjSprite2D_Event (obj) {
@@ -388,8 +456,13 @@ task ObjMove_Event (obj) {
 	let y = ObjMove_GetY(obj);
 	let speed = ObjMove_GetSpeed(obj);
 	let angle = ObjMove_GetAngle(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjMove_GetX(obj);
 		if (x != temp) {
@@ -413,14 +486,21 @@ task ObjMove_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjSound_Event (obj) {
 	NotifyEventAll(EV_OBJ_SOUND_NEW, [obj]);
 	let is_playing = ObjSound_IsPlaying(obj);
 	let volume_rate = ObjSound_GetVolumeRate(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		let temp2;
 		let temp3;
@@ -449,13 +529,20 @@ task ObjSound_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjFile_Event (obj) {
 	NotifyEventAll(EV_OBJ_FILE_NEW, [obj]);
 	let size = ObjFile_GetSize(obj);
+	Obj_SetValue(obj, "ObjEvent_Pause", false);
+	Obj_SetValue(obj, "ObjEvent_Stop", false);
 	yield;
-	while (!Obj_IsDeleted(obj)) {
+	while (!Obj_IsDeleted(obj) && Obj_GetValueD(obj, "ObjEvent_Stop", false) == false && _EV_STOP_ == false) {
+		while (Obj_GetValueD(obj, "ObjEvent_Pause", false) || _EV_PAUSE_) {
+			yield;
+		}
 		let temp;
 		temp = ObjFile_GetSize(obj);
 		if (size != temp) {
@@ -464,6 +551,8 @@ task ObjFile_Event (obj) {
 		}
 		yield;
 	}
+	Obj_DeleteValue(obj, "ObjEvent_Pause");
+	Obj_DeleteValue(obj, "ObjEvent_Stop");
 }
 
 task ObjFileT_Event (obj) {
