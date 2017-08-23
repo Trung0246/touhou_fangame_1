@@ -68,15 +68,15 @@
 		}
 		case (EV_USER + 100) {
 			alternative (GetEventArgument(0))			
-				case (512) { //Raindrop red
-					SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
-				}
-				case (513) { //Raindrop green
-					SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) + GetCommonData("item_raindrop_change", 0));
-				}
-				case (514) { //Raindrop blue
-					SetCommonData("item_raindrop_blue", GetCommonData("item_raindrop_blue", 0) + GetCommonData("item_raindrop_change", 0));
-				}
+			case (512) { //Raindrop red
+				SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
+			}
+			case (513) { //Raindrop green
+				SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) + GetCommonData("item_raindrop_change", 0));
+			}
+			case (514) { //Raindrop blue
+				SetCommonData("item_raindrop_blue", GetCommonData("item_raindrop_blue", 0) + GetCommonData("item_raindrop_change", 0));
+			}
 		}
 		case (EV_OBJ_ENEMY_LIFE) {
 			let enemy = GetEventArgument(0)[0];
