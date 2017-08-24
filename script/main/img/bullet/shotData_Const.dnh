@@ -1,5 +1,5 @@
 local{
-	LoadEnemyShotData(GetCurrentScriptDirectory ~ "shotsheet.txt");
+	LoadEnemyShotData(GetCurrentScriptDirectory ~ "shotData.dnh");
 }
 
 //Dots

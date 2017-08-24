@@ -1,5 +1,5 @@
 #UserShotData
-shot_image = "./img/shots.png"
+shot_image = "./shots.png"
 
 //Dots
 ShotData{	id = 1	rect = (0, 0, 7, 7)	angular_velocity = 0	collision = 2	fixed_angle = true	}	//Red

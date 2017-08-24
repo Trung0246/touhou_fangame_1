@@ -20,10 +20,15 @@ task StreamFairyBehavior(enemy,extra){
 	wait(60);
 	Obj_SetValue(enemy,"Anim",0);
 	wait(40);
+	let diff_count = [2,3,4,5];
+	let diff_angle = [16,12,10,8];
+	let diff_speed = [2,2.5,2.5,3];
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	loop(5){
-		ascent(i in -5..6){
-			if(Obj_IsDeleted(enemy)){break;}
-			let shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*8),SCALE_BLUE+absolute(i)%2,10);
+		if(Obj_IsDeleted(enemy)){break;}
+		PlaySFX(SFX_SHOT1);
+		ascent(i in -diff_count[diff]..diff_count[diff]+1){
+			let shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),diff_speed[diff]-absolute(i)/2,GetAngleToPlayer(enemy)+i*absolute(i*diff_angle[diff]),SCALE_BLUE+absolute(i)%2,10);
 			ObjMove_AddPatternB2(shot,180,NO_CHANGE,NO_CHANGE,0,0.05,NO_CHANGE,5);
 		}
 		wait(50);
@@ -51,12 +56,18 @@ task RainFairyBehavior(enemy,extra){
 	wait(60);
 	Obj_SetValue(enemy,"Anim",0);
 	wait(40);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_count = [2,2,3,4][diff];
+	let diff_expand = [0,0.5,1,0.8][diff];
+	let diff_speed = [1.5,2,2,2][diff];
 	ascent(i in 0..5){
+		PlaySFX(SFX_SHOT1);
 		if(Obj_IsDeleted(enemy)){break;}
-		let n = rand(0,90);
+		let split = 360/diff_count;
+		let n = rand(0,split);
 		let a = GetAngleToPlayer(enemy);
-		ascent(j in 0..4){
-			let shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),2+i/2,n+j*90,-0.1,0,BALL_BLUE,5);
+		ascent(j in 0..diff_count){
+			let shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),diff_speed+i*diff_expand,n+j*split,-0.1,0,BALL_BLUE,5);
 			RainTransform(shot,a,j);
 		}
 		wait(60);
