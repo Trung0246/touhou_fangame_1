@@ -34,11 +34,14 @@
 	alternative(GetEventType())
 	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y]
 		let arg = GetEventArgument(0);
+		let obj;
 		alternative(arg[0])
 		case(FAIRY_STREAM){
 			loop(5){
-				CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
-				CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
 			}
 			let dir = (floor(arg[1]/192)%2)*2-1;
 			ascent(i in -1..2){
@@ -47,8 +50,10 @@
 		}
 		case(FAIRY_RAINCIRCLE){
 			loop(2){
-				CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
-				CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
 			}
 			ascent(i in 0..2){
 				let dir = i*2-1;
