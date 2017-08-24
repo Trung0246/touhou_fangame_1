@@ -213,7 +213,7 @@ task ObjMove_ReflectCeiling(obj, limit) {
 }
 task ObjMove_ReflectBottom(obj, limit) {
 	let count = 0;
-	while (!Obj_IsDeleted(obj) && count < limmit) {
+	while (!Obj_IsDeleted(obj) && count < limit) {
 		if (ObjMove_GetY(obj) >= GetClipMaxY && ObjMove_GetY(obj) <= GetClipMaxY + 20) {
 			ObjMove_SetAngle(obj, -ObjMove_GetAngle(obj));
 			count++;
