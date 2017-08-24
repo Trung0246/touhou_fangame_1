@@ -117,8 +117,9 @@ let dir = GetCurrentScriptDirectory();
 			if (tempNeedleDelay <= 0) {
 				ascent (i in 0..length(orb)) {
 					if (Obj_GetValueD(orb[i], "enable", false) == true) {
-						Shot_Needle_Create(ObjRender_GetX(orb[i]) - 6, ObjRender_GetY(orb[i]));
-						Shot_Needle_Create(ObjRender_GetX(orb[i]) + 6, ObjRender_GetY(orb[i]));
+						//Shot_Needle_Create(ObjRender_GetX(orb[i]) - 6, ObjRender_GetY(orb[i]));
+						//Shot_Needle_Create(ObjRender_GetX(orb[i]) + 6, ObjRender_GetY(orb[i]));
+						Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
 					}
 				}
 				tempNeedleDelay = needleDelay;
