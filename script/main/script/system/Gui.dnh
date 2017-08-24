@@ -541,7 +541,7 @@ task UpdateBossLife {
 		//Finalize the empty circle
 		ascent(i in 0..31) {
 			ascent(j in 0..2) {
-				ObjPrim_SetVertexPosition(circle, i * 2 + j, cos(i * 12) * (64 - j * 8), sin(i * 12) * (64 - j * 8), 0);
+				ObjPrim_SetVertexPosition(circle, i * 2 + j, cos(i * 12) * (64 - j * 5), sin(i * 12) * (64 - j * 5), 0);
 			}
 		}
 
@@ -572,7 +572,7 @@ task UpdateBossLife {
 				let xpos = cos(-i * angle - 90);
 				let ypos = sin(-i * angle - 90);
 				ascent(j in 0..2) {
-					ObjPrim_SetVertexPosition(lifebar, i * 2 + j, xpos * (64 - j * 8), ypos * (64 - j * 8), 0);
+					ObjPrim_SetVertexPosition(lifebar, i * 2 + j, xpos * (64 - j * 5), ypos * (64 - j * 5), 0);
 				}
 			}
 
