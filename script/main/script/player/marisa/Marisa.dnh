@@ -73,6 +73,7 @@ let dir = GetCurrentScriptDirectory();
 	SetPlayerAutoItemCollectLine(itemLine);
 
 	ObjPlayer_AddIntersectionCircleA1(objPlayerId, 0, 0, hitBox, grazeBox);
+	Obj_SetValue(objPlayerId, "itemBox", itemBox);
 
 	//Shot data
 	LoadPlayerShotData(dir ~ "MarisaShotData.dnh");
@@ -148,6 +149,7 @@ let dir = GetCurrentScriptDirectory();
 	let pX = GetPlayerX();
 	let pY = GetPlayerY();
 	ObjRender_SetPosition(objPlayer, pX, pY, 0);
+	CollectItemsInCircle(pX, pY, itemBox);
 	yield;
 }
 
