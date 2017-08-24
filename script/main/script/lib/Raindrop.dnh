@@ -21,6 +21,11 @@ task CheckPlayerCollect (raindrop, graphic) {
 	while(!Obj_IsDeleted(raindrop)){
 		let x = ObjMove_GetX(objPlayer) - ObjMove_GetX(raindrop);
 		let y = ObjMove_GetY(objPlayer) - ObjMove_GetY(raindrop);
+		//To get item box
+		/*
+		let objPlayer = GetPlayerObjectID();
+		Obj_GetValue(objPlayer, "itemBox", 0);
+		*/
 		if (x*x + y*y <= 576) {
 			NotifyEventAll(EV_USER + 100, graphic);
 			ObjShot_FadeDelete(raindrop);
