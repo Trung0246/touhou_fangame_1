@@ -60,10 +60,23 @@
 				CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
 			}
 		}
+		case(FAIRY_PLAIN){
+			loop(3){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let dir = (floor(arg[1]/192)%2)*2-1;
+			ascent(i in 0..2){
+				CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,2,RAINDROP_RED,0);
+			}
+		}
 	}
 }
 
 task Stage_Main() {
+	
 	//Init boss scripts
 	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/Plural.dnh");
 
@@ -85,7 +98,7 @@ task Stage_Main() {
 	ascent(i in -1..2){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*120,180-absolute(i)*10]);
 	}
-	stageWait(180);
+	stageWait(120);
 	ascent(i in -2..3){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*80,140-absolute(i)*10]);
 	}
@@ -93,14 +106,47 @@ task Stage_Main() {
 	ascent(i in -3..4){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,100-absolute(i)*10]);
 	}
-	stageWait(180);
-	ascent(i in -4..5){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*40,60-absolute(i)*10]);
+	stageWait(60);
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*100,60-absolute(i)*10]);
 	}
-	wait(600);
+	stageWait(60);
+	StageEnemy(192,-100,FAIRY_RAINCIRCLE,16,12,55,[192,30]);
 
+	stageWait(360);
+
+	//Rain section
+	let rainmaker = StageEnemy(192,-200,INVISIBLE_RAIN,0,0,1000,"This doesn't do anything, so I can put something dumb in it and you can't stop me.");
+
+	stageWait(230);
+
+	descent(i in 0..4){
+		StageEnemy(-32,120+i*30,FAIRY_PLAIN,16,12,50,[0]);
+		stageWait(100);
+	}
+
+	stageWait(120);
+
+	descent(i in 0..4){
+		StageEnemy(416,120+i*30,FAIRY_PLAIN,16,12,50,[180]);
+		stageWait(100);
+	}
+
+	stageWait(120);
+
+	StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0]);
+	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
+	stageWait(150);
+
+	StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0]);
+	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
+
+	stageWait(200);
+	
 	StartScript(midboss);
 	CheckBossActive(midboss);
+	yield;
+	Obj_SetValue(rainmaker,"BossTime",true);
 	while(!IsCloseScript(midboss)){yield;}
 
 	//CloseStgScene();

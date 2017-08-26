@@ -17,8 +17,6 @@ let objBoss;
 	Animation_Azure(objBoss);
 	BossAura_Azure(objBoss);
 	TEnd;
-
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 }
 
 @MainLoop
@@ -45,17 +43,22 @@ task TWork
 {
 	let wind = 0;
 	SetOffTheWind;
-	ObjMove_SetPosition(objBoss,192,-120);
+	ObjMove_SetPosition(objBoss,192-15,-120);
 	Obj_SetValue(objBoss,"Anim",1);
-	ObjMove_SetDestAtFrame(objBoss,192,140,90);
-	wait(120);
+	ObjMove_SetDestAtFrame(objBoss,192-15,140,110);
+	wait(110);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	wait(10);
 	Obj_SetValue(objBoss,"Anim",3);
+	wait(100);
+	Obj_SetValue(objBoss,"Anim",0);
 	let angle = rand(0,360);
 	let shot;
+	let size;
 	ActualFiring;
 	while(!Obj_IsDeleted(objBoss)){
 		ascent(i in 0..6){
-			shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,1,0,0,0,0,0,RBALL_BLUE,5);
+			shot = SPShotB2(ObjMove_GetX(objBoss)+15+cos(angle+i*60)*size*2.5,ObjMove_GetY(objBoss)-10+sin(angle+i*60)*size,1,0,0,0,0,0,RBALL_BLUE,5);
 			InstaDelete(shot);
 		}
 		angle -= 5;
@@ -63,6 +66,11 @@ task TWork
 	}
 
 	task ActualFiring{
+		//Putting this here is probably a sin against good coding practices but you can't stop me
+		ascent(i in 0..31){
+			size = i*2;
+			yield;
+		}
 		while(!Obj_IsDeleted(objBoss)){
 			ascent(i in 0..6){
 				shot = SPShotB2(ObjMove_GetX(objBoss)+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DROP_BLUE,10);
