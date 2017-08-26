@@ -124,6 +124,7 @@ task PlainFairyBehavior(enemy,extra){
 			shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),1,angle-i*shift,0.1,4.5,SCALE_MAGENTA,15);
 			ObjMove_AddPatternB2(shot,20,NO_CHANGE,NO_CHANGE,0,0.1,0,4);
 		}
+		PlaySFX(SFX_SHOT1);
 		wait(60);
 	}
 

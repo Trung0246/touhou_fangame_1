@@ -1,0 +1,5 @@
+task BossResistance(obj,duration){
+	ObjEnemy_SetDamageRate(obj,10,10);
+	wait(duration);
+	ObjEnemy_SetDamageRate(obj,100,100);
+}
