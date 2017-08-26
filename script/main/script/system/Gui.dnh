@@ -908,7 +908,7 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 
 	number = roundNumber(number, floatDigit);
 
-	let floatNum = number - floor(number);
+	let floatNum = ator(number - floor(number)); //add ator() because 16.1 - 16 != 0.1 (try it)
 	let listNum = DigitToArray(floatNum * 1000000, -1);
 	let zeroCount = 0;
 	let digits = NumberLength(floatNum * 1000000) + 1;
@@ -926,7 +926,7 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 	if (havePeriod && floatDigit > 0) {
 		xCount += 12;
 		while (length(listNum) < 6) {
-			listNum = listNum ~ [0];
+			listNum = [0] ~ listNum;
 			zeroCount --;
 		}
 		descent (i in 0..6) {
