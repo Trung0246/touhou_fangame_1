@@ -55,10 +55,8 @@
 				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 				ObjItem_SetRenderScoreEnable(obj, false);
 			}
-			ascent(i in 0..2){
-				let dir = i*2-1;
-				CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
-			}
+			let dir = rand(-1,1);
+			CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
 		}
 		case(FAIRY_PLAIN){
 			loop(3){
@@ -69,7 +67,7 @@
 			}
 			let dir = (floor(arg[1]/192)%2)*2-1;
 			ascent(i in 0..2){
-				CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,2,RAINDROP_RED,0);
+				CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED,0);
 			}
 		}
 	}

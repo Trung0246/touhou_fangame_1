@@ -104,6 +104,7 @@
 			Obj_SetRenderPriorityI(obj, 20);
 			ObjItem_SetRenderScoreEnable(obj, false);
 			ObjItem_SetAutoCollectEnable(obj, false);
+			ObjItem_SetDefinedMovePatternA1(obj,ITEM_MOVE_TOPLAYER);
 		}
 		case (EV_GRAZE) {
 			/*let shot = GetEventArgument(1);
