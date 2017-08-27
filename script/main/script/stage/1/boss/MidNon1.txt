@@ -242,7 +242,7 @@ task BossAura_Azure(boss){
 	task SpinWave(obj,size,dir){
 		let angle = rand(0,360);
 		let scale;
-		while(!Obj_IsDeleted(boss)){
+		while(!Obj_IsDeleted(objBoss)){
 			angle += 5*dir;
 			ObjRender_SetAngleZ(obj,angle);
 			size += 2;

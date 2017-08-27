@@ -145,7 +145,24 @@ task Stage_Main() {
 	CheckBossActive(midboss);
 	yield;
 	Obj_SetValue(rainmaker,"BossTime",true);
-	while(!IsCloseScript(midboss)){yield;}
+	
+	stageWait(960);
+	
+	//Super rain fairy filler
+	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(90);
+	StageEnemy(192+120,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(90);
+	StageEnemy(192-120,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(180);
+	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(90);
+	StageEnemy(192+140,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(90);
+	StageEnemy(192-140,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	stageWait(180);
+
+	//So far: 4770 frame, or 79,5 seconds
 
 	//CloseStgScene();
 }

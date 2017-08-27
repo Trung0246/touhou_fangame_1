@@ -61,7 +61,7 @@ task AnimateSmallFairy(obj,color) {
 
 task AnimateBigFairy(obj,color) {
 	Obj_SetValue(obj,"Anim",0);
-	ObjPrim_SetTexture(obj,"script/main/img/enemy/stage/SmallFairy.png");
+	ObjPrim_SetTexture(obj,"script/main/img/enemy/stage/LargeFairy.png");
 	ObjSprite2D_SetDestRect(obj,-24,-24,24,24);
 	while(!Obj_IsDeleted(obj)){
 		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){

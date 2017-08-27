@@ -519,12 +519,12 @@ task UpdateBossLife {
 		Obj_SetRenderPriority(lifebar, 0.75);
 		ObjPrim_SetTexture(lifebar, lifeBarPath);
 		ObjPrim_SetPrimitiveType(lifebar, PRIMITIVE_TRIANGLESTRIP);
-		ObjPrim_SetVertexCount(lifebar, 64);
+		ObjPrim_SetVertexCount(lifebar, 62);
 
 		let circle = ObjPrim_Create(OBJ_PRIMITIVE_2D);
 		ObjPrim_SetTexture(circle, lifeBarPath);
 		ObjPrim_SetPrimitiveType(circle, PRIMITIVE_TRIANGLESTRIP);
-		ObjPrim_SetVertexCount(circle, 64);
+		ObjPrim_SetVertexCount(circle, 62);
 		Obj_SetRenderPriority(circle, 0.74);
 
 		//Set up textures for all the circular parts
