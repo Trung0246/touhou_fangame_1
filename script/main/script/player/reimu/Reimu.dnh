@@ -63,7 +63,7 @@ let dir = GetCurrentScriptDirectory();
 	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
 	SetPlayerLife(GetCommonData("player_life", 2));
 	SetPlayerSpell(GetCommonData("player_spell", 3));
-	SetPlayerPower(GetCommonData("player_power", 0));
+	SetPlayerPower(GetCommonData("player_power", 1));
 
 	//SetPlayerInvincibilityFrame(invisibleFrame);
 	SetPlayerDownStateFrame(downFrame);
@@ -250,7 +250,7 @@ task Hitbox_Render() {
 	let scale = 2.75;
 	let alpha = 0;
 	let angle2 = 22.5;
-	let scale2 = grazeBox / 42 * 4;
+	let scale2 = 2.75; //grazeBox / 42 * 4
 	let alpha2 = 0;
 	while (!Obj_IsDeleted(objPlayer)) {
 		let playerState = GetPlayerState();
@@ -266,7 +266,7 @@ task Hitbox_Render() {
 		}
 		if (grazeTime > 0) {
 			Render2();
-			scale2 = grazeBox / 42 * 4;
+			scale2 = 2.75;
 			alpha2 = min(alpha2 + 255 / 100, (grazeTime / grazeDelay) * 80);
 			grazeTime --;
 		} else {
