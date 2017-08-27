@@ -114,7 +114,7 @@ let dir = GetCurrentScriptDirectory();
 		} else {
 			tempShotDelay --;
 		}
-		if (isFocus) {
+		/*if (isFocus) {
 			if (tempNeedleDelay <= 0) {
 				ascent (i in 0..length(orb)) {
 					if (Obj_GetValueD(orb[i], "enable", false) == true) {
@@ -126,20 +126,20 @@ let dir = GetCurrentScriptDirectory();
 			} else {
 				tempNeedleDelay --;
 			}
-		} else {
-			if (tempHomingDelay <= 0) {
-				let tempAngle = startChange;
-				ascent (i in 0..length(orb)) {
-					if (Obj_GetValueD(orb[i], "enable", false) == true) {
-						Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
-					}
-					tempAngle += angleChange;
+		} else {*/
+		if (tempHomingDelay <= 0) {
+			let tempAngle = startChange;
+			ascent (i in 0..length(orb)) {
+				if (Obj_GetValueD(orb[i], "enable", false) == true) {
+					Shot_Homing_Create(ObjRender_GetX(orb[i]), ObjRender_GetY(orb[i]), tempAngle, 9);
 				}
-				tempHomingDelay = homingDelay;
-			} else {
-				tempHomingDelay --;
+				tempAngle += angleChange;
 			}
+			tempHomingDelay = homingDelay;
+		} else {
+			tempHomingDelay --;
 		}
+		//}
 	} else {
 		tempShotDelay = 0;
 		tempNeedleDelay = 0;
