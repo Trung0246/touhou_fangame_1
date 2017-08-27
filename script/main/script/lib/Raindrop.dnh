@@ -7,7 +7,6 @@ local
 let RAINDROP_RED = 512;
 let RAINDROP_GREEN = 513;
 let RAINDROP_BLUE = 514;
-let __objPlayer__ = GetPlayerObjectID();
 
 function CreateShotRaindrop(x, y, xspd, yspd, xaccel, yaccel, xmax, ymax, graphic, delay) {
 	let raindrop = CreateShotB2(x, y, xspd, yspd, xaccel, yaccel, xmax, ymax, graphic, delay);
@@ -18,11 +17,12 @@ function CreateShotRaindrop(x, y, xspd, yspd, xaccel, yaccel, xmax, ymax, graphi
 }
 
 task CheckPlayerCollect(raindrop, graphic) {
+	let objPlayer = GetPlayerObjectID();
 	while (!Obj_IsDeleted(raindrop)) {
 		let x = ObjMove_GetX(objPlayer) - ObjMove_GetX(raindrop);
 		let y = ObjMove_GetY(objPlayer) - ObjMove_GetY(raindrop);
 		
-		let collectRange = Obj_GetValueD(__objPlayer__, "itemBox", 0)^2;
+		let collectRange = Obj_GetValueD(objPlayer, "itemBox", 0)^2;
 		
 		if (x*x + y*y <= collectRange) {
 			NotifyEventAll(EV_USER + 100, graphic);
