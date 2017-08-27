@@ -534,9 +534,7 @@ function Orb_Manage() {
 }*/
 
 task Shot_Missile_Create(x, y) {
-	let objShot = CreatePlayerShotA1(x, y + 16, 0, -90, missileDamage, 1, 3);
-	let lastX = ObjMove_GetX(objShot);
-	let lastY = ObjMove_GetY(objShot);
+	let objShot = CreatePlayerShotA1(x, y + 32, 0, -90, missileDamage, 1, 3);
 	ObjRender_SetAlpha(objShot, 220);
 	ObjRender_SetAngleZ(objShot, -90);
 	yield;
@@ -544,16 +542,10 @@ task Shot_Missile_Create(x, y) {
 	speedIncr;
 
 	task speedIncr {
-		while(ObjMove_GetSpeed(objShot) < 22){
+		while(ObjMove_GetSpeed(objShot) < 22 && !Obj_IsDeleted(objShot)){
 			ObjMove_SetSpeed(objShot,ObjMove_GetSpeed(objShot)+0.4);
 			yield;
 		}
-	}
-
-	while (!Obj_IsDeleted(objShot)) {
-		lastX = ObjMove_GetX(objShot);
-		lastY = ObjMove_GetY(objShot);
-		yield;
 	}
 }
 
