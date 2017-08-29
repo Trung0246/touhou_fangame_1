@@ -3,6 +3,9 @@ let FAIRY_RAINCIRCLE = 2;
 let INVISIBLE_RAIN = 3;
 let FAIRY_PLAIN = 4; //I have no idea what to call it :S
 let FAIRY_SUPERRAIN = 5;
+let FAIRY_OBLIGATORY = 6;
+let FAIRY_SPAM = 7;
+let FAIRY_RAINFALL = 8;
 function StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
 	if(bossActive){return;}
 	let enemy = ObjEnemy_Create(OBJ_ENEMY);
@@ -15,6 +18,9 @@ function StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
 		case(INVISIBLE_RAIN){RainThingyBehavior(enemy,extra);} //No arguments
 		case(FAIRY_PLAIN){PlainFairyBehavior(enemy,extra);} //[angle]
 		case(FAIRY_SUPERRAIN){SuperRainFairyBehavior(enemy,extra);} //[ydest]
+		case(FAIRY_OBLIGATORY){ObligatoryStageOneFairyBehavior(enemy,extra);} //[xdest,ydest]
+		case(FAIRY_SPAM){SpamFairyBehavior(enemy,extra);} //[angle]
+		case(FAIRY_RAINFALL){RainfallFairyBehavior(enemy,extra);} //[xdest,ydest,dir]
 	return enemy;
 
 }
@@ -248,87 +254,139 @@ task SuperRainFairyBehavior(enemy,extra){
 	}
 }
 
-//Keeping this because I have yet to update the rainfall fairy
-/*task StageEnemy(x,y,type,extra){
-	let enemy = ObjEnemy_Create(OBJ_ENEMY);
-	ObjEnemy_Regist(enemy);
-	ObjMove_SetPosition(enemy,x,y);
-	alternative(type)
-	case(FAIRY_TEST){ //[xdest,ydest,color]
-
-	}
-	case(FAIRY_RAIN){ //[destx,desty,dir] //todo: implement variable direction
-		AnimateBigFairy(enemy,1);
-		ObjEnemy_SetLife(enemy,200);
-		Obj_SetValue(enemy,"Anim",4);
-		ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
-		extra[0] = extra[0] - 5;
-		let angle = rand(0,360);
-		let n = 0;
-		let continueRain = true;
-		RainSpiral;
-		while(ObjMove_GetX(enemy) < extra[0] && !Obj_IsDeleted(enemy)){yield;}
-		if(!Obj_IsDeleted(enemy)){
-			Obj_SetValue(enemy,"Anim",0);
-			while(angle%60 >= 5){yield;}
-			continueRain = false;
-			wait(180);
-			ObjMove_SetAngle(enemy,270);
-			ObjMove_SetAcceleration(enemy,0.05);
-			ObjMove_SetMaxSpeed(enemy,3);
-			wait(120);
-			Obj_Delete(enemy);
-		}
-
-		task RainSpiral{
-			while(continueRain){
-				loop(4){
-					if(Obj_IsDeleted(enemy)){
-						continueRain = false;
-						break;
-					}
-					ascent(j in 0..6){
-						let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*40,ObjMove_GetY(enemy)+sin(angle+j*60)*40,0,90,DS_RICE_S_BLUE,15);
-						InstaDelete(trail);
-					}
-					angle += 5;
-					wait(2);
-				}
-				if(Obj_IsDeleted(enemy)){break;}
-				ascent(j in 0..3){
-					let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*120+n%2*60)*40,ObjMove_GetY(enemy)+sin(angle+j*120+n%2*60)*40,rand(2,3),90,DS_RICE_S_BLUE,10);
-					ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
-				}
-				n++;
+//Fact: if you don't have a generic aimed V-shape big fairy in red or yellow, your stage 1 is invalid by modern Touhou standards.
+task ObligatoryStageOneFairyBehavior(enemy,extra){
+	AnimateBigFairy(enemy,0);
+	ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+	if(extra[0] > ObjMove_GetX(enemy)){Obj_SetValue(enemy,"Anim",2);}
+	else{Obj_SetValue(enemy,"Anim",1);}
+	wait(90);
+	Obj_SetValue(enemy,"Anim",0);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_width1 = [3,4,4,6][diff];
+	let diff_width2 = [1,2,3,3][diff];
+	let angle;
+	let shot;
+	loop(5){
+		if(Obj_IsDeleted(enemy)){break;}
+		PlaySFX(SFX_SHOT1);
+		angle = GetAngleToPlayer(enemy);
+		ascent(i in 0..5){
+			ascent(j in -diff_width1..diff_width1+1){
+				SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3.5-absolute(j)*0.1,angle+i*72+j*1.5,RBALL_YELLOW,10);
 			}
-			ascent(i in 0..60){
-				if(Obj_IsDeleted(enemy)){break;}
-				ascent(j in 0..6){
-					let trail = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),0,90,DS_RICE_S_BLUE,15);
-					InstaDelete(trail);
-				}
-				if(i%5 == 0){
-					ascent(j in 0..6){
-						let shot = CreateShotA1(ObjMove_GetX(enemy)+cos(angle+j*60)*(40+i*7),ObjMove_GetY(enemy)+sin(angle+j*60)*(40+i),rand(2,3),90,DS_RICE_S_BLUE,10);
-						ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0.01,0,rand(2,4),0);
-					}
+			ascent(j in -diff_width2..diff_width2+1){
+				shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),2-absolute(j)*0.1,angle+(i+0.5)*72+j*3,SCALE_BLUE,20);
+				ObjMove_AddPatternB2(shot,70,NO_CHANGE,NO_CHANGE,0,0.1,0,4);
+			}
+		}
+		wait(120);
+	}
+
+	wait(120);
+	Obj_SetValue(enemy,"Anim",1);
+	ObjMove_SetAngle(enemy,220);
+	ObjMove_SetAcceleration(enemy,0.1);
+	ObjMove_SetMaxSpeed(enemy,4);
+	wait(240);
+	Obj_Delete(enemy);
+}
+
+task SpamFairyBehavior(enemy,extra){
+	AnimateSmallFairy(enemy,1);
+	if((extra[0]+90)%360 > 180){Obj_SetValue(enemy,"Anim",3);}
+	else{Obj_SetValue(enemy,"Anim",4);}
+	ObjMove_SetAngle(enemy,extra[0]);
+	ObjMove_SetSpeed(enemy,5);
+	let angle;
+	let shot;
+	let shift;
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_delay = [14,9,7,5][diff];
+
+	let speed = ObjMove_GetSpeed(enemy)*cos(ObjMove_GetAngle(enemy));
+
+	let time = 0;
+
+	while(!Obj_IsDeleted(enemy) && time < 180){
+		SPShotB2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),speed/2+rand(-1,1),-2,speed/-100,0.05,speed/20,4.5,DOT_CYAN,5);
+		wait(diff_delay);
+		time += diff_delay;
+	}
+
+	Obj_Delete(enemy);
+}
+
+task RainfallFairyBehavior(enemy,extra){
+	AnimateBigFairy(enemy,2);
+	ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+	if(extra[0] > ObjMove_GetX(enemy)){Obj_SetValue(enemy,"Anim",2);}
+	else{Obj_SetValue(enemy,"Anim",1);}
+	let shots = [];
+	let a = rand(0,360);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_spawnrate = [36,26,24,20][diff];
+
+	ascent(i in 0..6){
+		shots = shots ~ [SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),0,0,RBALL_CYAN,0)];
+		ObjShot_SetAutoDelete(shots[i],false);
+		ObjShot_SetSpellResist(shots[i],true);
+		LetThereBeRain(shots[i],i%2);
+	}
+	loop(100){
+		UpdateCircle;
+		yield;
+	}
+	ascent(i in 0..6){
+		LetThereBeRain(shots[i],(i+1)%2);
+	}
+	while(a%60 >= 5){
+		UpdateCircle;
+		yield;
+	}
+	
+	Obj_SetValue(enemy,"Anim",0);
+
+	let xspd;
+	let yspd;
+	ascent(i in 0..6){
+		xspd = cos(a+i*60);
+		yspd = sin(a+i*60);
+		ObjMove_AddPatternB2(shots[i],0,0,0,xspd/20,yspd/20,xspd*4,yspd/2);
+		ObjShot_SetAutoDelete(shots[i],true);
+	}
+	
+
+	wait(120);
+	Obj_SetValue(enemy,"Anim",2);
+	ObjMove_SetAngle(enemy,290);
+	ObjMove_SetAcceleration(enemy,0.1);
+	ObjMove_SetMaxSpeed(enemy,4);
+	wait(240);
+	Obj_Delete(enemy);
+
+	task LetThereBeRain(obj,delay){
+		wait(diff_spawnrate*(delay/2));
+		while(!Obj_IsDeleted(obj)){
+			loop(diff_spawnrate){
+				if(Obj_IsDeleted(obj)){break;}
+				if(Obj_IsDeleted(enemy)){
+					ObjShot_SetDeleteFrame(obj,0);
 				}
 				yield;
 			}
-		}
-
-		task InstaDelete(shot){
-			wait(ObjShot_GetDelay(shot)-1);
-			Obj_Delete(shot);
-		}
-	}
-
-	task SpawnRaindrops(xpos,ypos){
-		alternative(type)
-			case(FAIRY_TEST){
-				ascent(i in -1..2){
-					CreateShotRaindrop(xpos,ypos,cos(90+i*120)*0.2,sin(90+i*120),0,0.1,0,2,RAINDROP_RED-absolute(i)*2,5);
-				}
+			if(!Obj_IsDeleted(obj)){
+				SPShotB2(ObjMove_GetX(obj),ObjMove_GetY(obj),0,0,extra[2]/60,0.1,extra[2],3,DROP_CYAN,5);
 			}
+		}
 	}
-}*/
+
+	task UpdateCircle{
+		if(!Obj_IsDeleted(enemy)){
+			ascent(i in 0..6){
+				ObjMove_SetPosition(shots[i],ObjMove_GetX(enemy)+cos(a+i*60)*40,ObjMove_GetY(enemy)+sin(a+i*60)*40);
+			}
+			a += 3;
+		}
+	}
+}

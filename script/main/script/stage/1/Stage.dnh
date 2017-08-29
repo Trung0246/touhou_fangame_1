@@ -37,7 +37,7 @@
 		let obj;
 		alternative(arg[0])
 		case(FAIRY_STREAM){
-			loop(5){
+			loop(4){
 				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 				ObjItem_SetRenderScoreEnable(obj, false);
 				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
@@ -70,6 +70,36 @@
 				CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED,0);
 			}
 		}
+		case(FAIRY_SUPERRAIN){
+			loop(6){
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let xspd;
+			ascent(i in 0..8){
+				xspd = cos(i*45);
+				CreateShotRaindrop(arg[1],arg[2],xspd,sin(i*45),xspd/-100,0.05,0,2,RAINDROP_BLUE,0);
+			}
+		}
+		case(FAIRY_OBLIGATORY){
+			loop(8){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let xspd;
+			ascent(i in 0..4){
+				xspd = cos(45+i*90);
+				CreateShotRaindrop(arg[1],arg[2],xspd/2,sin(45+i*90),xspd/-100,0.05,0,2,RAINDROP_RED,0);
+			}
+		}
+		case(FAIRY_SPAM){
+			obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			CreateShotRaindrop(arg[1],arg[2],0,-3,0,0.05,0,2,RAINDROP_RED,0);
+		}
+
 	}
 }
 
@@ -92,6 +122,7 @@ task Stage_Main() {
 	stageWait(360);
 	StageTitle(1);
 	stageWait(300);
+	
 	//Fairy lane wave
 	ascent(i in -1..2){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*120,180-absolute(i)*10]);
@@ -147,22 +178,72 @@ task Stage_Main() {
 	Obj_SetValue(rainmaker,"BossTime",true);
 	
 	stageWait(960);
-	
+
 	//Super rain fairy filler
-	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(90);
-	StageEnemy(192+120,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192+120,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(90);
-	StageEnemy(192-120,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192-120,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(180);
-	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(90);
-	StageEnemy(192+140,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192+140,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(90);
-	StageEnemy(192-140,-100,FAIRY_SUPERRAIN,24,16,200,[50]);
+	StageEnemy(192-140,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(180);
 
-	//So far: 4770 frame, or 79,5 seconds
+	//V-shape fairies
+	StageEnemy(80,-50,FAIRY_OBLIGATORY,24,16,250,[192,50]);
+	stageWait(180);
+
+	StageEnemy(100,-100,FAIRY_OBLIGATORY,24,16,250,[192,200]);
+	StageEnemy(284,-100,FAIRY_OBLIGATORY,24,16,250,[192,100]);
+	stageWait(300);
+
+	StageEnemy(120,-50,FAIRY_OBLIGATORY,24,16,350,[192,50]);
+
+	stageWait(60);
+	loop(5){
+		StageEnemy(-128,150,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+		stageWait(15);
+	}
+
+	stageWait(60);
+	loop(8){
+		StageEnemy(512,150,FAIRY_SPAM,16,12,10,[180+rand(-10,10)]);
+		stageWait(10);
+	}
+
+	//Final section with rainfall fairies
+	stageWait(120);
+	StageEnemy(416,200,FAIRY_RAINFALL,24,16,200,[100,100,1]);
+	stageWait(210);
+	StageEnemy(512,100,FAIRY_SPAM,16,12,10,[170]);
+	StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[10]);
+	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,200,[284,100,-1]);
+	stageWait(240);
+	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);
+	}
+	stageWait(300);
+/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
+	stageWait(60);
+	loop(2){
+		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
+		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180]);
+		stageWait(90);
+	}
+	stageWait(120);*/
+	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
+	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
+	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[324,150,2]);
+	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[60,150,2]);
+	stageWait(480);
+	DeleteShotAll(TYPE_ALL,TYPE_ITEM);
+
 
 	//CloseStgScene();
 }

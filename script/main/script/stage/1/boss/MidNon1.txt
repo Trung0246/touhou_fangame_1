@@ -264,7 +264,7 @@ task TEnd
 
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	shotdown = true;
-	wait(120);
+	wait(60);
 	ObjMove_SetAngle(objBoss,-50);
 	ObjMove_SetAcceleration(objBoss,0.1);
 	ObjMove_SetMaxSpeed(objBoss,6);
