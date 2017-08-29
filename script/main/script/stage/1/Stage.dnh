@@ -105,6 +105,10 @@
 
 task Stage_Main() {
 	
+	//Here have a background
+	let background = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./background/Background.dnh");
+	StartScript(background);
+
 	//Init boss scripts
 	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/Plural.dnh");
 
