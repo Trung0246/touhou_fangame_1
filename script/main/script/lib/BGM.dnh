@@ -1,16 +1,16 @@
-task BGM_Stop{
-	let objBGM = GetCommonData("ObjBGM",ID_INVALID);
+task BGM_Stop {
+	let objBGM = GetCommonData("ObjBGM", ID_INVALID);
 	ObjSound_Stop(objBGM);
 }
 
-task BGM_Resume{
-	let objBGM = GetCommonData("ObjBGM",ID_INVALID);
-	if(!GetAreaCommonData("GameState","NoBGM",false)){
+task BGM_Resume {
+	let objBGM = GetCommonData("ObjBGM", ID_INVALID);
+	if (!GetAreaCommonData("GameState", "NoBGM", false)) {
 		ObjSound_Play(objBGM);
 	}
 }
 
-task BGM_Play(id){
+task BGM_Play(id) {
 	//Data is in format: [filename]/[loop start]/[loop end]/[corresponding line in songcomments]
 	let file = ObjFile_Create(OBJ_FILE_TEXT);
 	ObjFile_Open(file, "script/main/script/data/songdata.txt");
@@ -20,10 +20,10 @@ task BGM_Play(id){
 	
 	SetAreaCommonData("GameState","NoBGM",false);
 	ObjSound_Stop(objBGM);
-	ObjSound_Load(objBGM,"script/main/sound/bgm/" ~ data[0]);
-	ObjSound_SetRestartEnable(objBGM,false);
+	ObjSound_Load(objBGM, "script/main/sound/bgm/" ~ data[0]);
+	ObjSound_SetRestartEnable(objBGM, false);
 	ObjSound_SetLoopSampleCount(objBGM, data[1], data[2]);
-	ObjSound_SetLoopEnable(objBGM,true);
+	ObjSound_SetLoopEnable(objBGM, true);
 	ObjSound_Play(objBGM);
 	ObjSound_SetRestartEnable(objBGM,true);
 	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));

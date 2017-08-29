@@ -1,0 +1,50 @@
+function ObjRender_CreateMask(objTexture) {
+	Obj_SetValue(objTexture, "__Mask__", []);
+}
+
+function ObjRender_InitMask(objTexture, renderNumber, RP) {
+	Obj_SetValue(objTexture, "__MaskTarget__", GetReservedRenderTargetName(renderNumber));
+	Obj_SetValue(objTexture, "__MaskRP__", RP);
+
+	ObjShader_SetShaderF(objTexture, GetModuleDirectory() ~ "script/main/script/shader/SamplePS02_HLSL.txt");
+	ObjShader_SetTexture(objTexture, "textureMask_", Obj_GetValueD(objTexture, "__MaskTarget__", GetReservedRenderTargetName(0)));
+	ObjShader_SetTechnique(objTexture, "TecMask");
+}
+
+function ObjRender_UpdateMask(objTexture) {
+	let objMaskList = Obj_GetValueD(objTexture, "__Mask__", []);
+	let textureRP = Obj_GetValueD(objTexture, "__MaskRP__", [0, 0]);
+	let renderTarget =  Obj_GetValueD(objTexture, "__MaskTarget__", GetReservedRenderTargetName(0));
+
+	RenderToTextureA1(renderTarget, textureRP[0], textureRP[1], true);
+	ascent (i in 0..length(objMaskList)) {
+		RenderToTextureB1(renderTarget, objMaskList[i], false);
+	}
+}
+
+function ObjRender_AddMask(objTexture, objMask) {
+	Obj_SetValue(objTexture, "__Mask__", Obj_GetValueD(objTexture, "__Mask__", []) ~ [objMask]);
+}
+
+function ObjRender_RemoveMask(objTexture, objMask) {
+	let objMaskList = Obj_GetValueD(objTexture, "__Mask__", []);
+
+	ascent (i in 0..length(objMaskList)) {
+		if (objMaskList[i] == objMask) {
+			Obj_SetValue(objTexture, "__Mask__", erase(objMaskList, i));
+			break;
+		}
+	}
+}
+
+function ObjRender_DestroyMask(objTexture) {
+	//TODO: add dummy shader for effective removal
+
+	//let textureRP = Obj_GetValueD(objTexture, "__MaskRP__", [0, 0]);
+	//ObjShader_SetShaderF(objTexture, "");
+	//ResetShaderI(textureRP[0], textureRP[1]);
+
+	Obj_DeleteValue(objTexture, "__Mask__");
+	Obj_DeleteValue(objTexture, "__MaskTarget__");
+	Obj_DeleteValue(objTexture, "__MaskRP__");
+}

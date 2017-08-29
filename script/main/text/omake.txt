@@ -85,18 +85,18 @@ To be quite honest, she only fought Reimu and company because they were so insis
 Name: Sakkagumi Happyaku
 
 Species: Ama-nyudo (アマーニュド)
-Abilities: Able to completely obscure a given location
+Abilities: Able to gather and condense grief
 
 The cloudy visage of a long dead nun.
 
-The grief of a dreadfully long life seems to have made itself manifest upon her death. Curiously enough, this visage of
-hers is a Buddhist as well. Even as a youkai, she manages to act as a perfect model of Buddhist detachment from
-physicality. She's attached just enough to act as a Bodhisattva. Perhaps it's because she's a cloud?
+The grief of a dreadfully long life seems to have made itself manifest upon her death, and (reluctantly) continues to
+feed upon the nun's long, long list of unresolved sorrows. Curiously enough, this visage of hers is a Buddhist as well. 
+Even as a youkai, she manages to act as a perfect model of Buddhist detachment from physicality. 
+She's attached just enough to act as a Bodhisattva. Perhaps it's because she's a cloud?
 
-Though ironically one who wishes to lead other's to Nirvana, she's quite proficient at obscuring locations. Her ability
-doesn't have much purpose besides hiding things, but is likely the byproduct of the dead nun's struggles in life. Likewise,
-she's usually quite quiet, but oftentimes can burst out loads of information under duress. Thankfully, her incredible
-detachment from the world ensures that she hasn't too much information to provide.
+She's able to gather the "grief" of both human and youkai and condense it into something physical. She could hypothetically
+instantly grant someone Nirvana by taking all of their grief-induced attachment to the world, but that would perhaps defeat
+the purpose of working towards Nirvana. She's usually quite quiet, but oftentimes can burst out loads of information under duress. Thankfully, her own incredible detachment from the world ensures that she hasn't too much information to provide.
 
 Her idea in concealing the Expanse for Saga was that, if she helped, then quite possibly Saga and her associates
 might listen to her. She probably hadn't taken into account the fact they were already of their own, certain religious
@@ -107,7 +107,12 @@ She practices a form of Buddhism from the mainland, and as such, presents hersel
 Myouren. Though, presented with little youkai success and the shock-induced death of at least one human, she's considered
 simply caving in and joining them.
 
-Perhaps it would be best to simply become a Buddha now and get it over with.
+...It seems that as of recent, some other source of grief has begun to flow into her. To cope with the resulting overflow
+of phantasmal power, she manifested two rather morbid items in her hands. She has a hunch on why they appear the way they
+do, but like most things, she doesn't seem to want to talk about it. 
+
+It certainly doesn't help minimize the shock-induced deaths.
+
 
 --------------------Stage 3 boss - Wicked Fairy Godmother--------------------
 
@@ -148,22 +153,22 @@ Name: Kazarashi Irohahime
 Species: Wani (鰐)
 Abilities: Manipulation of phantasmal flame
 
-Long ago, St. Elmo's Fire used to hover above the seas of Earth.
+Long ago, great flames used to hover above the seas of Earth.
 
 The wani have a simple sort of lifestyle that benefits their hedonistic pursuits. They often waste their time collectively
 trying to prove something to themselves or to others, and engage visitors with an air of kindness. A human tale is passed
 down of an entire clan of wani that had once gathered to play a clever game with a cunning rabbit ages ago. Thus was the
 atmosphere that Irohahime was born into.
 
-Irohahime, the younger sister of Umehime, is an easy-going sort of individual. She hasn't a mind for business and politics
-but has a certain talent for pyrotechnics. She in't fond of her high status in youkai society, and thus tends to go by the
-alias Iroha.
+Irohahime, the younger sister of Umehime, is an easy-going sort of individual with a certain talent for pyrotechnics. 
+She isn't fond of business nor politics, much less of her high status in youkai society, and thus tends to go by the alias Iroha.
+It's very much in her field of comprehension, nonetheless.
 
 By using the sacred Kazarashi sake, she's able to conjure incredible dragons of fire that bend to her will. Of course,
 these things are simply an illusion. Still, she has great skill when it comes to fire.
 
-She ends up picking fights with those who look down upon her, so it isn't out of the ordinary to encounter her with all
-sorts of wounds.
+Her own little adventures are something of a daily routine, with her getting lost here and there, so it isn't out of the ordinary to 
+encounter her all bandaged up.
 
 Iroha(hime) didn't quite care about the convoluted plot of the granny they were hosting or  all the new servants they had
 gained through Saga's confusing contracts, but she was excited at the prospect of what the plan's success would promise.
@@ -178,7 +183,7 @@ She speaks in a Kansai-ben accent and finds Aloe Vela uncanny.
 Name: Kazarashi Umehime
 
 Species: Wani (鰐)
-Abilties: Manipulation of phantasmal rain
+Abilties: Manipulation of phantasmal weather phenomena
 
 Long ago, great storms would overtake sails above the seas of earth.
 
@@ -335,14 +340,15 @@ Soon, she would be their mother again.
 名: アジャースワール
 Name: Azure Swirl
 
-Species: Fairy (Nereid) (妖精 (ニアリーッド))
+Species: Nereid (ニアリーッド)
 Abilities: Control of the Ocean Currents
 
 She's back now. The Kazarashi sisters are relying on her to filter out any intruders
 after "that other goddess" that are currently barging into the Expanse.
 
-That fairy with the ability to control the ocean waves. It's an incredibly potent power. Combined with the fact Azure's
-actually quite competent for a fairy, she's quite the threat.
+That "fairy" with the ability to control the ocean waves. It's an incredibly potent power. Combined with the fact Azure's
+actually quite competent for a fairy, she's quite the threat. Actually, given her maturity and her unrestrained power,
+she's much more human than fairy at this point. It's imaginable she's now as capable of death as one, anyway.
 
 This time, Reimu and company encountered her right in the heart of the Expanse.
 She thinks that putting in the effort is only being polite, but really, she's just acting as a huge roadblock.

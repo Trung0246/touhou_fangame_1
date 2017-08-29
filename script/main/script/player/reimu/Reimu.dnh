@@ -63,7 +63,7 @@ let dir = GetCurrentScriptDirectory();
 	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
 	SetPlayerLife(GetCommonData("player_life", 2));
 	SetPlayerSpell(GetCommonData("player_spell", 3));
-	SetPlayerPower(GetCommonData("player_power", 0));
+	SetPlayerPower(GetCommonData("player_power", 1));
 
 	//SetPlayerInvincibilityFrame(invisibleFrame);
 	SetPlayerDownStateFrame(downFrame);
@@ -242,17 +242,21 @@ task Player_Render() {
 
 task Hitbox_Render() {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	let obj2 = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, dir ~ "img/hitbox.png");
 	Obj_SetRenderPriority(obj, 0.7);
+	ObjPrim_SetTexture(obj2, dir ~ "img/hitbox.png");
+	Obj_SetRenderPriorityI(obj2, 21);
 	let angle = 22.5;
 	let scale = 2.75;
 	let alpha = 0;
 	let angle2 = 22.5;
-	let scale2 = grazeBox / 42 * 4;
+	let scale2 = 2.75; //grazeBox / 42 * 4
 	let alpha2 = 0;
 	while (!Obj_IsDeleted(objPlayer)) {
 		let playerState = GetPlayerState();
 		ObjSpriteList2D_ClearVertexCount(obj);
+		ObjSpriteList2D_ClearVertexCount(obj2);
 		if (isFocus && playerState == STATE_NORMAL) {
 			Render();
 			scale = max(scale - 2 / 10, 64 / (64 - hitBox * 4.5));
@@ -263,7 +267,7 @@ task Hitbox_Render() {
 		}
 		if (grazeTime > 0) {
 			Render2();
-			scale2 = grazeBox / 42 * 4;
+			scale2 = 2.75;
 			alpha2 = min(alpha2 + 255 / 100, (grazeTime / grazeDelay) * 80);
 			grazeTime --;
 		} else {
@@ -295,23 +299,23 @@ task Hitbox_Render() {
 	}
 
 	function Render2() {
-		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
-		ObjRender_SetX(obj, GetPlayerX());
-		ObjRender_SetY(obj, GetPlayerY());
-		ObjRender_SetAngleZ(obj, angle2);
-		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj, alpha2);
-		ObjSpriteList2D_AddVertex(obj);
+		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
+		ObjRender_SetX(obj2, GetPlayerX());
+		ObjRender_SetY(obj2, GetPlayerY());
+		ObjRender_SetAngleZ(obj2, angle2);
+		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj2, alpha2);
+		ObjSpriteList2D_AddVertex(obj2);
 
-		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
-		ObjRender_SetX(obj, GetPlayerX());
-		ObjRender_SetY(obj, GetPlayerY());
-		ObjRender_SetAngleZ(obj, -angle2);
-		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj, alpha2);
-		ObjSpriteList2D_AddVertex(obj);
+		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
+		ObjRender_SetX(obj2, GetPlayerX());
+		ObjRender_SetY(obj2, GetPlayerY());
+		ObjRender_SetAngleZ(obj2, -angle2);
+		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj2, alpha2);
+		ObjSpriteList2D_AddVertex(obj2);
 	}
 }
 
@@ -392,7 +396,7 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = GetCommonData("player_power", 0);
+	let powerData = GetCommonData("player_power", 1);
 	let dist = 40;
 	if (powerData >= 4) {
 		startChange = -60;

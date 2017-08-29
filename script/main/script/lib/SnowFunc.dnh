@@ -1,812 +1,874 @@
-let frame=0;
-let bgspd=0;
-let bossflg=0;
-let yes=1;
-let no=0;
-let angleacc=0;
-let time=0;
-let num=0;
-let type=0;
-let pcount=0;
-let frame2=0;
-let frame3=0;
-let GATP=NULL;
-let angle=0;
-let angle2=0;
-let angle3=0;
-let N=1;
-let n=0;
-let RNDM=0;
-let rad=40;
+//Compatible for v0.12m DMF
+//TODO: change it to ph3 compatible
+
+let frame = 0;
+let bgspd = 0;
+let bossflg = 0;
+let yes = 1;
+let no = 0;
+let angleacc = 0;
+let time = 0;
+let num = 0;
+let type = 0;
+let pcount = 0;
+let frame2 = 0;
+let frame3 = 0;
+let GATP = NULL;
+let angle = 0;
+let angle2 = 0;
+let angle3 = 0;
+let N = 1;
+let n = 0;
+let RNDM = 0;
+let rad = 40;
 let stream = 1;
-let CSD = GetCurrentScriptDirectory;
+let CSD = GetCurrentScriptDirectory();
 
-function more(x,y){
-	if(x>y){return x;}
-	if(x<y){return y;}
-	if(x==y){return x;}
+function more(x, y) {
+	if (x > y) {
+		return x;
+	}
+	if (x < y) {
+		return y;
+	}
+	if (x == y) {
+		return x;
+	}
 }
 
-function less(x,y){
-	if(x>y){return y;}
-	if(x<y){return x;}
-	if(x==y){return y;}
+function less(x, y) {
+	if (x > y) {
+		return y;
+	}
+	if (x < y) {
+		return x;
+	}
+	if (x == y) {
+		return y;
+	}
 }
 
-task Concentration03(let time){
-	loop(time){
-		SetShotColor(rand(0,255),rand(0,255),rand(0,255));
+/*task Concentration03(let time) {
+	loop(time) {
+		//SetShotColor(rand(0, 255), rand(0, 255), rand(0, 255));
 		SparkLine;
-		SetShotColor(255,255,255);
-		yield;}
-	task SparkLine{
-		let obj=Obj_Create(OBJ_LASER);
-		Obj_SetPosition(obj,GetX,GetY);
-		let Length=200;
-		Obj_SetAngle(obj,rand(0,360));
-		ObjShot_SetDelay(obj,20);
-		ObjShot_SetGraphic(obj,WHITE01);
-		ObjLaser_SetWidth(obj,rand(5,80));
-		ObjLaser_SetSource(obj,false);
-		Obj_SetCollisionToPlayer(obj,false);
-		let addLength=-Length/20;
-		loop(20){
-			Length+=addLength;
-			ObjLaser_SetLength(obj,Length);
-			Obj_SetX(obj,GetX);
-			Obj_SetY(obj,GetY);
+		//SetShotColor(255, 255, 255);
+		yield;
+	}
+	task SparkLine {
+		let obj = Obj_Create(OBJ_STRAIGHT_LASER);
+		Obj_SetPosition(obj, GetX, GetY);
+		let Length = 200;
+		Obj_SetAngle(obj, rand(0, 360));
+		ObjShot_SetDelay(obj, 20);
+		ObjShot_SetGraphic(obj, WHITE01);
+		ObjLaser_SetWidth(obj, rand(5, 80));
+		ObjLaser_SetSource(obj, false);
+		Obj_SetCollisionToPlayer(obj, false);
+		let addLength = -Length / 20;
+		loop(20) {
+			Length += addLength;
+			ObjLaser_SetLength(obj, Length);
+			Obj_SetX(obj, GetX);
+			Obj_SetY(obj, GetY);
 			yield;
 		}
 		Obj_Delete(obj);
 	}
 }
 
-task Nova(let X,let Y,let rad,let type, graphic){
-	let obj=Obj_Create(OBJ_LASER);
-	Obj_SetPosition(obj,X,Y);
-	Obj_SetAngle(obj,90);
-	ObjShot_SetGraphic(obj,graphic);
-	ObjLaser_SetLength(obj,0);
-	ObjLaser_SetWidth(obj,0);
-	ObjLaser_SetSource(obj,false);
-	Obj_SetAlpha(obj,5);
-	Obj_SetAutoDelete(obj,false);
-	ObjShot_SetBombResist(obj,true);
-	ObjShot_ToItem(obj,false);
-	let taskcount=0;
-	let al=5;
-	let radius=0;
-	while(!Obj_BeDeleted(obj)){
+task Nova(let X, let Y, let rad, let type, graphic) {
+	let obj = Obj_Create(OBJ_LASER);
+	Obj_SetPosition(obj, X, Y);
+	Obj_SetAngle(obj, 90);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjLaser_SetLength(obj, 0);
+	ObjLaser_SetWidth(obj, 0);
+	ObjLaser_SetSource(obj, false);
+	Obj_SetAlpha(obj, 5);
+	Obj_SetAutoDelete(obj, false);
+	ObjShot_SetBombResist(obj, true);
+	ObjShot_ToItem(obj, false);
+	let taskcount = 0;
+	let al = 5;
+	let radius = 0;
+	while (!Obj_BeDeleted(obj)) {
 		taskcount++;
-		if(type==0){Obj_SetCollisionToPlayer(obj,false);}
-		if(type==1){Obj_SetCollisionToPlayer(obj,true);
-			Obj_SetAlpha(obj,0);}
-		if(taskcount<16){al+=250/15;
-			radius+=2*rad/15;
-			Obj_SetAlpha(obj,al);
-			Obj_SetPosition(obj,X,Y-0.5*radius);
-			ObjLaser_SetLength(obj,radius);
-			ObjLaser_SetWidth(obj,radius);}
-		if(taskcount==16){ascent(i in 0..120){Spark(i*3);}}
-	yield;}
-}
-
-task Spark(let ang){
-	let obj=Obj_Create(OBJ_LASER);
-	Obj_SetPosition(obj,GetX,GetY);
-	Obj_SetAngle(obj,ang);
-	ObjShot_SetDelay(obj,0);
-	ObjShot_SetGraphic(obj,PURPLE11);
-	Obj_SetAlpha(obj,240);
-	ObjLaser_SetWidth(obj,50);
-	ObjLaser_SetSource(obj,false);
-	Obj_SetCollisionToPlayer(obj,false);
-	ObjShot_ToItem(obj,false);
-	let leng=300;
-	let taskcount=0;
-	let al=240;
-	while(!Obj_BeDeleted(obj)){
-		taskcount++;
-		if(al>0){al-=2;}
-		if(taskcount<=20){
-			leng+=30;
-			ObjLaser_SetLength(obj,leng);}
-		if(taskcount>20 && taskcount<=60){
-			leng+=10;
-			ObjLaser_SetLength(obj,leng);}
-		Obj_SetAlpha(obj,al);
-		if(taskcount==120){Obj_Delete(obj);}
-	yield;}
-}
-
-function ObjShot_Create(x, y, speed, angle, graphic, delay){
-  let obj = Obj_Create(OBJ_SHOT);
-  Obj_SetPosition(obj, x, y);
-  Obj_SetSpeed(obj, speed);
-  Obj_SetAngle(obj, angle);
-  ObjShot_SetGraphic(obj, graphic);
-  ObjShot_SetDelay(obj, delay);
-  return obj;
-}
-
-function ObjLaser_Create(x, y, angle, length, width, graphic, delay){
-  let obj = Obj_Create(OBJ_LASER);
-  Obj_SetPosition(obj, x, y);
-  Obj_SetAngle(obj, angle);
-  ObjLaser_SetLength(obj, length);
-  ObjLaser_SetWidth(obj, width);
-  ObjShot_SetGraphic(obj, graphic);
-  ObjShot_SetDelay(obj, delay);
-  return obj;
-}
-
-function ObjSinuateLaser_Create(x, y, speed, angle, length, width, graphic, delay){
-  let obj = Obj_Create(OBJ_SINUATE_LASER);
-  Obj_SetPosition(obj, x, y);
-  Obj_SetSpeed(obj, speed);
-  Obj_SetAngle(obj, angle);
-  ObjSinuateLaser_SetLength(obj, length);
-  ObjSinuateLaser_SetWidth(obj, width);
-  ObjShot_SetGraphic(obj, graphic);
-  ObjShot_SetDelay(obj, delay);
-  return obj;
-}
-
-function GetPlayerMoveAngle {
-  let angle = NULL;
-  if(GetKeyState(VK_DOWN)==KEY_HOLD){
-    if(GetKeyState(VK_RIGHT)==KEY_HOLD){
-      angle = 45;
-    }
-    else if(GetKeyState(VK_LEFT)==KEY_HOLD){
-      angle = 135;
-    }
-    else {
-      angle = 90;
-    }
-  }
-  else if(GetKeyState(VK_UP)==KEY_HOLD){
-    if(GetKeyState(VK_RIGHT)==KEY_HOLD){
-      angle = 315;
-    }
-    else if(GetKeyState(VK_LEFT)==KEY_HOLD){
-      angle = 225;
-    }
-    else {
-      angle = 270;
-    }
-  }
-  else if(GetKeyState(VK_RIGHT)==KEY_HOLD){
-    angle = 0;
-  }
-  else if(GetKeyState(VK_LEFT)==KEY_HOLD){
-    angle = 180;
-  }
-  return angle;
-}
-
-task ShootShape(x, y, speed, angle, graphic, delay, corners, bullets){
-  let Corners = [];
-  let SideBullets = [];
-  ascent(i in 0..corners){
-    let obj = Obj_Create(OBJ_SHOT);
-    Corners = Corners ~ [obj];
-    
-    Obj_SetPosition(obj, x, y);
-    Obj_SetSpeed(obj, speed);
-    Obj_SetAngle(obj, angle+i*(360/corners));
-    ObjShot_SetGraphic(obj, graphic);
-    ObjShot_SetDelay(obj, delay);
-    
-    Obj_SetAlpha(obj, 0);
-    Obj_SetCollisionToPlayer(obj, false);
-    Obj_SetAutoDelete(obj, false);
-  }
-  
-task DeleteShotInCircleEx(item, type, x, y, initradius, maxradius, grow, invincibility){
-	let currentradius = initradius;
-	while(currentradius!=maxradius){
-		if(item){
-			DeleteEnemyShotToItemInCircle(type,x,y,currentradius);
-		}else{
-			DeleteEnemyShotInCircle(type,x,y,currentradius);
+		if (type == 0) {
+			Obj_SetCollisionToPlayer(obj, false);
 		}
-		currentradius+=grow;
-		if(invincibility){SetPlayerInvincibility(2);}
+		if (type == 1) {
+			Obj_SetCollisionToPlayer(obj, true);
+			Obj_SetAlpha(obj, 0);
+		}
+		if (taskcount < 16) {
+			al += 250 / 15;
+			radius += 2 * rad / 15;
+			Obj_SetAlpha(obj, al);
+			Obj_SetPosition(obj, X, Y - 0.5 * radius);
+			ObjLaser_SetLength(obj, radius);
+			ObjLaser_SetWidth(obj, radius);
+		}
+		if (taskcount == 16) {
+			ascent(i in 0..120) {
+				Spark(i * 3);
+			}
+		}
 		yield;
 	}
-	if(invincibility){SetPlayerInvincibility(0);}
-}
-  ascent(i in 0..corners){
-    if(i==corners-1){
-      let Side = BulletLine(Corners[i], Corners[0]);
-      SideBullets = SideBullets ~ [Side];
-    }
-    else {
-      let Side = BulletLine(Corners[i], Corners[i+1]);
-      SideBullets = SideBullets ~ [Side];
-    }
-  }
-  
-  while(length(SideBullets) > 0){
-    descent(i in 0..length(SideBullets)){
-      if(SideBullets[i] == [0]){
-        SideBullets = erase(SideBullets, i);
-      }
-      else {
-        let tempArray = SideBullets[i];
-        descent(j in 1..length(tempArray)){
-          if(Obj_BeDeleted(tempArray[j])){
-            tempArray = erase(tempArray, j);
-          }
-        }
-        SideBullets[i] = tempArray;
-      }
-    }
-    yield;
-  }
-  
-  ascent(i in 0..corners){
-    Obj_Delete(Corners[i]);
-  }
-  
-  function BulletLine(obj1, obj2){
-    let SideBullets = [0];
-    let DummyArray = [0];
-    ascent(i in 0..bullets){
-      let obj = Obj_Create(OBJ_SHOT);
-      SideBullets = SideBullets ~ [obj];
-      DummyArray = DummyArray ~ [0];
-      
-      ObjShot_SetGraphic(obj, graphic);
-      ObjShot_SetDelay(obj, delay);
-    }
-    RealTask;
-    return SideBullets;
-    
-    task RealTask {
-      while(SideBullets != DummyArray){
-        let x1 = Obj_GetX(obj1);
-        let y1 = Obj_GetY(obj1);
-        let x2 = Obj_GetX(obj2);
-        let y2 = Obj_GetY(obj2);
-        let distance = ((x1-x2)^2 + (y1-y2)^2)^0.5;
-        let interval = distance/bullets;
-        let angle = atan2(y2-y1, x2-x1);
-        descent(i in 1..length(SideBullets)){
-          if(Obj_BeDeleted(SideBullets[i])){
-            SideBullets[i] = 0;
-          }
-          else {
-            let xo = Obj_GetX(SideBullets[i]);
-            let yo = Obj_GetY(SideBullets[i]);
-            
-            Obj_SetPosition(SideBullets[i], x1+cos(angle)*interval*i, y1+sin(angle)*interval*i);
-            
-            let xn = Obj_GetX(SideBullets[i]);
-            let yn = Obj_GetY(SideBullets[i]);
-            let newangle = atan2(yn-yo, xn-xo);
-            
-            Obj_SetAngle(SideBullets[i], newangle);
-          }
-        }
-        yield;
-      }
-    }
-  }
 }
 
-task TReflectionLaser(x, y, v, angle, maxLen, width, graphic, delay, count){
-   
-   while(angle>=180){angle-=360;}
-   while(angle<-180){angle+=360;}
+task Spark(let ang) {
+	let obj = Obj_Create(OBJ_LASER);
+	Obj_SetPosition(obj, GetX, GetY);
+	Obj_SetAngle(obj, ang);
+	ObjShot_SetDelay(obj, 0);
+	ObjShot_SetGraphic(obj, PURPLE11);
+	Obj_SetAlpha(obj, 240);
+	ObjLaser_SetWidth(obj, 50);
+	ObjLaser_SetSource(obj, false);
+	Obj_SetCollisionToPlayer(obj, false);
+	ObjShot_ToItem(obj, false);
+	let leng = 300;
+	let taskcount = 0;
+	let al = 240;
+	while (!Obj_BeDeleted(obj)) {
+		taskcount++;
+		if (al > 0) {
+			al -= 2;
+		}
+		if (taskcount <= 20) {
+			leng += 30;
+			ObjLaser_SetLength(obj, leng);
+		}
+		if (taskcount > 20 && taskcount <= 60) {
+			leng += 10;
+			ObjLaser_SetLength(obj, leng);
+		}
+		Obj_SetAlpha(obj, al);
+		if (taskcount == 120) {
+			Obj_Delete(obj);
+		}
+		yield;
+	}
+}
 
-   loop(delay){yield;}
-   
-   let obj=Obj_Create(OBJ_LASER);
+function ObjShot_Create(x, y, speed, angle, graphic, delay) {
+	let obj = Obj_Create(OBJ_SHOT);
+	Obj_SetPosition(obj, x, y);
+	Obj_SetSpeed(obj, speed);
+	Obj_SetAngle(obj, angle);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	return obj;
+}
 
-   
-   Obj_SetPosition(obj, x, y);
-   Obj_SetAngle(obj, angle);
-   ObjLaser_SetWidth(obj, width);
-   ObjShot_SetGraphic(obj, graphic);
-   Obj_SetAutoDelete(obj, false);
-   ObjLaser_SetSource(obj, false);
-   TReflectionLaser_Lengthen(obj, maxLen, v);
-   TReflectionLaser_Move(obj, x, y, v, angle);
+function ObjLaser_Create(x, y, angle, length, width, graphic, delay) {
+	let obj = Obj_Create(OBJ_LASER);
+	Obj_SetPosition(obj, x, y);
+	Obj_SetAngle(obj, angle);
+	ObjLaser_SetLength(obj, length);
+	ObjLaser_SetWidth(obj, width);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	return obj;
+}
 
-   while(!Obj_BeDeleted(obj)){
-      if(x>GetClipMaxX&&x+maxLen*cos(angle)>GetClipMaxX||x<GetClipMinX&&x+maxLen*cos(angle)<GetClipMinX||y<GetClipMinY&&y+maxLen*sin(angle)<GetClipMinY){Obj_Delete(obj);}
-      x=Obj_GetX(obj);
-      y=Obj_GetY(obj);
-      // reflection detection
-      if(angle<0 && y<GetClipMinY && x>GetClipMinX && x<GetClipMaxX){
-         
-         if(count>0){TReflectionLaser(x, y, v, -angle, maxLen, width, graphic, 0, count-1);}
-         break;
-      }else
-      if(((-90<angle && angle<90) && x>GetClipMaxX)||((angle<-90 || 90<angle) && x <GetClipMinX) && y>GetClipMinY && y<GetClipMaxY){
-         
-         if(count>0){TReflectionLaser(x, y, v, 180 - angle, maxLen, width, graphic, 0, count-1);}
-         break;
-      }
-      yield;
-   }
+function ObjSinuateLaser_Create(x, y, speed, angle, length, width, graphic, delay) {
+	let obj = Obj_Create(OBJ_SINUATE_LASER);
+	Obj_SetPosition(obj, x, y);
+	Obj_SetSpeed(obj, speed);
+	Obj_SetAngle(obj, angle);
+	ObjSinuateLaser_SetLength(obj, length);
+	ObjSinuateLaser_SetWidth(obj, width);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	return obj;
+}*/
+
+function GetPlayerMoveAngle {
+	let angle;// = NULL;
+	if (GetKeyState(VK_DOWN) == KEY_HOLD) {
+		if (GetKeyState(VK_RIGHT) == KEY_HOLD) {
+			angle = 45;
+		} else if (GetKeyState(VK_LEFT) == KEY_HOLD) {
+			angle = 135;
+		} else {
+			angle = 90;
+		}
+	} else if (GetKeyState(VK_UP) == KEY_HOLD) {
+		if (GetKeyState(VK_RIGHT) == KEY_HOLD) {
+			angle = 315;
+		} else if (GetKeyState(VK_LEFT) == KEY_HOLD) {
+			angle = 225;
+		} else {
+			angle = 270;
+		}
+	} else if (GetKeyState(VK_RIGHT) == KEY_HOLD) {
+		angle = 0;
+	} else if (GetKeyState(VK_LEFT) == KEY_HOLD) {
+		angle = 180;
+	}
+	return angle;
+}
+
+/*task ShootShape(x, y, speed, angle, graphic, delay, corners, bullets) {
+	let Corners = [];
+	let SideBullets = [];
+	ascent(i in 0..corners) {
+		let obj = Obj_Create(OBJ_SHOT);
+		Corners = Corners~[obj];
+
+		Obj_SetPosition(obj, x, y);
+		Obj_SetSpeed(obj, speed);
+		Obj_SetAngle(obj, angle + i * (360 / corners));
+		ObjShot_SetGraphic(obj, graphic);
+		ObjShot_SetDelay(obj, delay);
+
+		Obj_SetAlpha(obj, 0);
+		Obj_SetCollisionToPlayer(obj, false);
+		Obj_SetAutoDelete(obj, false);
+	}
+
+	task DeleteShotInCircleEx(item, type, x, y, initradius, maxradius, grow, invincibility) {
+		let currentradius = initradius;
+		while (currentradius != maxradius) {
+			if (item) {
+				DeleteEnemyShotToItemInCircle(type, x, y, currentradius);
+			} else {
+				DeleteEnemyShotInCircle(type, x, y, currentradius);
+			}
+			currentradius += grow;
+			if (invincibility) {
+				SetPlayerInvincibility(2);
+			}
+			yield;
+		}
+		if (invincibility) {
+			SetPlayerInvincibility(0);
+		}
+	}
+	ascent(i in 0..corners) {
+		if (i == corners - 1) {
+			let Side = BulletLine(Corners[i], Corners[0]);
+			SideBullets = SideBullets~[Side];
+		} else {
+			let Side = BulletLine(Corners[i], Corners[i + 1]);
+			SideBullets = SideBullets~[Side];
+		}
+	}
+
+	while (length(SideBullets) > 0) {
+		descent(i in 0..length(SideBullets)) {
+			if (SideBullets[i] == [0]) {
+				SideBullets = erase(SideBullets, i);
+			} else {
+				let tempArray = SideBullets[i];
+				descent(j in 1..length(tempArray)) {
+					if (Obj_BeDeleted(tempArray[j])) {
+						tempArray = erase(tempArray, j);
+					}
+				}
+				SideBullets[i] = tempArray;
+			}
+		}
+		yield;
+	}
+
+	ascent(i in 0..corners) {
+		Obj_Delete(Corners[i]);
+	}
+
+	function BulletLine(obj1, obj2) {
+		let SideBullets = [0];
+		let DummyArray = [0];
+		ascent(i in 0..bullets) {
+			let obj = Obj_Create(OBJ_SHOT);
+			SideBullets = SideBullets~[obj];
+			DummyArray = DummyArray~[0];
+
+			ObjShot_SetGraphic(obj, graphic);
+			ObjShot_SetDelay(obj, delay);
+		}
+		RealTask;
+		return SideBullets;
+
+		task RealTask {
+			while (SideBullets != DummyArray) {
+				let x1 = Obj_GetX(obj1);
+				let y1 = Obj_GetY(obj1);
+				let x2 = Obj_GetX(obj2);
+				let y2 = Obj_GetY(obj2);
+				let distance = ((x1 - x2) ^ 2 + (y1 - y2) ^ 2) ^ 0.5;
+				let interval = distance / bullets;
+				let angle = atan2(y2 - y1, x2 - x1);
+				descent(i in 1..length(SideBullets)) {
+					if (Obj_BeDeleted(SideBullets[i])) {
+						SideBullets[i] = 0;
+					} else {
+						let xo = Obj_GetX(SideBullets[i]);
+						let yo = Obj_GetY(SideBullets[i]);
+
+						Obj_SetPosition(SideBullets[i], x1 + cos(angle) * interval * i, y1 + sin(angle) * interval * i);
+
+						let xn = Obj_GetX(SideBullets[i]);
+						let yn = Obj_GetY(SideBullets[i]);
+						let newangle = atan2(yn - yo, xn - xo);
+
+						Obj_SetAngle(SideBullets[i], newangle);
+					}
+				}
+				yield;
+			}
+		}
+	}
+}
+
+task TReflectionLaser(x, y, v, angle, maxLen, width, graphic, delay, count) {
+
+	while (angle >= 180) {
+		angle -= 360;
+	}
+	while (angle < -180) {
+		angle += 360;
+	}
+
+	loop(delay) {
+		yield;
+	}
+
+	let obj = Obj_Create(OBJ_LASER);
+
+
+	Obj_SetPosition(obj, x, y);
+	Obj_SetAngle(obj, angle);
+	ObjLaser_SetWidth(obj, width);
+	ObjShot_SetGraphic(obj, graphic);
+	Obj_SetAutoDelete(obj, false);
+	ObjLaser_SetSource(obj, false);
+	TReflectionLaser_Lengthen(obj, maxLen, v);
+	TReflectionLaser_Move(obj, x, y, v, angle);
+
+	while (!Obj_BeDeleted(obj)) {
+		if (x > GetClipMaxX && x + maxLen * cos(angle) > GetClipMaxX || x < GetClipMinX && x + maxLen * cos(angle) < GetClipMinX || y < GetClipMinY && y + maxLen * sin(angle) < GetClipMinY) {
+			Obj_Delete(obj);
+		}
+		x = Obj_GetX(obj);
+		y = Obj_GetY(obj);
+		// reflection detection
+		if (angle < 0 && y < GetClipMinY && x > GetClipMinX && x < GetClipMaxX) {
+
+			if (count > 0) {
+				TReflectionLaser(x, y, v, -angle, maxLen, width, graphic, 0, count - 1);
+			}
+			break;
+		} else
+		if (((-90 < angle && angle < 90) && x > GetClipMaxX) || ((angle < -90 || 90 < angle) && x < GetClipMinX) && y > GetClipMinY && y < GetClipMaxY) {
+
+			if (count > 0) {
+				TReflectionLaser(x, y, v, 180 - angle, maxLen, width, graphic, 0, count - 1);
+			}
+			break;
+		}
+		yield;
+	}
 }
 
 task TReflectionLaser_Lengthen(obj, maxLen, v) {
-   let len=0;
-   let max=floor(maxLen/v);
-   let i=0;
-   while(!Obj_BeDeleted(obj)) {
+	let len = 0;
+	let max = floor(maxLen / v);
+	let i = 0;
+	while (!Obj_BeDeleted(obj)) {
 
-      ObjLaser_SetLength(obj, -len);
-      yield;
-      if(i<max){
-         len+=v;
-         i++;
-      }else
-      if(i==max){
-         ObjLaser_SetLength(obj, -maxLen);
-         break;
-      }
-   }
+		ObjLaser_SetLength(obj, -len);
+		yield;
+		if (i < max) {
+			len += v;
+			i++;
+		} else
+		if (i == max) {
+			ObjLaser_SetLength(obj, -maxLen);
+			break;
+		}
+	}
 }
 
 task TReflectionLaser_Move(obj, x, y, v, angle) {
-   let vx=v*cos(angle);
-   let vy=v*sin(angle);
-   while(!Obj_BeDeleted(obj)){
-      Obj_SetPosition(obj, x, y);
-      yield;
-      x+=vx;
-      y+=vy;
-   }
+	let vx = v * cos(angle);
+	let vy = v * sin(angle);
+	while (!Obj_BeDeleted(obj)) {
+		Obj_SetPosition(obj, x, y);
+		yield;
+		x += vx;
+		y += vy;
+	}
 }
 
-function wait(w){
-		loop(w){yield;}
+task LightningShot(let x,
+	let y,
+		let speed,
+			let angle,
+				let stype) {
+	let objShot = Obj_Create(OBJ_SHOT);
+	let FireCount = 0;
+	let Span = 3;
+	let RNDM = rand(0.03, 0.1);
+	let speedcap = 0;
+	let angle2 = 0;
+	let rad = 40;
+	let bounce = false;
+	let SubShotCount = 0;
+	Obj_SetX(objShot, x);
+	Obj_SetY(objShot, y);
+	Obj_SetAlpha(objShot, 250);
+	ObjShot_SetGraphic(objShot, stype);
+
+	Obj_SetAngle(objShot, angle);
+	Obj_SetSpeed(objShot, speed);
+	while (!Obj_BeDeleted(objShot)) {
+		SubShotCount++;
+		if (Obj_GetX(objShot) > GetClipMaxX || Obj_GetX(objShot) < GetClipMinX && bounce == false) {
+			Obj_SetAngle(objShot, 180 - Obj_GetAngle(objShot));
+			bounce = true;
+
+		}
+		FireCount++;
+		Obj_SetSpeed(objShot, speed - speedcap);
+		if (SubShotCount <= 120 && SubShotCount % 8 == 0) {
+			speedcap += 0.3;
+			rad -= 3;
+			if (speedcap >= speed) {
+				speedcap = speed
+			}
+			if (speedcap == speed) {
+				Obj_Delete(objShot)
+			}
+			CreateShotA(0, Obj_GetX(objShot) + rad * cos(angle2 + 180), Obj_GetY(objShot) + rad * sin(angle2 + 180), 0);
+			SetShotDataA(0, 0, 0, (angle + 180), 0, 0, 0, 229);
+			//				SetShotDirectionType(PLAYER);
+			SetShotDataA(0, 120, 0, angle + 180, 0, 0.2, 4, 229);
+			FireShot(0);
+
+			CreateShotA(0, Obj_GetX(objShot) + rad * cos(angle2), Obj_GetY(objShot) + rad * sin(angle2), 0);
+			SetShotDataA(0, 0, 0, (angle) + 0, 0, 0, 0, 229);
+			//				SetShotDirectionType(PLAYER);
+			SetShotDataA(0, 120, 0, angle, 0, 0.2, 4, 229);
+			FireShot(0);
+
+
+		}
+
+		if (FireCount >= Span) {
+			FireCount = 0;
+			//	LightningTail(Obj_GetX(objShot),Obj_GetY(objShot),Obj_GetAngle(objShot),238,30);
+		}
+		yield;
 	}
 
-	task LightningShot(let x,let y,let speed,let angle,let stype){
-		let objShot= Obj_Create(OBJ_SHOT);
-		let FireCount=0;
-		let Span=3;
-		let RNDM=rand(0.03,0.1);
-		let speedcap=0;
-		let angle2=0;
-		let rad=40;
-		let bounce=false;
-		let SubShotCount=0;
-		Obj_SetX(objShot, x);
-		Obj_SetY(objShot, y);
-		Obj_SetAlpha(objShot, 250); 
-	        	ObjShot_SetGraphic(objShot, stype);
+	Obj_Delete(objShot);
+}
 
-		Obj_SetAngle(objShot, angle);
-		Obj_SetSpeed(objShot,speed);
-		while( !Obj_BeDeleted(objShot)){
-		SubShotCount++;
-			if(Obj_GetX(objShot)>GetClipMaxX || Obj_GetX(objShot)<GetClipMinX && bounce==false){
-				Obj_SetAngle(objShot,180-Obj_GetAngle(objShot));
-				bounce=true;
-				
-				}
-			FireCount++;
-			Obj_SetSpeed(objShot,speed-speedcap);
-			if(SubShotCount<=120 && SubShotCount%8==0){
-			speedcap+=0.3;
-			rad-=3;			
-			if(speedcap>=speed){speedcap=speed}
-			if(speedcap==speed){Obj_Delete(objShot)}
-				CreateShotA(0,Obj_GetX(objShot)+rad*cos(angle2+180),Obj_GetY(objShot)+rad*sin(angle2+180),0);
-				SetShotDataA(0,0,0,(angle+180),0,0,0,229);
-//				SetShotDirectionType(PLAYER);
-				SetShotDataA(0,120,0,angle+180,0,0.2,4,229);				
-				FireShot(0);
-
-				CreateShotA(0,Obj_GetX(objShot)+rad*cos(angle2),Obj_GetY(objShot)+rad*sin(angle2),0);
-				SetShotDataA(0,0,0,(angle)+0,0,0,0,229);
-//				SetShotDirectionType(PLAYER);
-				SetShotDataA(0,120,0,angle,0,0.2,4,229);				
-				FireShot(0);
-				
-			
-			}
-
-			if(FireCount>=Span){
-				FireCount=0;
-			//	LightningTail(Obj_GetX(objShot),Obj_GetY(objShot),Obj_GetAngle(objShot),238,30);
-				}
-			yield;
-			}
-
-		Obj_Delete(objShot);
-		}
-
-	task LightningTail(x,y,angle,stype,lifetime){
-		let objShot= Obj_Create(OBJ_SHOT);
-		let alp=150;
-		Obj_SetX(objShot, x);
-		Obj_SetY(objShot, y);
+task LightningTail(x, y, angle, stype, lifetime) {
+	let objShot = Obj_Create(OBJ_SHOT);
+	let alp = 150;
+	Obj_SetX(objShot, x);
+	Obj_SetY(objShot, y);
+	Obj_SetAlpha(objShot, alp);
+	ObjShot_SetGraphic(objShot, stype);
+	Obj_SetAngle(objShot, angle);
+	Obj_SetSpeed(objShot, 0);
+	loop(lifetime) {
+		//alp-=100/lifetime;
+		//Obj_SetAlpha(objShot, alp);
+		yield;
+	}
+	Obj_SetCollisionToPlayer(objShot, true);
+	loop(lifetime) {
+		alp -= 100 / lifetime;
 		Obj_SetAlpha(objShot, alp);
-        	ObjShot_SetGraphic(objShot, stype);
-		Obj_SetAngle(objShot, angle);
-		Obj_SetSpeed(objShot,0);
-		loop(lifetime){
-			//alp-=100/lifetime;
-			//Obj_SetAlpha(objShot, alp);
-			yield;
-			}
-		Obj_SetCollisionToPlayer(objShot,true);
-		loop(lifetime){
-			alp-=100/lifetime;
-			Obj_SetAlpha(objShot, alp);
-			yield;
-			}
-		Obj_Delete(objShot);
-		}
+		yield;
+	}
+	Obj_Delete(objShot);
+}
 
 
 
-	task Angelwings(graphic1,graphic2){
+task Angelwings(graphic1, graphic2) {
 	yield;
 	let ang = 0;
 	let dir = 0;
 	let count = 0;
 	let x = 0;
-	loop{
-	if(x==3)
-	{ 
-	ang+=6.5;
-                CreateShot01(GetX, GetY, 5.2, 90*sin(ang)-5, graphic1, 0);
-                CreateShot01(GetX, GetY, 5.2, 185-90*sin(ang), graphic1, 0);
-                ascent(i in 1..9){
-                    CreateShot01(GetX, GetY, 4.5, 90*sin(ang-10*i)-5, graphic2, 0);
-                    CreateShot01(GetX, GetY, 4.5, 185-90*sin(ang-10*i), graphic2, 0);
-                }
-	x = 0;
+	loop {
+		if (x == 3) {
+			ang += 6.5;
+			CreateShot01(GetX, GetY, 5.2, 90 * sin(ang) - 5, graphic1, 0);
+			CreateShot01(GetX, GetY, 5.2, 185 - 90 * sin(ang), graphic1, 0);
+			ascent(i in 1..9) {
+				CreateShot01(GetX, GetY, 4.5, 90 * sin(ang - 10 * i) - 5, graphic2, 0);
+				CreateShot01(GetX, GetY, 4.5, 185 - 90 * sin(ang - 10 * i), graphic2, 0);
 			}
-	
-	x++;
-	wait(1);
-	}
-		
-	}
+			x = 0;
+		}
 
-
-task TFireToAir01(speed,graphic) {
-	let YLaser      = GetClipMaxY - 16;
-        let wFire = 8;    // firing interval
-
-        loop {
-            CreateShot01(rand(GetClipMinX, GetClipMaxX),
-                         YLaser, speed, rand(-92, -88), graphic, wFire);
-            wait(wFire);
-        }
-    }
-
-task TFireToAir02(position,speed,graphic,rate) {
-	let YLaser      = GetClipMaxY - position;
-        
-        loop {
-            CreateShot01(rand(GetClipMinX, GetClipMaxX),
-                         YLaser, speed, rand(-92, -88), graphic, rate);
-            wait(rate);
-        }
-    }
-
-task Shots(id,delay,slow,bul,angle){
-		loop(60){
-			CreateShotA(id,GetX-100*cos(angle),GetY-100*sin(angle),delay);
-			SetShotDataA(id,0,5,angle,0,slow,1,bul);
-			SetShotDataA(id,60,1,angle,0,0.5,1,bul);
- 			FireShot(id);
-			angle += 360/60;
-			//loop(1){yield;}
-			}
-		angle += 1;
+		x++;
+		wait(1);
 	}
 
-task oddflower(angle1, angle2, angle3, graphic1, graphic2){
-			loop(105){
-			CreateShotA(1,GetX+100*cos(angle1),GetY+100*sin(angle1),10);
-			SetShotDataA(1,0,2,angle2,0,-0.1,0.1,graphic1);
-			SetShotDataA(1,240,0.1,angle2,0,0.1,2,graphic1);
-			FireShot(1);
-			CreateShotA(2,GetX-50*cos(angle1),GetY-50*sin(angle1),10);
-			SetShotDataA(2,0,2,angle3,0,-0.1,-0.1,graphic2);
-			SetShotDataA(2,240,-0.1,angle3,0,0.1,2,graphic2);
-			FireShot(2);
-			angle2 += 360/12;
-			angle3 -= 360/12;
-			wait(1)
-				}
-		}    
+}
 
-   task Tshot(way,angle,bul) {
-        let x;
-        let y;
-        let angle;
-        let speed;
-        let colorspeed = 360 / way;
-        let colorframe = rand(0, 360);
-        let R;
-        let G;
-        let B;
 
-	x=GetX;
-	y=GetY;
-                    R = 255 - 90 * (1 + sin(colorframe));
-                    G = 255 - 90 * (1 + sin(colorframe + 120));
-                    B = 255 - 90 * (1 + sin(colorframe + 240));
+task TFireToAir01(speed, graphic) {
+	let YLaser = GetClipMaxY - 16;
+	let wFire = 8; // firing interval
 
-                    SetShotColor(R, G, B);
-		CreateShotA(1,x,y,10);
-		SetShotDirectionType(ABSOLUTE);
-		SetShotDataA(1,0,5,angle,0,-0.2,0,bul);
-		SetShotDirectionType(PLAYER);
-		SetShotDataA(1,60,0,0,0,0.04,6,NULL);
+	loop {
+		CreateShot01(rand(GetClipMinX, GetClipMaxX),
+			YLaser, speed, rand(-92, -88), graphic, wFire);
+		wait(wFire);
+	}
+}
+
+task TFireToAir02(position, speed, graphic, rate) {
+	let YLaser = GetClipMaxY - position;
+
+	loop {
+		CreateShot01(rand(GetClipMinX, GetClipMaxX),
+			YLaser, speed, rand(-92, -88), graphic, rate);
+		wait(rate);
+	}
+}
+
+task Shots(id, delay, slow, bul, angle) {
+	loop(60) {
+		CreateShotA(id, GetX - 100 * cos(angle), GetY - 100 * sin(angle), delay);
+		SetShotDataA(id, 0, 5, angle, 0, slow, 1, bul);
+		SetShotDataA(id, 60, 1, angle, 0, 0.5, 1, bul);
+		FireShot(id);
+		angle += 360 / 60;
+		//loop(1){yield;}
+	}
+	angle += 1;
+}
+
+task oddflower(angle1, angle2, angle3, graphic1, graphic2) {
+	loop(105) {
+		CreateShotA(1, GetX + 100 * cos(angle1), GetY + 100 * sin(angle1), 10);
+		SetShotDataA(1, 0, 2, angle2, 0, -0.1, 0.1, graphic1);
+		SetShotDataA(1, 240, 0.1, angle2, 0, 0.1, 2, graphic1);
 		FireShot(1);
-                    SetShotColor(255, 255, 255);
-                    colorframe += colorspeed;
+		CreateShotA(2, GetX - 50 * cos(angle1), GetY - 50 * sin(angle1), 10);
+		SetShotDataA(2, 0, 2, angle3, 0, -0.1, -0.1, graphic2);
+		SetShotDataA(2, 240, -0.1, angle3, 0, 0.1, 2, graphic2);
+		FireShot(2);
+		angle2 += 360 / 12;
+		angle3 -= 360 / 12;
+		wait(1)
+	}
+}
 
-        
-    }
+task Tshot(way, angle, bul) {
+	let x;
+	let y;
+	let angle;
+	let speed;
+	let colorspeed = 360 / way;
+	let colorframe = rand(0, 360);
+	let R;
+	let G;
+	let B;
 
-   task TLaser(way,angle,bul) {
-        let x;
-        let y;
-        let angle;
-        let colorspeed = 360 / way;
-        let colorframe = rand(0, 360);
-        let R;
-        let G;
-        let B;
+	x = GetX;
+	y = GetY;
+	R = 255 - 90 * (1 + sin(colorframe));
+	G = 255 - 90 * (1 + sin(colorframe + 120));
+	B = 255 - 90 * (1 + sin(colorframe + 240));
 
-
-	x=GetX;
-	y=GetY;
-                    R = 255 - 90 * (1 + sin(colorframe));
-                    G = 255 - 90 * (1 + sin(colorframe + 120));
-                    B = 255 - 90 * (1 + sin(colorframe + 240));
-                    SetShotColor(R, G, B);
-                    CreateLaser01(x, y, 3.2, angle,100,7,bul, 10);
-                    SetShotColor(255, 255, 255);
-                    colorframe += colorspeed;
-
-        
-    }
-
-   task MLaser(v,angle,bul) {
-        let x;
-        let y;
-        let angle;
-        let colorspeed = 360 / angle;
-        let colorframe = rand(0, 360);
-        let R;
-        let G;
-        let B;
+	SetShotColor(R, G, B);
+	CreateShotA(1, x, y, 10);
+	SetShotDirectionType(ABSOLUTE);
+	SetShotDataA(1, 0, 5, angle, 0, -0.2, 0, bul);
+	SetShotDirectionType(PLAYER);
+	SetShotDataA(1, 60, 0, 0, 0, 0.04, 6, NULL);
+	FireShot(1);
+	SetShotColor(255, 255, 255);
+	colorframe += colorspeed;
 
 
-	x=GetX;
-	y=GetY;
-                    R = 255 - 90 * (1 + sin(colorframe));
-                    G = 255 - 90 * (1 + sin(colorframe + 120));
-                    B = 255 - 90 * (1 + sin(colorframe + 240));
-                    SetShotColor(R, G, B);
-                    CreateLaser01(x, y, v, angle,100,7,bul, 10);
-                    SetShotColor(255, 255, 255);
-                    colorframe += colorspeed;        
-    }
+}
 
-task MasterSpark(x, y, angle, graphic){
-    CreateLaserA(0, x, y, 0, 50, graphic, 90);
-    SetLaserDataA(0, 0, angle, 0, 20, 0, 0);
-    SetShotKillTime(0, 85);
-    FireShot(0);
-    loop(90){yield;}
-    CreateLaserA(0, x-cos(angle-90)*20, y-sin(angle-90)*20, 550, 250, graphic, 0);
-    SetLaserDataA(0, 0, angle, 0, 0, 0, 0);
-    SetShotKillTime(0, 240);
-    FireShot(0);
-    CreateLaserA(0, x-cos(angle+90)*20, y-sin(angle+90)*20, 550, 250, graphic, 0);
-    SetLaserDataA(0, 0, angle, 0, 0, 0, 0);
-    SetShotKillTime(0, 240);
-    FireShot(0);
-    loop(240){yield;}
-  }
+task TLaser(way, angle, bul) {
+	let x;
+	let y;
+	let angle;
+	let colorspeed = 360 / way;
+	let colorframe = rand(0, 360);
+	let R;
+	let G;
+	let B;
 
-	task GravityPull(left,top,right,bottom,intervals,pull){
-		let center = 0;
-		let positionx=0;
-		let positiony=0;
-		center=(left+top+bottom+right)/8;
 
-		if(GetPlayerX<(left+center) && frame%intervals==0){
-			positionx=GetPlayerX+pull;
-			SetPlayerX(positionx);}
+	x = GetX;
+	y = GetY;
+	R = 255 - 90 * (1 + sin(colorframe));
+	G = 255 - 90 * (1 + sin(colorframe + 120));
+	B = 255 - 90 * (1 + sin(colorframe + 240));
+	SetShotColor(R, G, B);
+	CreateLaser01(x, y, 3.2, angle, 100, 7, bul, 10);
+	SetShotColor(255, 255, 255);
+	colorframe += colorspeed;
 
-		if(GetPlayerX>(right-center) && frame%intervals==0){
-			positionx=GetPlayerX-pull;
-			SetPlayerX(positionx);}
 
-		if(GetPlayerY>(top+center) && frame%intervals==0){
-			positiony=GetPlayerY-pull;
-			SetPlayerY(positiony);}
+}
 
-		if(GetPlayerY<(bottom-center) && frame%intervals==0){
-			positiony=GetPlayerY+pull;
-			SetPlayerY(positiony);}
+task MLaser(v, angle, bul) {
+	let x;
+	let y;
+	let angle;
+	let colorspeed = 360 / angle;
+	let colorframe = rand(0, 360);
+	let R;
+	let G;
+	let B;
 
+
+	x = GetX;
+	y = GetY;
+	R = 255 - 90 * (1 + sin(colorframe));
+	G = 255 - 90 * (1 + sin(colorframe + 120));
+	B = 255 - 90 * (1 + sin(colorframe + 240));
+	SetShotColor(R, G, B);
+	CreateLaser01(x, y, v, angle, 100, 7, bul, 10);
+	SetShotColor(255, 255, 255);
+	colorframe += colorspeed;
+}
+
+task MasterSpark(x, y, angle, graphic) {
+	CreateLaserA(0, x, y, 0, 50, graphic, 90);
+	SetLaserDataA(0, 0, angle, 0, 20, 0, 0);
+	SetShotKillTime(0, 85);
+	FireShot(0);
+	loop(90) {
 		yield;
+	}
+	CreateLaserA(0, x - cos(angle - 90) * 20, y - sin(angle - 90) * 20, 550, 250, graphic, 0);
+	SetLaserDataA(0, 0, angle, 0, 0, 0, 0);
+	SetShotKillTime(0, 240);
+	FireShot(0);
+	CreateLaserA(0, x - cos(angle + 90) * 20, y - sin(angle + 90) * 20, 550, 250, graphic, 0);
+	SetLaserDataA(0, 0, angle, 0, 0, 0, 0);
+	SetShotKillTime(0, 240);
+	FireShot(0);
+	loop(240) {
+		yield;
+	}
+}
 
+task GravityPull(left, top, right, bottom, intervals, pull) {
+	let center = 0;
+	let positionx = 0;
+	let positiony = 0;
+	center = (left + top + bottom + right) / 8;
+
+	if (GetPlayerX < (left + center) && frame % intervals == 0) {
+		positionx = GetPlayerX + pull;
+		SetPlayerX(positionx);
 	}
 
-	task GravityRepel(left,top,right,bottom,intervals,repel){
-		let center = 0;
-		let positionx=0;
-		let positiony=0;
-		center=(left+top+bottom+right)/8;
-
-		if(GetPlayerX<(left+center) && frame%intervals==0){
-			positionx=GetPlayerX-repel;
-			SetPlayerX(positionx);}
-
-		if(GetPlayerX>(right-center) && frame%intervals==0){
-			positionx=GetPlayerX+repel;
-			SetPlayerX(positionx);}
-
-		if(GetPlayerY>(top+center) && frame%intervals==0){
-			positiony=GetPlayerY+repel;
-			SetPlayerY(positiony);}
-
-		if(GetPlayerY<(bottom-center) && frame%intervals==0){
-			positiony=GetPlayerY-repel;
-			SetPlayerY(positiony);}
-
-		yield;
-
+	if (GetPlayerX > (right - center) && frame % intervals == 0) {
+		positionx = GetPlayerX - pull;
+		SetPlayerX(positionx);
 	}
 
-task BlackHole(x, y, angle, graphic, graphic2, delay)
-  {
-      let obj = Obj_Create(OBJ_SHOT);
-      let count2 = 0;
-      let suck = 0;        
-      let playerY;
-      let playerX;
-      let alpha = 255;
+	if (GetPlayerY > (top + center) && frame % intervals == 0) {
+		positiony = GetPlayerY - pull;
+		SetPlayerY(positiony);
+	}
 
-      Obj_SetX(obj,x);
-      Obj_SetY(obj,y);
-      Obj_SetSpeed(obj,4);
-      ObjShot_SetGraphic(obj, graphic);
-      ObjShot_SetDelay(obj,delay);
-      Obj_SetAngle(obj,angle);
+	if (GetPlayerY < (bottom - center) && frame % intervals == 0) {
+		positiony = GetPlayerY + pull;
+		SetPlayerY(positiony);
+	}
 
-      while (!Obj_BeDeleted(obj))
-      {  
-        if (count2 == 0){
-                playerX = GetPlayerX;
-                playerY = GetPlayerY;
-                }
-        if (count2 % 3 == 0 && suck == 1){
-                if(GetPlayerX > Obj_GetX(obj)){SetPlayerX(GetPlayerX-1.5);}
-                if(GetPlayerX < Obj_GetX(obj)){SetPlayerX(GetPlayerX+1.5);}
-                if(GetPlayerY < Obj_GetY(obj)){SetPlayerY(GetPlayerY+1.5);}
-                if(GetPlayerY > Obj_GetY(obj)){SetPlayerY(GetPlayerY-1.5);}
-                }
-        
-        if (suck == 1 && count2 < 200){
-                
-                        let angle = rand(0,360);
-                        CreateShotA(1,75*cos(angle)+Obj_GetX(obj), 75*sin(angle)+Obj_GetY(obj), 5);
-                        SetShotDataA(1, 0, 0, angle+180, 0, 1, 6, graphic);
-                        SetShotDataA(1, 5, 0, angle+180, 0, 1, 6, graphic);
-                        SetShotDataA(1, 18, 0, NULL, 0, 0, 0, graphic);
-                        SetShotDataA(1, 219-count2, rand(1,4), NULL, 0, 0, 0, graphic2); 
-                        FireShot(1);
-                        
-                }
+	yield;
 
-            if ((absolute(Obj_GetX(obj) - playerX) < 25) && (absolute(Obj_GetY(obj) - playerY) < 25)){                  
-                Obj_SetSpeed(obj,0);    
-                suck = 1;
-                alpha = alpha - 3;
-                Obj_SetAlpha(obj, alpha);
-                }
+}
 
-        if (count2 == 240){Obj_Delete(obj);}
+task GravityRepel(left, top, right, bottom, intervals, repel) {
+	let center = 0;
+	let positionx = 0;
+	let positiony = 0;
+	center = (left + top + bottom + right) / 8;
+
+	if (GetPlayerX < (left + center) && frame % intervals == 0) {
+		positionx = GetPlayerX - repel;
+		SetPlayerX(positionx);
+	}
+
+	if (GetPlayerX > (right - center) && frame % intervals == 0) {
+		positionx = GetPlayerX + repel;
+		SetPlayerX(positionx);
+	}
+
+	if (GetPlayerY > (top + center) && frame % intervals == 0) {
+		positiony = GetPlayerY + repel;
+		SetPlayerY(positiony);
+	}
+
+	if (GetPlayerY < (bottom - center) && frame % intervals == 0) {
+		positiony = GetPlayerY - repel;
+		SetPlayerY(positiony);
+	}
+
+	yield;
+
+}
+
+task BlackHole(x, y, angle, graphic, graphic2, delay) {
+	let obj = Obj_Create(OBJ_SHOT);
+	let count2 = 0;
+	let suck = 0;
+	let playerY;
+	let playerX;
+	let alpha = 255;
+
+	Obj_SetX(obj, x);
+	Obj_SetY(obj, y);
+	Obj_SetSpeed(obj, 4);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	Obj_SetAngle(obj, angle);
+
+	while (!Obj_BeDeleted(obj)) {
+		if (count2 == 0) {
+			playerX = GetPlayerX;
+			playerY = GetPlayerY;
+		}
+		if (count2 % 3 == 0 && suck == 1) {
+			if (GetPlayerX > Obj_GetX(obj)) {
+				SetPlayerX(GetPlayerX - 1.5);
+			}
+			if (GetPlayerX < Obj_GetX(obj)) {
+				SetPlayerX(GetPlayerX + 1.5);
+			}
+			if (GetPlayerY < Obj_GetY(obj)) {
+				SetPlayerY(GetPlayerY + 1.5);
+			}
+			if (GetPlayerY > Obj_GetY(obj)) {
+				SetPlayerY(GetPlayerY - 1.5);
+			}
+		}
+
+		if (suck == 1 && count2 < 200) {
+
+			let angle = rand(0, 360);
+			CreateShotA(1, 75 * cos(angle) + Obj_GetX(obj), 75 * sin(angle) + Obj_GetY(obj), 5);
+			SetShotDataA(1, 0, 0, angle + 180, 0, 1, 6, graphic);
+			SetShotDataA(1, 5, 0, angle + 180, 0, 1, 6, graphic);
+			SetShotDataA(1, 18, 0, NULL, 0, 0, 0, graphic);
+			SetShotDataA(1, 219 - count2, rand(1, 4), NULL, 0, 0, 0, graphic2);
+			FireShot(1);
+
+		}
+
+		if ((absolute(Obj_GetX(obj) - playerX) < 25) && (absolute(Obj_GetY(obj) - playerY) < 25)) {
+			Obj_SetSpeed(obj, 0);
+			suck = 1;
+			alpha = alpha - 3;
+			Obj_SetAlpha(obj, alpha);
+		}
+
+		if (count2 == 240) {
+			Obj_Delete(obj);
+		}
 
 
-        count2++;
-        
-        yield;
-      }
-  }
+		count2++;
+
+		yield;
+	}
+}
 
 
-	task Bubbleshot(x, y, v, angle, angle2, graphic, graphic2, accl, delay) {
-	     let obj=Obj_Create(OBJ_SHOT);
-	     let frame=0;
-	     let count=0;
-	     let speed=0;
-	     Obj_SetPosition(obj, x, y);
-	     Obj_SetAngle(obj, angle);
-	     Obj_SetSpeed(obj, v);
-	     ObjShot_SetGraphic(obj, graphic);
-	     ObjShot_SetDelay(obj, delay);
-	     ObjShot_SetBombResist(obj, true);
-	     Obj_SetCollisionToObject(obj, true);
+task Bubbleshot(x, y, v, angle, angle2, graphic, graphic2, accl, delay) {
+	let obj = Obj_Create(OBJ_SHOT);
+	let frame = 0;
+	let count = 0;
+	let speed = 0;
+	Obj_SetPosition(obj, x, y);
+	Obj_SetAngle(obj, angle);
+	Obj_SetSpeed(obj, v);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	ObjShot_SetBombResist(obj, true);
+	Obj_SetCollisionToObject(obj, true);
 
-	     while(Obj_BeDeleted(obj)==false){
+	while (Obj_BeDeleted(obj) == false) {
 		frame++;
 		count++;
 
-        	if(frame>=0){
-			speed+=0.1;
-	                Obj_SetSpeed(obj, speed);
-	           }
+		if (frame >= 0) {
+			speed += 0.1;
+			Obj_SetSpeed(obj, speed);
+		}
 
-        	if(speed>=10){
-			speed=0;
-	           }
+		if (speed >= 10) {
+			speed = 0;
+		}
 
-		if(frame>=40 && frame<=80 && count>=50 && frame%10==0){
-		    	loop(2){
-				ascent(i in 0..8){
-			        CreateShotA(5,Obj_GetX(obj),Obj_GetY(obj), 24);
-			        SetShotDataA(5, 0, 0, angle2+(i*20), 0, 0.1, 3, graphic2);
-		        	SetShotDataA(5, 20, 1, NULL, 0, 0, 1, graphic2);
-		        	SetShotDataA(5, 60, 1, 180-(i*20), 0, 0, 1, graphic2);
-				FireShot(5);
+		if (frame >= 40 && frame <= 80 && count >= 50 && frame % 10 == 0) {
+			loop(2) {
+				ascent(i in 0..8) {
+					CreateShotA(5, Obj_GetX(obj), Obj_GetY(obj), 24);
+					SetShotDataA(5, 0, 0, angle2 + (i * 20), 0, 0.1, 3, graphic2);
+					SetShotDataA(5, 20, 1, NULL, 0, 0, 1, graphic2);
+					SetShotDataA(5, 60, 1, 180 - (i * 20), 0, 0, 1, graphic2);
+					FireShot(5);
 				}
 			}
-		    count=40;
-		   }
+			count = 40;
+		}
 
-	       yield;
+		yield;
 	}
-	}
+}
 
 task BubbleshotB(x, y, v, angle, angle2, graphic, graphic2, accl, delay) {
-	     let obj=Obj_Create(OBJ_SHOT);
-	     let frame=0;
-	     let count=0;
-	     let speed=0;
-	     Obj_SetPosition(obj, x, y);
-	     Obj_SetAngle(obj, angle);
-	     Obj_SetSpeed(obj, v);
-	     ObjShot_SetGraphic(obj, graphic);
-	     ObjShot_SetDelay(obj, delay);
-	     ObjShot_SetBombResist(obj, true);
-	     Obj_SetCollisionToObject(obj, true);
+	let obj = Obj_Create(OBJ_SHOT);
+	let frame = 0;
+	let count = 0;
+	let speed = 0;
+	Obj_SetPosition(obj, x, y);
+	Obj_SetAngle(obj, angle);
+	Obj_SetSpeed(obj, v);
+	ObjShot_SetGraphic(obj, graphic);
+	ObjShot_SetDelay(obj, delay);
+	ObjShot_SetBombResist(obj, true);
+	Obj_SetCollisionToObject(obj, true);
 
-	     while(Obj_BeDeleted(obj)==false){
+	while (Obj_BeDeleted(obj) == false) {
 		frame++;
 		count++;
 
-        	if(frame>=0){
-			speed+=0.1;
-	                Obj_SetSpeed(obj, speed);
-	           }
+		if (frame >= 0) {
+			speed += 0.1;
+			Obj_SetSpeed(obj, speed);
+		}
 
-        	if(speed>=10){
-			speed=0;
-	           }
+		if (speed >= 10) {
+			speed = 0;
+		}
 
-		if(frame>=40 && frame<=80 && count>=50 && frame%10==0){
-		    
-			loop(12){
+		if (frame >= 40 && frame <= 80 && count >= 50 && frame % 10 == 0) {
+
+			loop(12) {
 				CreateShotA(2, Obj_GetX(obj), Obj_GetY(obj), 30);
 				SetShotDataA_XY(2, 0, rand(-3, 3), rand(-1, -4), 0, 0.1, 0, 1.5, graphic2);
 				FireShot(2);
 			}
-		    count=40;
-		   }
+			count = 40;
+		}
 
-	       yield;
+		yield;
 	}
-	}
-
+}*/

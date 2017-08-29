@@ -1,0 +1,281 @@
+//Made by Trung0246, version 1.0
+
+function CreateShotZun(x, y, spd1, spd2, angle1, angle2, way, stack, style, graphic, delay) {
+  let i;
+  let j;
+  let mainAngle = 0;
+  let mainSpd = spd1;
+  alternative (/*Obj_GetValueD(zunObj, "_zun_style_", 0)*/style)
+  case (0) { //equal to 1
+  	i = 1;
+    while (i <= stack) {
+      mainAngle = angle2 * (way - 1) / 2;
+      j = 1;
+      while (j <= way) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1,
+          graphic,
+          delay
+        );
+        mainAngle -= angle2;
+        j ++;
+      }
+      mainSpd -= ((spd1 - spd2) / (stack - 1));
+      i ++;
+    }
+  }
+  case (1) { //equal to 3
+  	i = 1;
+    while (i <= stack) {
+    	j = 1;
+      while (j <= way) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          j * 360 / way + mainAngle + angle1,
+          graphic,
+          delay
+        );
+        j ++;
+      }
+      mainAngle += angle2;
+      mainSpd -= ((spd1 - spd2) / (stack - 1));
+      i ++;
+    }
+  }
+  case (2) { //unknown for 4, 5, maybe do later
+    
+  }
+  case (3) { //equal to 6?
+  	i = 1;
+    while (i <= stack) {
+    	j = 1;
+      while (j <= way) {
+        mainAngle = rand(0, 1) * angle2 - angle2 / 2;
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1,
+          graphic,
+          delay
+        );
+        j ++;
+      }
+      mainSpd -= ((spd1 - spd2) / (stack - 1));
+      i ++;
+    }
+  }
+  case (4) { //equal to 6? (2nd one)
+  	i = 1;
+    while (i <= stack) {
+      mainAngle = angle2 * (way - 1) / 2;
+      j = 1;
+      while (j <= way) {
+        mainSpd = rand(0, 1) * spd2 + spd1 - spd2;
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1,
+          graphic,
+          delay
+        );
+        mainAngle -= angle2;
+        j ++;
+      }
+      i ++;
+    }
+  }
+  case (5) { //equal to 7?
+  	i = 1;
+    while (i <= stack) {
+    	j = 1;
+      while (j <= way) {
+        mainSpd = rand(0, 1) * spd2 + spd1 - spd2;
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          j * 360 / way + mainAngle + angle1,
+          graphic,
+          delay
+        );
+        j ++;
+      }
+      mainAngle += angle2;
+      i ++;
+    }
+  }
+  case (6) { //equal to 8?
+  	i = 1;
+    while (i <= stack) {
+    	j = 1;
+      while (j <= way) {
+        mainAngle = rand(0, 1) * angle2 - angle2 / 2;
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1,
+          graphic,
+          delay
+        );
+        j ++;
+      }
+      mainSpd = rand(0, 1) * spd2 + spd1 - spd2;
+      i ++;
+    }
+  }
+  case (7) { //equal to 8? (2nd one)
+  	i = 1;
+    while (i <= stack) {
+    	j = 1;
+      while (j <= way) {
+        mainSpd = rand(0, 1) * spd2 + spd1 - spd2;
+        mainAngle = rand(0, 1) * angle2 - angle2 / 2;
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1,
+          graphic,
+          delay
+        );
+        j ++;
+      }
+      i ++;
+    }
+  }
+  case (8) { //equal to 10
+    let tempSpd = 2 * (spd1 - spd2) / (stack - 1);
+    let baseAngle = 0;
+    i = 1;
+    while (i <= way) {
+      mainAngle = angle2 * (stack - 1) / 2;
+      mainSpd = spd2;
+      j = 1;
+      while (j <= floor(stack / 2)) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1 + baseAngle,
+          graphic,
+          delay
+        );
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          -(mainAngle + angle1 + baseAngle) + (angle1) * 2,
+          graphic,
+          delay
+        );
+        mainSpd += tempSpd;
+        mainAngle -= angle2;
+        j ++;
+      }
+      if (stack % 2 != 0) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          mainAngle + angle1 + baseAngle,
+          graphic,
+          delay
+        );
+      }
+      baseAngle += 360 / way;
+      i ++;
+    }
+  }
+  case (9) { //equal to 11
+    let maxSpd = spd1;
+    let baseAngle = 0;
+    j = 1;
+    while (j <= stack) {
+      let minSpd = maxSpd * spd2;
+      i = 1;
+      while (i <= floor(way / 2)) {
+				CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          -mainAngle + angle1 + baseAngle,
+          graphic,
+          delay
+        );
+        mainAngle += 360 / way;
+        mainSpd = sin(360 - mainAngle) * minSpd + maxSpd;
+        i ++;
+      }
+      i = 1; 
+      while (i <= round(way / 2)) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          -mainAngle + angle1 + baseAngle,
+          graphic,
+          delay
+        );
+        mainAngle += 360 / way;
+        mainSpd = sin(mainAngle) * minSpd + maxSpd;
+        i ++;
+      }
+      maxSpd -= ((spd1 - spd2) / (stack - 1));
+      mainSpd = maxSpd;
+      mainAngle = 0;
+      baseAngle += angle2;
+      j ++;
+    }
+  }
+  case (10) { //equal to 12
+    let maxSpd = spd1;
+    let baseAngle = 0;
+    mainAngle = (360 / (way * 2));
+    j = 1;
+    while (j <= stack) {
+      let minSpd = maxSpd * spd2;
+      mainSpd = sin(360 - mainAngle) * minSpd + maxSpd;
+      i = 1;
+      while (i <= round(way / 2)) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          (mainAngle - baseAngle) + angle1,
+          graphic,
+          delay
+        );
+        mainAngle += 360 / way;
+        mainSpd = sin(360 - mainAngle) * minSpd + maxSpd;
+        i ++;
+      }
+      mainSpd = sin(mainAngle) * minSpd + maxSpd;
+      i = 1;
+      while (i <= floor(way / 2)) {
+        CreateShotA1(
+          x,
+          y,
+          mainSpd,
+          (mainAngle - baseAngle) + angle1,
+          graphic,
+          delay
+        );
+        mainAngle += 360 / way;
+        mainSpd = sin(mainAngle) * minSpd + maxSpd;
+        i ++;
+      }
+      maxSpd -= ((spd1 - spd2) / (stack - 1));
+      mainAngle = (360 / (way * 2));
+      baseAngle += angle2;
+      j ++;
+    }
+  }
+}
