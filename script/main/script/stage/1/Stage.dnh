@@ -175,7 +175,7 @@ task Stage_Main() {
 	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
 
 	stageWait(200);
-	
+	SetCommonData("Switch to Phase 2?",true);
 	StartScript(midboss);
 	CheckBossActive(midboss);
 	yield;
@@ -221,18 +221,18 @@ task Stage_Main() {
 
 	//Final section with rainfall fairies
 	stageWait(120);
-	StageEnemy(416,200,FAIRY_RAINFALL,24,16,200,[100,100,1]);
+	StageEnemy(416,200,FAIRY_RAINFALL,24,16,200,[100,100,-1]);
 	stageWait(210);
 	StageEnemy(512,100,FAIRY_SPAM,16,12,10,[170]);
 	StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[10]);
-	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,200,[284,100,-1]);
+	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,200,[284,100,1]);
 	stageWait(240);
-	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
 	ascent(i in -1..2){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);
 	}
 	stageWait(300);
-/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
+/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	stageWait(60);
 	loop(2){
 		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
@@ -240,9 +240,9 @@ task Stage_Main() {
 		stageWait(90);
 	}
 	stageWait(120);*/
-	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
-	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
-	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
+	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	//StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
+	//StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
 	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[324,150,2]);
 	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[60,150,2]);
 	stageWait(480);

@@ -1171,6 +1171,7 @@ task DisplayTitle {
 task StartGame {
 	LoadingStageTransition(false);
 	wait(120);
+	LoadStage(GetAreaCommonData("GameState", "Stage", 1));
 	InitializeStageScene;
 	SetStageIndex(GetAreaCommonData("GameState", "Stage", 1));
 	SetStagePlayerScript(GetPlayerScriptForNumber(GetAreaCommonData("GameState", "Player", 0)));
@@ -1220,6 +1221,7 @@ task GameHandler {
 				PauseStageScene(false);
 			}
 			case (RESULT_RETRY) {
+				let prevStage = GetAreaCommonData("GameState", "Stage", 1);
 				alternative(GetAreaCommonData("GameState", "GameType", GAMETYPE_MAINGAME))
 				case (GAMETYPE_MAINGAME) {
 					SetAreaCommonData("GameState", "Stage", 1);
@@ -1228,12 +1230,16 @@ task GameHandler {
 				StartGame();
 				wait(60);
 				TerminateStageScene();
+				if(GetAreaCommonData("GameState", "Stage", 1) != prevStage){
+					UnloadStage(GetAreaCommonData("GameState", "Stage", 1));
+				}
 			}
 			case (RESULT_END) {
-				LoadingStageTransition(true);
+				LoadingStageTransition(false);
 				SetAreaCommonData("GameState", "InGame", false);
 				wait(60);
 				TerminateStageScene();
+				UnloadStage(GetAreaCommonData("GameState", "Stage", 1));
 				DisplayTitle();
 				SetAreaCommonData("GameState", "loading", false);
 

@@ -41,13 +41,20 @@ function LoadSounds{
 
 function LoadStage(id) {
 	let paths = GetFilePathList("script/main/img/face/" ~ itoa(id) ~ "/");
+	paths = paths ~ GetFilePathList("script/main/img/enemy/boss/" ~ itoa(id) ~ "/");
+	paths = paths ~ GetFilePathList("script/main/img/stage/" ~ itoa(id) ~ "/");
 	ascent(i in 0..length(paths)) {
 		LoadTexture(paths[i]);
 		yield;
 	}
-	paths = GetFilePathList("script/main/img/enemy/boss/" ~ itoa(id) ~ "/");
+}
+
+function UnloadStage(id) {
+	let paths = GetFilePathList("script/main/img/face/" ~ itoa(id) ~ "/");
+	paths = paths ~ GetFilePathList("script/main/img/enemy/boss/" ~ itoa(id) ~ "/");
+	paths = paths ~ GetFilePathList("script/main/img/stage/" ~ itoa(id) ~ "/");
 	ascent(i in 0..length(paths)) {
-		LoadTexture(paths[i]);
+		RemoveTexture(paths[i]);
 		yield;
 	}
 }
