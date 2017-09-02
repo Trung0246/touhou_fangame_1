@@ -1,0 +1,105 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Sakkagumi Nonspell 1"]
+#Text["Saga Kuramu: Wicked Magical Contract"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+let CenterX = GetStgFrameWidth/2;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(3000);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(30);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss, 100, 100);
+	ObjMove_SetPosition(objBoss,CenterX,140);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+function angleToPlayer(obj){
+	let toPlayer = atan2(GetPlayerY-ObjMove_GetY(obj),GetPlayerX-ObjMove_GetX(obj)); // Makes something aim towards the player
+	return toPlayer;
+}
+
+task TMain {
+	wait(1);
+	while(!Obj_IsDeleted(objBoss)){
+		spiral1;
+		spiral2;
+		wait(400);
+	}
+}
+
+task spiral1 {
+	let angleA = angleToPlayer(objBoss);
+	let radius = 1;
+	loop(100){
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA),objBossY+(radius+rand(-30,30))*sin(angleA),rand(1,1.25),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+90),objBossY+(radius+rand(-30,30))*sin(angleA+90),rand(1,1.25),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+180),objBossY+(radius+rand(-30,30))*sin(angleA+180),rand(1,1.25),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+270),objBossY+(radius+rand(-30,30))*sin(angleA+270),rand(1,1.25),rand(0,360),15,120);
+		radius += 6;
+		angleA += 2;
+		wait(1);
+	}
+}
+
+task spiral2 {
+	let angleA = angleToPlayer(objBoss)+45;
+	let radius = 1;
+	loop(100){
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA),objBossY+(radius+rand(-30,30))*sin(angleA),rand(0.75,1),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+90),objBossY+(radius+rand(-30,30))*sin(angleA+90),rand(0.75,1),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+180),objBossY+(radius+rand(-30,30))*sin(angleA+180),rand(0.75,1),rand(0,360),15,120);
+		CreateShotA1(objBossX+(radius+rand(-30,30))*cos(angleA+270),objBossY+(radius+rand(-30,30))*sin(angleA+270),rand(0.75,1),rand(0,360),15,120);
+		radius += 9;
+		angleA -= 4;
+		wait(1);
+	}
+}
+
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
