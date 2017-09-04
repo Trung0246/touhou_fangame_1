@@ -175,6 +175,7 @@ task Stage_Main() {
 	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
 
 	stageWait(200);
+	NotifyEvent(background,EV_BACKGROUND_1,0);
 	SetCommonData("Switch to Phase 2?",true);
 	StartScript(midboss);
 	CheckBossActive(midboss);

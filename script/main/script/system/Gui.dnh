@@ -3,19 +3,20 @@
 #include "script/main/script/lib/SFX.dnh"
 #include "script/main/script/lib/Event_Const.dnh"
 
-let dir = GetModuleDirectory() ~ "script/main/img/system/";
+let dir = "script/main/img/system/";
 let guiPath = dir ~ "front00.png";
-let digitPath = dir ~ "ascii.png";
+let digitPath = dir ~ "hud_nums.png";
 let lifeBarPath = dir ~ "lifebar.png";
 let bossScene = ID_INVALID;
 
 @Initialize {
-	LoadTexture(guiPath);
+/*	LoadTexture(guiPath);
 	LoadTexture(digitPath);
-	LoadTexture(lifeBarPath);
+	LoadTexture(lifeBarPath);*/
 
 	InitFrame();
 	InitLine();
+	InitHeaders();
 	UpdateHiScore();
 	UpdateScore();
 	UpdatePlayerLife();
@@ -73,29 +74,25 @@ let bossScene = ID_INVALID;
 }
 
 task InitFrame {
-	//328, 703 //right
-	//47, 703 //left
-	//563, 24 //top
-	//563, 23 //bottom
 
 	let frame = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(frame,guiPath);
+	ObjPrim_SetTexture(frame,"script/main/img/system/frame.png");
 	Obj_SetRenderPriority(frame, 0.1);
-	ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
+	ObjRender_SetBlendType(frame, 0);
 	//left
-	ObjSpriteList2D_SetSourceRect(frame,0,0,63,959); //47 703
+	ObjSpriteList2D_SetSourceRect(frame,0,0,32,480); 
 	ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
 	ObjSpriteList2D_AddVertex(frame);
 	//top
-	ObjSpriteList2D_SetSourceRect(frame,0,960,767,991); //703 562 727
+	ObjSpriteList2D_SetSourceRect(frame,0,480,384,496);
 	ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
 	ObjSpriteList2D_AddVertex(frame);
 	//bottom
-	ObjSpriteList2D_SetSourceRect(frame,0,992,767,1023); //0 726 562 750
+	ObjSpriteList2D_SetSourceRect(frame,0,496,384,512);
 	ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
 	ObjSpriteList2D_AddVertex(frame);
 	//right
-	ObjSpriteList2D_SetSourceRect(frame,64,0,511,959); //47 0 375 703
+	ObjSpriteList2D_SetSourceRect(frame,32,0,256,480);
 	ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
 	ObjSpriteList2D_AddVertex(frame);
 }
@@ -132,17 +129,47 @@ task InitLine {
 		ObjSpriteList2D_AddVertex(obj);
 	}
 }
-task UpdateHiScore {
-	let objScore = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objScore, guiPath);
-	Obj_SetRenderPriority(objScore, 0.1);
-	ObjSprite2D_SetSourceRect(objScore, 512, 0, 655, 35); //Plus 1 at 375 because some weird problem that a black line appear 375 + 1, 26 * 0 + 1, 375 + 104, (26 * 1) - 1
-	ObjSprite2D_SetDestRect(objScore, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objScore, 0.75);
-	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 223);
-	ObjRender_SetY(objScore, 38);
+task InitHeaders{
+	let headers = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(headers,"script/main/img/system/hud.png");
+	Obj_SetRenderPriority(headers, 0.1);
+	//HiScore
+	ObjSpriteList2D_SetSourceRect(headers,0,0,96,24);
+	ObjSpriteList2D_SetDestRect(headers,417,38,513,60);
+	ObjSpriteList2D_AddVertex(headers);
 
+	//Score
+	ObjSpriteList2D_SetSourceRect(headers,0,24,96,48);
+	ObjSpriteList2D_SetDestRect(headers,417,60,513,84);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Lives
+	ObjSpriteList2D_SetSourceRect(headers,0,48,96,72);
+	ObjSpriteList2D_SetDestRect(headers,417,93,513,117);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Bombs
+	ObjSpriteList2D_SetSourceRect(headers,0,72,96,96);
+	ObjSpriteList2D_SetDestRect(headers,417,128,513,152);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Graze
+	ObjSpriteList2D_SetSourceRect(headers,96,0,192,24);
+	ObjSpriteList2D_SetDestRect(headers,430,223,526,247);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Power
+	ObjSpriteList2D_SetSourceRect(headers,96,24,192,48);
+	ObjSpriteList2D_SetDestRect(headers,430,179,526,203);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//PIV
+	ObjSpriteList2D_SetSourceRect(headers,96,48,192,72);
+	ObjSpriteList2D_SetDestRect(headers,430,200,526,224);
+	ObjSpriteList2D_AddVertex(headers);
+}
+
+task UpdateHiScore {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
@@ -157,16 +184,6 @@ task UpdateHiScore {
 	}
 }
 task UpdateScore {
-	let objScore = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objScore, guiPath);
-	Obj_SetRenderPriority(objScore, 0.1);
-	//ObjSprite2D_SetSourceRect(objScore, 375 + 1, 26 * 1, 375 + 104, (26 * 2) - 1); //Plus 1 at 375 because some weird problem that a black line appear
-	ObjSprite2D_SetSourceRect(objScore, 512, 0 + 36, 655, 35 + 36);
-	ObjSprite2D_SetDestRect(objScore, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objScore, 0.75);
-	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 223);
-	ObjRender_SetY(objScore, 60);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -202,17 +219,6 @@ task UpdateScore {
 	}
 }
 task UpdateGraze {
-	let objGraze = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objGraze, guiPath);
-	Obj_SetRenderPriority(objGraze, 0.1);
-	//ObjSprite2D_SetSourceRect(objGraze, 479, 26 * 1, 479 + 127, (26 * 2) - 1);
-	//ObjSprite2D_SetDestRect(objGraze, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objGraze, 656, 0 + 36, 831, 35 + 36);
-	ObjSprite2D_SetDestRect(objGraze, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objGraze, 0.75);
-	ObjRender_SetScaleY(objGraze, 0.75);
-	ObjRender_SetX(objGraze, 640 - 210);
-	ObjRender_SetY(objGraze, 223);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -232,22 +238,10 @@ task UpdateGraze {
 	}
 }
 task UpdatePower {
-	let objPower = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objPower, guiPath);
-	Obj_SetRenderPriority(objPower, 0.1);
-	//ObjSprite2D_SetSourceRect(objPower, 479, 26 * 3, 479 + 127, (26 * 4) - 1);
-	//ObjSprite2D_SetDestRect(objPower, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objPower, 656, 0 + 36 * 3, 831 - 3, 35 + 36 * 3);
-	ObjSprite2D_SetDestRect(objPower, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objPower, 0.75);
-	ObjRender_SetScaleY(objPower, 0.75);
-	ObjRender_SetX(objPower, 640 - 210);
-	ObjRender_SetY(objPower, 225 - 46);
-
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
-	ObjRender_SetY(obj, 225 - 46 + 3);
+	ObjRender_SetY(obj, 180);
 	ObjRender_SetColor(obj, 219, 127, 70); //221 111 42
 
 	while (true) {
@@ -261,7 +255,7 @@ task UpdatePower {
 		}
 		number = min(number, 4);
 		let tempString = rtos("0.00", number);
-		let listNum = [IntToString(tempString[0]), ".", IntToString(tempString[2]), IntToString(tempString[3])];
+		let listNum = [ToString(tempString[0]), ".", ToString(tempString[2]), ToString(tempString[3])];
 		listNum = listNum ~ ["/", "4", ".", "0", "0"];
 
 		ObjSpriteList2D_ClearVertexCount(obj);
@@ -269,15 +263,15 @@ task UpdatePower {
 			let num = listNum[i];
 			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ".") {
-				ObjSpriteList2D_SetSourceRect(obj, 176, 144 + 1, 191, 159 + 1);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, 176, 0, 191, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 				ObjRender_SetX(obj, ObjRender_GetX(obj) + 1.5);
 			} else if (ToString(num) == "/") {
-				ObjSpriteList2D_SetSourceRect(obj, 160, 144, 175, 159);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, 160, 0, 175, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 			} else {
-				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 144, (atoi(num) + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 0, (atoi(num) + 1) * 16, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -285,18 +279,6 @@ task UpdatePower {
 	}
 }
 task UpdatePoint {
-	let objPoint = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objPoint, guiPath);
-	Obj_SetRenderPriority(objPoint, 0.1);
-	//ObjSprite2D_SetSourceRect(objPoint, 479, 26 * 2, 479 + 127, (26 * 3) - 1);
-	//ObjSprite2D_SetDestRect(objPoint, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objPoint, 656, 0 + 36 * 2, 831 - 3, 35 + 36 * 2);
-	ObjSprite2D_SetDestRect(objPoint, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objPoint, 0.75);
-	ObjRender_SetScaleY(objPoint, 0.75);
-	ObjRender_SetX(objPoint, 640 - 210);
-	ObjRender_SetY(objPoint, 225 - 25);
-
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
@@ -309,24 +291,14 @@ task UpdatePoint {
 		}
 		number = GetCommonData("player_point", 0); 
 
-		RenderNumber(obj, 640 - 20, 225 - 22 + 2, number, -1, true, false, 0, false);
+		RenderNumber(obj, 620, 201, number, -1, true, false, 0, false);
 		yield;
 	}
 }
 task UpdatePlayerLife {
-	let objLife = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objLife, guiPath);
-	Obj_SetRenderPriority(objLife, 0.1);
-	//ObjSprite2D_SetSourceRect(objLife, 375 + 1, 26 * 2, 375 + 104, (26 * 3) - 1); //Plus 1 at 375 because some weird problem that a black line appear
-	ObjSprite2D_SetSourceRect(objLife, 512, 0 + 36 * 2, 655, 35 + 36 * 2);
-	ObjSprite2D_SetDestRect(objLife, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objLife, 0.75);
-	ObjRender_SetScaleY(objLife, 0.75);
-	ObjRender_SetX(objLife, 640 - 212.5 - 10);
-	ObjRender_SetY(objLife, 93);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(obj, guiPath);
+	ObjPrim_SetTexture(obj, "script/main/img/system/lifespell2.png");
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 94 + 2);
 	ObjRender_SetScaleX(obj, 0.7);
@@ -360,7 +332,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 727 + 1, 1, 750 - 1, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 992, 0, 1023, 31);
+			ObjSpriteList2D_SetSourceRect(obj, 80, 0, 96, 16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -372,7 +344,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
 			//ObjSpriteList2D_SetSourceRect(obj, 609 + floor(pieceCount * 5) * 24 - pieceCount, 1, 630 + 1 + floor(pieceCount * 5) * 24 - pieceCount, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832 + floor(pieceCount * 5) * 32, 0, 863 + floor(pieceCount * 5) * 32, 31);
+			ObjSpriteList2D_SetSourceRect(obj, pieceCount*16, 0, (pieceCount+1)*16, 16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -382,7 +354,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 609, 1, 630 + 1, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832, 0, 863, 31);
+			ObjSpriteList2D_SetSourceRect(obj, 0,0,16,16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -391,20 +363,9 @@ task UpdatePlayerLife {
 	}
 }
 task UpdatePlayerSpell {
-	let objSpell = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objSpell, guiPath);
-	Obj_SetRenderPriority(objSpell, 0.1);
-	//ObjSprite2D_SetSourceRect(objSpell, 479, 0 + 1, 605, 25);
-	//ObjSprite2D_SetDestRect(objSpell, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objSpell, 656, 0, 831, 35);
-	ObjSprite2D_SetDestRect(objSpell, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objSpell, 0.75);
-	ObjRender_SetScaleY(objSpell, 0.75);
-	ObjRender_SetX(objSpell, 640 - 212.5 - 10);
-	ObjRender_SetY(objSpell, 127.25);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(obj, guiPath);
+	ObjPrim_SetTexture(obj, "script/main/img/system/lifespell2.png");
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 130);
 	ObjRender_SetScaleX(obj, 0.7);
@@ -438,7 +399,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 27, 750 - 1, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 992, 32, 1023, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, 80,16,96,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -450,7 +411,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
 			//ObjSpriteList2D_SetSourceRect(obj, 608 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 27, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832 + floor(pieceCount * 5) * 32, 32, 863 + floor(pieceCount * 5) * 32, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, pieceCount*16,16,(pieceCount+1)*16,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -460,7 +421,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 608, 0 + 27, 630 + 1, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832, 32, 863, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, 0,16,16,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -916,11 +877,13 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 
 	let size = 12;
 	let size2 = 0;
+	let size3 = 0;
 	let switch = false;
 
 	if (isSmallFloat) {
 		size = 9;
 		size2 = 6;
+		size3 = 3;
 	}
 
 	if (havePeriod && floatDigit > 0) {
@@ -936,9 +899,9 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 			}
 			if (num != 0 || switch == true) {
 				switch = true;
-				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
+				ObjSpriteList2D_SetSourceRect(obj, num * 16, 0, (num + 1) * 16, 24);
 				ObjRender_SetX(obj, x - (digits - 1 - i) * size);
-				ObjSpriteList2D_SetDestRect(obj, (0 + zeroCount * size), size2, (16 + zeroCount * size) - size2, 16);
+				ObjSpriteList2D_SetDestRect(obj, (0 + zeroCount * size), size3, (16 + zeroCount * size) - size2, 24-size3);
 				ObjSpriteList2D_AddVertex(obj);
 				xCount += size;
 			} else {
@@ -948,8 +911,8 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 				zeroCount ++;
 			}
 		}
-		ObjSpriteList2D_SetSourceRect(obj, 176, 144 + 1, 191, 159 + 1);
-		ObjSpriteList2D_SetDestRect(obj, 0, 0 + 2, 16, 16 + 2);
+		ObjSpriteList2D_SetSourceRect(obj, 176, 0, 192, 24);
+		ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 		if (isSmallFloat) {
 			ObjRender_SetX(obj, ObjRender_GetX(obj) - 2 + (zeroCount - 1) * 9);
 			xCount += 1;
@@ -972,12 +935,12 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 	descent (i in 0 .. digits) {
 		let num = listNum[i];
 		ObjRender_SetX(obj, x - (digits - 1 - i) * 12 - xCount);
-		ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-		ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0, 16 - commaCount * 6, 16);	
+		ObjSpriteList2D_SetSourceRect(obj, num * 16, 0, (num + 1) * 16, 24);
+		ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0, 16 - commaCount * 6, 24);	
 		ObjSpriteList2D_AddVertex(obj);
 		if ((digits - i) % 3 == 0 && i != digits && i != 0 && haveComma) {
-			ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1);
-			ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0 + 4, 16 - commaCount * 6, 16 + 4);
+			ObjSpriteList2D_SetSourceRect(obj, 192, 0, 208, 24);
+			ObjSpriteList2D_SetDestRect(obj, -4 - commaCount * 6, 0 + 4, 12 - commaCount * 6, 16 + 4);
 			ObjRender_SetX(obj, ObjRender_GetX(obj) - 5);
 			commaCount ++;
 			ObjSpriteList2D_AddVertex(obj);
