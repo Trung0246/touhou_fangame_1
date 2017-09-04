@@ -17,6 +17,7 @@ let bossScene = ID_INVALID;
 	InitFrame();
 	InitLine();
 	InitHeaders();
+	InitDifficulty();
 	UpdateHiScore();
 	UpdateScore();
 	UpdatePlayerLife();
@@ -167,6 +168,42 @@ task InitHeaders{
 	ObjSpriteList2D_SetSourceRect(headers,96,48,192,72);
 	ObjSpriteList2D_SetDestRect(headers,430,200,526,224);
 	ObjSpriteList2D_AddVertex(headers);
+}
+
+task InitDifficulty {
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj,dir ~ "diff_ph.png");
+	let difficulty = GetAreaCommonData("GameState","Difficulty",1);
+	ObjSprite2D_SetSourceRect(obj,0,difficulty*32,128,(difficulty+1)*32);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.79);
+	if(GetAreaCommonData("GameState","Starting",true)){
+		ObjRender_SetPosition(obj,192,16,0);
+		let color;
+		ascent(i in 5..66){
+			color = 192+sin(i*18)*64;
+			ObjRender_SetColor(obj,color,color,color);
+			yield;
+		}
+		wait(30);
+		descent(i in 0..10){
+			ObjRender_SetScaleY(obj,i/10);
+			yield;
+		}
+	}
+	Obj_SetRenderPriority(obj,0.1);
+	ObjRender_SetPosition(obj,528,20,0);
+	if(GetAreaCommonData("GameState","Starting",true)){
+		ObjRender_SetScaleY(obj,1);
+		ascent(i in 0..21){
+			ObjRender_SetAlpha(obj,i*26);
+			yield;
+		}
+	}
+	SetAreaCommonData("GameState","Starting",false);
+	
+	
+	
 }
 
 task UpdateHiScore {

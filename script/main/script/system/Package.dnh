@@ -1170,6 +1170,7 @@ task DisplayTitle {
 
 task StartGame {
 	LoadingStageTransition(false);
+	SetAreaCommonData("GameState","Starting",true);
 	wait(120);
 	LoadStage(GetAreaCommonData("GameState", "Stage", 1));
 	InitializeStageScene;
