@@ -22,6 +22,7 @@ let bossScene = ID_INVALID;
 	UpdateScore();
 	UpdatePlayerLife();
 	UpdatePlayerSpell();
+	UpdatePlayerRaindrops();
 	UpdatePower();
 	UpdatePoint(); //Blue drop bonus //144 * 24 for phantasm, ... 304 x 46 for disable
 	UpdateGraze();
@@ -399,6 +400,7 @@ task UpdatePlayerLife {
 		yield;
 	}
 }
+
 task UpdatePlayerSpell {
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
@@ -467,6 +469,69 @@ task UpdatePlayerSpell {
 		yield;
 	}
 }
+
+task UpdatePlayerRaindrops {
+	let max = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(max, digitPath);
+	Obj_SetRenderPriority(max, 0.1);
+	ObjRender_SetColor(max, 192,192,255);
+
+	ObjRender_SetPosition(max,592,150,0);
+	ObjSpriteList2D_SetSourceRect(max,160,0,176,24);
+	ObjSpriteList2D_SetDestRect(max,0,0,10,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,32,0,48,24);
+	ObjSpriteList2D_SetDestRect(max,10,0,20,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,0,0,16,24);
+	ObjSpriteList2D_SetDestRect(max,20,0,30,16);
+	ObjSpriteList2D_AddVertex(max);
+
+	ObjRender_SetY(max,116);
+	ObjSpriteList2D_SetSourceRect(max,160,0,176,24);
+	ObjSpriteList2D_SetDestRect(max,0,0,10,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,32,0,48,24);
+	ObjSpriteList2D_SetDestRect(max,10,0,20,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,0,0,16,24);
+	ObjSpriteList2D_SetDestRect(max,20,0,30,16);
+	ObjSpriteList2D_AddVertex(max);
+	
+//function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigit, isSmallFloat) {
+	let life = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(life, digitPath);
+	Obj_SetRenderPriority(life, 0.1);
+	ObjRender_SetColor(life, 192,192,255);
+	ObjRender_SetPosition(life,582,116,0);
+
+	let bomb = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(bomb, digitPath);
+	Obj_SetRenderPriority(bomb, 0.1);
+	ObjRender_SetColor(bomb, 192,192,255);
+	ObjRender_SetPosition(bomb,582,150,0);
+
+	let count = [];
+	let number;
+	let objs = [life,bomb];
+	while (true) {
+		count = [GetCommonData("item_raindrop_red", 0),GetCommonData("item_raindrop_green", 0)];
+		
+		ascent(j in 0..2){
+			ObjSpriteList2D_ClearVertexCount(objs[j]);
+			ascent(i in 0..2){
+				number = floor(count[j]%10);
+				ObjSpriteList2D_SetSourceRect(objs[j],number*16,0,(number+1)*16,24);
+				ObjSpriteList2D_SetDestRect(objs[j],i*-10,0,(i-1)*-10,16);
+				ObjSpriteList2D_AddVertex(objs[j]);
+				count[j] = count[j] / 10;
+			}
+		}
+		yield;
+	}
+
+}
+
 task UpdateBossLife {
 	let active = false;
 
@@ -608,7 +673,6 @@ task UpdateBossTimer {
 	while (bossScene != ID_INVALID) {
 		time = ObjEnemyBossScene_GetInfo(bossScene, INFO_TIMERF);
 		sec = min(99.99, time / 60);
-		//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
 		RenderNumber(obj, 192 + 12, 0, sec, 2, false, true, 2, true);
 		yield;
 
