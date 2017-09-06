@@ -12,3 +12,5 @@ let EV_BACKGROUND_4 = EV_USER+123;
 let EV_BACKGROUND_5 = EV_USER+124;
 let EV_BACKGROUND_SPELLCAST = EV_USER+125; //Spawn spell background
 let EV_BACKGROUND_SPELLBREAK = EV_USER+126; //Dissolve spell background
+let EV_EXTEND_LIFE = EV_USER+130; //Player got an extra life!
+let EV_EXTEND_SPELL = EV_USER+131; //Player got an extra bomb!

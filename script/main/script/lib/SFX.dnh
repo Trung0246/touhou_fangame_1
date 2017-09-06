@@ -13,6 +13,9 @@ let SFX_UNPAUSE = 11;
 let SFX_SHOT1 = 12;
 let SFX_SHOT2 = 13;
 let SFX_LASER = 14;
+let SFX_BOMBEXTEND = 15;
+let SFX_EXTEND = 16;
+let SFX_FULLPOWER = 17;
 
 task PlaySFX(id){
 	NotifyEventAll(EV_SFX_PLAY,id);

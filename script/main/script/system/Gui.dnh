@@ -73,6 +73,8 @@ let bossScene = ID_INVALID;
 			SetCommonData("player_life", tempLife - 1);
 		}
 	}
+	case (EV_EXTEND_LIFE){ ShowExtend(); }
+	case (EV_EXTEND_SPELL){ PlaySFX(SFX_BOMBEXTEND); }
 }
 
 task InitFrame {
@@ -956,6 +958,24 @@ task UpdateReplayFps {
 
 	while (true) {
 		ObjText_SetText(objFps, IntToString(GetReplayFps()) ~ " fps");
+		yield;
+	}
+}
+
+task ShowExtend {
+	PlaySFX(SFX_EXTEND);
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,0,128,128,160);
+	Obj_SetRenderPriority(obj,0.3);
+	ObjRender_SetPosition(obj,192,100,0);
+	ascent(i in 0..17){
+		ObjSprite2D_SetDestRect(obj,-64,0,64,i*2);
+		yield;
+	}
+	wait(60);
+	descent(i in 0..17){
+		ObjRender_SetAlpha(obj,i*16);
 		yield;
 	}
 }

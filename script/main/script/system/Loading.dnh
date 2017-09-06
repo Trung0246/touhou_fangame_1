@@ -27,7 +27,8 @@ function LoadSounds{
 			"timeout1.wav","timeout2.wav","Item.wav",
 			"enemydown.wav","nodamage.wav","missil.wav",
 			"pldead.wav","PAUSE.wav","UNPAUSE.wav","shot1.wav",
-			"shot2.wav","laser.wav"];
+			"shot2.wav","laser.wav","BombExtend.wav",
+			"Extend.wav","FullPower.wav"];
 	let sounds = [];
 	ascent(i in 0..length(sfxlist)){
 		let snd = ObjSound_Create;

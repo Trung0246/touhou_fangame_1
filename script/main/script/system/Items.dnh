@@ -77,9 +77,19 @@ let __grazeCount__ = 0;
 			alternative (GetEventArgument(0))			
 			case (512) { //Raindrop red
 				SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
+				if(GetCommonData("item_raindrop_red",0) >= 20){
+					SetCommonData("player_life",GetCommonData("player_life",2)+1);
+					SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) - 20);
+					NotifyEventAll(EV_EXTEND_LIFE,0);
+				}
 			}
 			case (513) { //Raindrop green
 				SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) + GetCommonData("item_raindrop_change", 0));
+				if(GetCommonData("item_raindrop_green",0) >= 20){
+					SetCommonData("player_spell",GetCommonData("player_spell",2)+1);
+					SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) - 20);
+					NotifyEventAll(EV_EXTEND_SPELL,0);
+				}
 			}
 			case (514) { //Raindrop blue
 				SetCommonData("item_raindrop_blue", GetCommonData("item_raindrop_blue", 0) + GetCommonData("item_raindrop_change", 0));
