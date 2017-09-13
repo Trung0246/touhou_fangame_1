@@ -191,15 +191,15 @@ task Stage_Main() {
 	stageWait(90);
 	StageEnemy(192-120,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(180);
-	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	StageEnemy(192+80,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
 	stageWait(90);
-	StageEnemy(192+140,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
-	stageWait(90);
-	StageEnemy(192-140,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
-	stageWait(180);
+	StageEnemy(192-80,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	//stageWait(30);
+	//StageEnemy(192-140,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(150);
 
 	//V-shape fairies
-	StageEnemy(80,-50,FAIRY_OBLIGATORY,24,16,250,[192,50]);
+	StageEnemy(80,0,FAIRY_OBLIGATORY,24,16,250,[192,50]);
 	stageWait(180);
 
 	StageEnemy(100,-100,FAIRY_OBLIGATORY,24,16,250,[192,200]);
@@ -210,24 +210,23 @@ task Stage_Main() {
 
 	stageWait(60);
 	loop(5){
-		StageEnemy(-128,150,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+	//	StageEnemy(-128,150,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
 		stageWait(15);
 	}
 
-	stageWait(60);
-	loop(8){
-		StageEnemy(512,150,FAIRY_SPAM,16,12,10,[180+rand(-10,10)]);
-		stageWait(10);
-	}
+	stageWait(45);
 
 	//Final section with rainfall fairies
 	stageWait(120);
 	StageEnemy(416,200,FAIRY_RAINFALL,24,16,200,[100,100,-1]);
-	stageWait(210);
-	StageEnemy(512,100,FAIRY_SPAM,16,12,10,[170]);
-	StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[10]);
+	stageWait(150);
+	loop(3){
+		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
+		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180]);
+		stageWait(90);
+	}
 	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,200,[284,100,1]);
-	stageWait(240);
+	stageWait(300);
 	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
 	ascent(i in -1..2){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);

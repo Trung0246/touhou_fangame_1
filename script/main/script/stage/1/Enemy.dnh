@@ -62,13 +62,15 @@ task StreamFairyBehavior(enemy,extra){
 }
 
 task RainFairyBehavior(enemy,extra){
+	ObjEnemy_SetDamageRate(enemy,10,10);
 	AnimateSmallFairy(enemy,0);
 	ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
 	if(extra[0] > ObjMove_GetX(enemy)){Obj_SetValue(enemy,"Anim",4);}
 	else{Obj_SetValue(enemy,"Anim",3);}
 	wait(60);
+	ObjEnemy_SetDamageRate(enemy,100,100);
 	Obj_SetValue(enemy,"Anim",0);
-	wait(40);
+	wait(90);
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	let diff_count = [2,2,3,5][diff];
 	let diff_expand = [0,0.5,1,1.2][diff];
@@ -96,8 +98,8 @@ task RainFairyBehavior(enemy,extra){
 		wait(rand(30,40));
 		angle = GetAngleToPlayer(shot);
 		if(Obj_IsDeleted(shot)){return;}
-		let rain = SPShotA2(ObjMove_GetX(shot),ObjMove_GetY(shot),2,angle,0.1,4,DROP_BLUE,10);
-		ObjMove_AddPatternB2(rain,0,NO_CHANGE,NO_CHANGE,0,0.05,0,5);
+		let rain = SPShotA2(ObjMove_GetX(shot),ObjMove_GetY(shot),2,angle,0.1,4,RICE_BLUE,10);
+		ObjMove_AddPatternB2(rain,0,NO_CHANGE,NO_CHANGE,0,0.05,0,4);
 
 		//Could use this later
 		//let dir = floor((((ObjMove_GetAngle(shot))+90)%360)/180)*2-1;
@@ -122,16 +124,17 @@ task PlainFairyBehavior(enemy,extra){
 	let shift;
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	let diff_count = [2,4,6,8][diff];
+	let diff_speed = [1.5,2,2.5,3][diff];
 
 	shift = 180/diff_count;
 	while(!Obj_IsDeleted(enemy) && ObjMove_GetY(enemy) > 0){
 		angle = rand(-20,20);
 		ascent(i in 0..diff_count){
-			SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),1,angle+i*shift,0.1,3,RBALL_GREEN,15);
+			SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),1,angle+i*shift,0.1,diff_speed,RBALL_GREEN,15);
 		}
 		ascent(i in 1..diff_count+1){
-			shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),1,angle-i*shift,0.1,4.5,SCALE_YELLOW,15);
-			ObjMove_AddPatternB2(shot,20,NO_CHANGE,NO_CHANGE,0,0.1,0,4);
+			shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),1,angle-i*shift,0.1,3.5,SCALE_GREEN,15);
+			ObjMove_AddPatternB2(shot,30,NO_CHANGE,NO_CHANGE,0,0.1,0,diff_speed+1);
 		}
 		PlaySFX(SFX_SHOT1);
 		wait(60);
@@ -213,11 +216,12 @@ task SuperRainFairyBehavior(enemy,extra){
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	let diff_count = [2,4,5,6][diff];
 	let diff_waves = [6,6,8,10][diff];
+	let n = rand(0,360);
 	ascent(i in 0..diff_waves){
 		PlaySFX(SFX_SHOT1);
 		if(Obj_IsDeleted(enemy)){break;}
 		let split = 360/diff_count;
-		let n = rand(0,split);
+		n += rand(19,21);
 		ascent(j in 0..diff_count){
 			let shot = SPShotA2(ObjMove_GetX(enemy),ObjMove_GetY(enemy),3+i/2,n+j*split,-0.1,0,BALL_BLUE,5);
 			RainTransform(shot,j);
@@ -235,12 +239,12 @@ task SuperRainFairyBehavior(enemy,extra){
 		ObjShot_SetAutoDelete(shot,false);
 		wait(20);
 		if(Obj_IsDeleted(shot)){return;}
-		let rain = SPShotA1(ObjMove_GetX(shot),ObjMove_GetY(shot),ObjMove_GetSpeed(shot),ObjMove_GetAngle(shot),DROP_BLUE,10);
+		let rain = SPShotA1(ObjMove_GetX(shot),ObjMove_GetY(shot),ObjMove_GetSpeed(shot),ObjMove_GetAngle(shot),RICE_BLUE,10);
 		ObjShot_SetAutoDelete(rain,false);
 		CheckFall(rain);
 
 		let dir = floor((((ObjMove_GetAngle(shot))+90)%360)/180)*2-1;
-		ObjMove_AddPatternB2(rain,10,NO_CHANGE,NO_CHANGE,0.05*dir,0.2,rand(-0.5,0.5),5);
+		ObjMove_AddPatternB2(rain,10,NO_CHANGE,NO_CHANGE,0.05*dir,0.2,rand(-0.5,0.5),4);
 		
 		descent(i in 0..10){
 			ObjRender_SetAlpha(shot,i*25);
@@ -336,9 +340,6 @@ task RainfallFairyBehavior(enemy,extra){
 	loop(100){
 		UpdateCircle;
 		yield;
-	}
-	ascent(i in 0..6){
-		LetThereBeRain(shots[i],(i+1)%2);
 	}
 	while(a%60 >= 5){
 		UpdateCircle;
