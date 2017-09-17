@@ -1,0 +1,142 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["autism spell"]
+#Text["aka whats wrong with the camera"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+let CenterX = GetStgFrameWidth/2;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(4000);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(30);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss,100,100);
+	ObjMove_SetPosition(objBoss,CenterX,140);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+function angleToPlayer(obj){
+	let toPlayer = atan2(GetPlayerY-ObjMove_GetY(obj),GetPlayerX-ObjMove_GetX(obj)); // Makes something aim towards the player
+	return toPlayer;
+}
+
+task TMain {
+	wait(1);
+	whatswrongwiththecamerajesuschristthatthingisnutspleasestopthis;
+	fire1;
+}
+
+task fire1 {
+	while(!Obj_IsDeleted(objBoss)){
+		CreateShotA1(objBossX,objBossY,rand(4,5.5),rand(0,360),22,0);
+		CreateShotA1(objBossX,objBossY,rand(4,5.5),rand(0,360),24,0);
+		CreateShotA1(objBossX,objBossY,rand(4,5.5),rand(0,360),20,0);
+		wait(2);
+	}
+}
+
+task whatswrongwiththecamerajesuschristthatthingisnutspleasestopthis {
+	one;
+	wait(60);
+	two;
+}
+
+task one {
+	while(!Obj_IsDeleted(objBoss)){
+		Set2DCameraFocusX(GetPlayerX);
+		Set2DCameraFocusY(GetPlayerY);
+		yield;
+	}
+}
+
+task two {
+	let lol = 1;
+	fluc;
+	while(!Obj_IsDeleted(objBoss)){
+		Set2DCameraRatio(lol);
+		yield;
+	}
+
+	task fluc {
+		while(!Obj_IsDeleted(objBoss)){
+			loop(15){
+				lol += 0.05;
+				wait(1);
+			}
+			loop(15){
+				lol -= 0.05;
+				wait(1);
+			}
+			loop(15){
+				lol += 0.1;
+				wait(1);
+			}
+			loop(15){
+				lol -= 0.1;
+				wait(1);
+			}
+			loop(15){
+				lol += 0.15;
+				wait(1);
+			}
+			loop(15){
+				lol -= 0.15;
+				wait(1);
+			}
+			loop(15){
+				lol += 0.1;
+				wait(1);
+			}
+			loop(15){
+				lol -= 0.1;
+				wait(1);
+			}
+		}
+	}
+}
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
