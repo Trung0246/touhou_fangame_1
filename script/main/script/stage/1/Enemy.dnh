@@ -372,6 +372,7 @@ task RainfallFairyBehavior(enemy,extra){
 			loop(diff_spawnrate){
 				if(Obj_IsDeleted(obj)){break;}
 				if(Obj_IsDeleted(enemy)){
+					CreateShotRaindrop(ObjMove_GetX(obj),ObjMove_GetY(obj),0,0,0,0.01,0,2,RAINDROP_GREEN,0);
 					ObjShot_SetDeleteFrame(obj,0);
 				}
 				yield;

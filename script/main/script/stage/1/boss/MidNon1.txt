@@ -52,7 +52,7 @@ task TWork
 	Obj_SetValue(objBoss,"Anim",1);
 	ObjMove_SetDestAtFrame(objBoss,192-15,140,110);
 	wait(110);
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
 	wait(10);
 	Obj_SetValue(objBoss,"Anim",3);
 	wait(100);
@@ -262,7 +262,7 @@ task TEnd
 		yield;
 	}
 
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
 	shotdown = true;
 	wait(60);
 	ObjMove_SetAngle(objBoss,-50);
