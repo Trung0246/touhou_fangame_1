@@ -8,6 +8,7 @@ let guiPath = dir ~ "front00.png";
 let digitPath = dir ~ "hud_nums.png";
 let lifeBarPath = dir ~ "lifebar.png";
 let bossScene = ID_INVALID;
+let timerActive = false;
 
 @Initialize {
 /*	LoadTexture(guiPath);
@@ -46,7 +47,9 @@ let bossScene = ID_INVALID;
 		ascent (i in 0..length(tempObj)) {
 			UpdateBossXPos(tempObj[i]);
 		}
-		UpdateBossTimer();
+		if(!timerActive){
+			UpdateBossTimer();
+		}
 	}
 	case (EV_END_BOSS_STEP) {
 		
@@ -500,7 +503,6 @@ task UpdatePlayerRaindrops {
 	ObjSpriteList2D_SetDestRect(max,20,0,30,16);
 	ObjSpriteList2D_AddVertex(max);
 	
-//function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigit, isSmallFloat) {
 	let life = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(life, digitPath);
 	Obj_SetRenderPriority(life, 0.1);
@@ -659,6 +661,7 @@ task UpdateBossLife {
 task UpdateBossTimer {
 	yield;
 
+	timerActive = true;
 	let active = true;
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -668,24 +671,24 @@ task UpdateBossTimer {
 
 	let time;
 	let sec = 0;
+	let ypos = 0;
 
-	//CheckSpell;
+	CheckSpell;
 	CheckRemainingTime();
 	CheckTimerFade();
+	let boss = GetEnemyBossObjectID();
 	while (bossScene != ID_INVALID) {
 		time = ObjEnemyBossScene_GetInfo(bossScene, INFO_TIMERF);
 		sec = min(99.99, time / 60);
-		RenderNumber(obj, 192 + 12, 0, sec, 2, false, true, 2, true);
+		RenderNumber(obj, 192 + 12, ypos, sec, 2, false, true, 2, true);
 		yield;
 
 	}
 	active = false;
 	//This is the part where the timer goes away and everything is trashed
 	Obj_Delete(obj);
-	//Obj_Delete(timeout1);
-	//Obj_Delete(timeout2);
-
-
+	timerActive = false;
+	
 	task CheckTimerFade {
 		let objPlayer = GetPlayerObjectID();
 		while (active) {
@@ -699,26 +702,27 @@ task UpdateBossTimer {
 			yield;
 		}
 	}
-	//TODO: update this once we decide how to check if a spell is active
-	/*task CheckSpell {
+
+	task CheckSpell {
 		while(active){
 			while(!GetCommonData("SpellActive",false) && active){
 				yield;
 			}
+			wait(52);
 			ascent(i in 0..35){
-				ObjRender_SetY(obj,i);
+				ypos = i;
 				yield;
 			}
 			while(GetCommonData("SpellActive",false) && active){
-				ObjRender_SetY(obj,35);
+				ypos = 35;
 				yield;
 			}
 			descent(i in 0..35){
-				ObjRender_SetY(obj,i);
+				ypos = i;
 				yield;
 			}
 		}
-	}*/
+	}
 
 	task CheckRemainingTime {
 		while (active) {

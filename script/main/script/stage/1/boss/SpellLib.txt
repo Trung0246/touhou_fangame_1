@@ -1,0 +1,126 @@
+
+task SpellCast{
+	NotifyEventAll(EV_BACKGROUND_SPELLCAST,0);
+	SetCommonData("SpellActive",true);
+	PortraitTime;
+
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,"script/main/img/system/spellname.png");
+	ObjSprite2D_SetSourceRect(back,0,0,256,32);
+	ObjSprite2D_SetDestRect(back,-256,-8,0,24);
+	ObjRender_SetPosition(back,374,300,0);
+	ObjRender_SetAlpha(back,0);
+
+	let name = ObjText_Create();
+	ObjText_SetText(name,"Placeholder Sign \"Name Not Final\"");
+	ObjText_SetFontSize(name,12);
+	ObjText_SetFontBorderWidth(name,1);
+	ObjText_SetFontBorderType(name,BORDER_FULL);
+	ObjText_SetFontBorderColor(name,0,0,64);
+	ObjText_SetFontColorTop(name,255,255,255);
+	ObjText_SetHorizontalAlignment(name,ALIGNMENT_RIGHT);
+	ObjText_SetMaxWidth(name,300);
+	ObjRender_SetPosition(name,74,300,0);
+	descent(i in 0..16){
+		ObjRender_SetScaleXYZ(name,1+i/32,1+i/32,1);
+		ObjRender_SetAlpha(name,256-i*8);
+		yield;
+	}
+	ascent(i in 0..17){
+		ObjRender_SetAlpha(back,i*16);
+		yield;
+	}
+	wait(20);
+	ascent(i in -5..33){
+		ObjRender_SetY(back,260-i*8);
+		ObjRender_SetY(name,260-i*8);
+		yield;
+	}
+	let bonusT = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(bonusT,"script/main/img/system/spellname.png");
+	ObjSprite2D_SetSourceRect(bonusT,0,32,64,48);
+	ObjSprite2D_SetDestRect(bonusT,0,0,64,16);
+	ObjRender_SetPosition(bonusT,166,20,0);
+
+	let history = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(history,"script/main/img/system/spellname.png");
+	ObjSprite2D_SetSourceRect(history,64,32,256,48);
+	ObjSprite2D_SetDestRect(history,0,0,192,16);
+	ObjRender_SetPosition(history,284,20,0);
+	ascent(i in 0..17){
+		ObjRender_SetAlpha(history,i*16);
+		ObjRender_SetAlpha(bonusT,i*16);
+		yield;
+	}
+
+	let attempts = 30;
+	let caps = 28;
+
+	let historyNum = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(historyNum,"script/main/img/system/spellname.png");
+	caps = min(caps,99);
+	let capsA = [floor((caps/10))%10,caps%10];
+	let a = min(attempts,99);
+	let attemptsA = [floor((a/10))%10,a%10];
+	if(attempts > 99){attemptsA = attemptsA ~ [11];}
+
+	let historyA = capsA ~ [10] ~ attemptsA;
+
+	ascent(i in 0..length(historyA)){
+		ObjRender_SetPosition(historyNum,0,0,0);
+		ObjSpriteList2D_SetSourceRect(historyNum,64+historyA[i]*8,48,72+historyA[i]*8,64);
+		ObjSpriteList2D_SetDestRect(historyNum,i*8,0,(i+1)*8,16);
+		ObjRender_SetPosition(historyNum,328,22,0);
+		ObjSpriteList2D_AddVertex(historyNum);
+	}
+	
+
+	//LoLK formula: 1million*stage+1million*difficulty
+	let spellbonus = 1000000;
+	let bonus = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(bonus,"script/main/img/system/spellname.png");
+	let temp;
+	let n;
+	let number = [];
+	loop{
+		temp = spellbonus;
+		number = [];
+		while(temp > 0){
+			number = number ~ [temp%10];
+			temp = floor(temp/10);
+		}
+		yield;
+		ObjSpriteList2D_ClearVertexCount(bonus);
+		ascent(i in 0..length(number)){
+			ObjRender_SetPosition(bonus,0,0,0);
+			ObjSpriteList2D_SetSourceRect(bonus,64+number[i]*8,48,72+number[i]*8,64);
+			ObjSpriteList2D_SetDestRect(bonus,64-i*8,0,64-(i-1)*8,16);
+			ObjRender_SetPosition(bonus,200,22,0);
+			ObjSpriteList2D_AddVertex(bonus);
+		}
+		yield;
+	}
+
+	task PortraitTime{
+		let portrait = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(portrait,"script/main/img/portrait/Azure/portrait.png");
+		ObjSprite2D_SetSourceRect(portrait,0,0,300,476);
+		ObjSprite2D_SetDestCenter(portrait);
+		Obj_SetRenderPriority(portrait,0.29);
+		ascent(i in -8..9){
+			ObjRender_SetPosition(portrait,384-i*16,128+i*8,0);
+			yield;
+		}
+		ascent(i in 0..60){
+			ObjRender_SetPosition(portrait,256-i,192+i/2,0);
+			yield;
+		}
+		ascent(i in 0..60){
+			ObjRender_SetPosition(portrait,196-i*(i/4),222+i*(i/4),0);
+			ObjRender_SetColor(portrait,256-i*2,256-i*2,256-i*2);
+			yield;
+		}
+		Obj_Delete(portrait);
+	}
+
+}

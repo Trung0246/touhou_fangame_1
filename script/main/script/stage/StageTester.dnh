@@ -21,7 +21,7 @@
 	Maingame_Init;
 	
 	CreateCommonDataArea("GameState");
-	SetAreaCommonData("GameState","Difficulty",1);
+	SetAreaCommonData("GameState","Difficulty",2);
 
 	SetCommonData("player_power", 1.00);
 	

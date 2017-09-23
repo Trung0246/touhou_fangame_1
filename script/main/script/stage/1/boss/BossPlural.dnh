@@ -1,0 +1,35 @@
+#TouhouDanmakufu[Plural]
+#ScriptVersion[3]
+#Title["Stage test"]
+#Text["Stage text"]
+#Player["script/main/script/player/reimu/Reimu.dnh"]
+#System["script/main/script/system/Gui.dnh"]
+#Background["script/main/script/stage/1/background/Background.dnh"]
+
+#include "script/main/script/system/Init.dnh"
+
+@Initialize {
+	Plural_Main();
+}
+
+@MainLoop {
+	yield;
+}
+ 
+@Finalize {
+
+}
+
+task Plural_Main() {
+	SetAreaCommonData("GameState","CurrentBoss",0);
+	let obj = ObjEnemyBossScene_Create();
+	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "BossSpell1.txt");
+	ObjEnemyBossScene_LoadInThread(obj);
+	ObjEnemyBossScene_Regist(obj);
+
+	while (!Obj_IsDeleted(obj)) {
+		yield;
+	}
+
+	CloseScript(GetOwnScriptID());
+}
