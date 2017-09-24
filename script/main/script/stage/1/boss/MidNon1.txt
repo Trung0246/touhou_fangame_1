@@ -8,7 +8,7 @@
 #include "script/main/script/lib/SFX.dnh"
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/img/bullet/shotData_Const.dnh"
-#include "./Anim.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
 
 let objBoss;
 @Initialize
