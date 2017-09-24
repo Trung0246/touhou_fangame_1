@@ -15,6 +15,7 @@ LoadTexture(floorTex);
 LoadTexture(rainTex);*/
 
 let scrollSpeed = 8;
+let spellBG;
 
 @Initialize{
 	Call;
@@ -45,6 +46,9 @@ task Call{
 		case(EV_BACKGROUND_SPELLCAST){
 			SpellBG;
 		}
+		case(EV_BACKGROUND_SPELLBREAK){
+			Obj_SetValue(spellBG,"End",true);
+		}
 	
 }
 
@@ -56,6 +60,7 @@ task SpellBG{
 	ObjRender_SetPosition(back,192,224,0);
 	ObjRender_SetScaleXYZ(back,0.5,0.5,0.5);
 	Obj_SetRenderPriority(back,0.25);
+	spellBG = back;
 
 	let wave = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(wave,"script/main/img/stage/1/spell2.png");
@@ -65,6 +70,7 @@ task SpellBG{
 	ObjRender_SetColor(wave,128,128,256);
 	Obj_SetRenderPriority(wave,0.26);
 	MoveWave;
+	CheckDelete;
 
 	ascent(i in 0..65){
 		ObjRender_SetAlpha(back,i*4);
@@ -82,6 +88,17 @@ task SpellBG{
 				yield;
 			}
 		}
+	}
+
+	task CheckDelete{
+		while(!Obj_GetValue(back,"End")){yield;}
+		descent(i in 0..33){
+			ObjRender_SetAlpha(back,i*8);
+			ObjRender_SetAlpha(wave,i*2);
+			yield;
+		}
+		Obj_Delete(wave);
+		Obj_Delete(back);
 	}
 }
 

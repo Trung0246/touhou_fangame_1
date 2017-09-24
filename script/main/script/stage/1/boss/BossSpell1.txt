@@ -55,6 +55,8 @@ task TWork
 	let diff_speed = [2,2,2.5,2.5][diff];
 
 	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	if(ObjMove_GetX(objBoss) > 192){Obj_SetValue(objBoss,"Anim",1);}
+	else{Obj_SetValue(objBoss,"Anim",2);}
 	wait(30);
 	SpellCast;
 	let n;
@@ -64,6 +66,8 @@ task TWork
 	let dir = 1;
 	let delay;
 	let dest;
+	wait(30);
+	Obj_SetValue(objBoss,"Anim",0);
 	wait(90);
 	while(!Obj_IsDeleted(objBoss)){
 		Obj_SetValue(objBoss,"Anim",3);
@@ -142,6 +146,7 @@ task TEnd
 	}
 
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
 	Obj_Delete(objBoss);
 
 	loop(30){yield;}

@@ -74,16 +74,19 @@ task SpellCast{
 		ObjSpriteList2D_AddVertex(historyNum);
 	}
 	
+	let spellbonus = 1000000*GetAreaCommonData("GameState","Stage",1)*(GetAreaCommonData("GameState","Difficulty",1)+1);
+	let decrease = ((2/3)*spellbonus)/(ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID(),INFO_TIMER)-5);
+	decrease /= 30;
+	WriteLog(decrease);
 
-	//LoLK formula: 1million*stage+1million*difficulty
-	let spellbonus = 1000000;
 	let bonus = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(bonus,"script/main/img/system/spellname.png");
 	let temp;
 	let n;
 	let number = [];
-	loop{
-		temp = spellbonus;
+	DecreaseSpellBonus;
+	while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+		temp = floor(spellbonus);
 		number = [];
 		while(temp > 0){
 			number = number ~ [temp%10];
@@ -99,6 +102,29 @@ task SpellCast{
 			ObjSpriteList2D_AddVertex(bonus);
 		}
 		yield;
+	}
+	Obj_Delete(bonus);
+	Obj_Delete(historyNum);
+	descent(i in 0..16){
+		ObjRender_SetAlpha(back,i*16);
+		ObjRender_SetAlpha(name,i*16);
+		ObjRender_SetAlpha(bonusT,i*16);
+		ObjRender_SetAlpha(history,i*16);
+		yield;
+	}
+	Obj_Delete(back);
+	Obj_Delete(name);
+	Obj_Delete(bonusT);
+	Obj_Delete(history);
+	SetCommonData("SpellActive",false);
+
+
+	task DecreaseSpellBonus{
+		wait(300);
+		while(!Obj_IsDeleted(objBoss)){
+			spellbonus -= decrease;
+			wait(2);
+		}
 	}
 
 	task PortraitTime{

@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Boss testing"]
-#Text["feat. dangerous ocean fairy"]
+#Title["Boss nonspell #2"]
+#Text["can we please quit it with the rain?"]
 #System["script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/Utils.dnh"
@@ -19,7 +19,7 @@ let objBoss;
 	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 	ObjEnemy_Regist(objBoss);
 	TWork;
-	BossResistance(objBoss,360);
+	BossResistance(objBoss,240);
 	Animation_Azure(objBoss);
 	BossAura_Azure(objBoss);
 	TEnd;
@@ -37,63 +37,107 @@ let objBoss;
 	alternative(GetEventType())
 	case(EV_REQUEST_LIFE)
 	{
-		SetScriptResult(950);
+		SetScriptResult(1650);
 	}
 	case(EV_REQUEST_TIMER)
 	{
-		SetScriptResult(25);
+		SetScriptResult(30);
 	}
 }
 
-let shotdown = false;
-
 task TWork
 {
-	let wind = 0;
-	SetOffTheWind;
-	ObjMove_SetPosition(objBoss,192-15,-120);
-	Obj_SetValue(objBoss,"Anim",2);
-	ObjMove_SetDestAtFrame(objBoss,192-15,140,110);
-	wait(110);
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
-	wait(10);
-	Obj_SetValue(objBoss,"Anim",3);
-	wait(100);
 	Obj_SetValue(objBoss,"Anim",0);
+	wait(30);
+	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	if(ObjMove_GetX(objBoss) > 192){Obj_SetValue(objBoss,"Anim",1);}
+	else{Obj_SetValue(objBoss,"Anim",2);}
+	wait(30);
 	let angle = rand(0,360);
 	let shot;
 	let size;
-	let rotation = 5*rand_sign();
-	ActualFiring;
-	BossMovement;
+	let rotation = 2*rand_sign();
+	wait(30);
+	Obj_SetValue(objBoss,"Anim",0);
+	wait(30);
+	BULLETS;
+	SizeShift;
+	Obj_SetValue(objBoss,"Anim",3);
 
-	while(!shotdown){
-		ascent(i in 0..6){
-			shot = SPShotB2(192+cos(angle+i*60)*size*2.5,ObjMove_GetY(objBoss)-10+sin(angle+i*60)*size,1,0,0,0,0,0,RBALL_BLUE,5);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_delay = [20,18,15,13][diff];
+	let diff_sway = [0.5,1,1.5,2][diff];
+
+	while(!Obj_IsDeleted(objBoss)){
+		ascent(i in 0..7){
+			shot = SPShotB2(192+cos(angle+i*51)*size*2,ObjMove_GetY(objBoss)-10+sin(angle+i*51)*size,1,0,0,0,0,0,RBALL_CYAN,9);
 			InstaDelete(shot);
 		}
-		angle -= rotation;
+		angle += rotation;
 		yield;
 	}
 
-	task ActualFiring{
-		//Putting this here is probably a sin against good coding practices but you can't stop me
-		ascent(i in 0..31){
-			size = i*2;
-			yield;
-		}
-		wait(30);
-		let diff = GetAreaCommonData("GameState","Difficulty",1);
-		let diff_shotdelay = [20,15,12,10][diff];
-		while(!shotdown){
-			ascent(i in 0..6){
-				shot = SPShotB2(192+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DROP_BLUE,10);
+	task BULLETS{
+		wait(90);
+		NoCheatingPlease;
+		let current;
+		CurrentTask;
+		while(!Obj_IsDeleted(objBoss)){
+			ascent(i in 0..7){
+				shot = SPShotA1(192+cos(angle+i*51)*size*2,ObjMove_GetY(objBoss)-10+sin(angle+i*51)*size,1,angle+i*51,RBALL_CYAN,10);
+				ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0,0.02,0,4);
+				CurrentMove(shot);
 			}
-			wait(diff_shotdelay+floor(rand(-1,1)));
+			wait(diff_delay);
+		}
+
+		task CurrentTask{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..360){
+					current = sin(i)*diff_sway;
+					yield;
+				}
+			}
+		}
+
+		task CurrentMove(obj){
+			while(!Obj_IsDeleted(obj)){
+				ObjMove_SetX(obj,ObjMove_GetX(obj)+current);
+				yield;
+			}
+		}
+
+		task NoCheatingPlease{
+			let n;
+			let objPlayer = GetPlayerObjectID();
+			while(!Obj_IsDeleted(objBoss)){
+				if(ObjMove_GetY(objPlayer) < 100){
+					n = rand(-15,15);
+					ascent(i in 0..12){
+						SPShotB2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),cos(i*30+n)*2,sin(i*30+n)-3.5,0,0.05,0,5,BUBBLE_BLUE,15);
+					}
+					wait(30);
+				}
+				wait(10);
+			}
 		}
 	}
 
-	task BossMovement{
+	task SizeShift{
+		ascent(i in 0..60){
+			size = i;
+			yield;
+		}
+		Obj_SetValue(objBoss,"Anim",0);
+		while(!Obj_IsDeleted(objBoss)){
+			ascent(i in 0..120){
+				size = 60+sin(i*3)*10;
+				yield;
+			}
+		}
+	}
+
+	/*task BossMovement{
 		let objPlayer = GetPlayerObjectID();
 		let dest;
 		wait(190);
@@ -119,23 +163,14 @@ task TWork
 			wait(190);
 		}
 		
-	}
-
-	task SetOffTheWind{
-		let n = 0;
-		while(!Obj_IsDeleted(objBoss)){
-			n += 2;
-			wind = sin(n);
-			yield;
-		}
-	}
+	}*/
 }
 
 task InstaDelete(shot){
 	ObjShot_SetSpellResist(shot,true);
 	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
-	ObjRender_SetColor(shot,128,128,256);
-	wait(5);
+	ObjRender_SetColor(shot,128,256,256);
+	wait(8);
 	Obj_Delete(shot);
 }
 
@@ -147,16 +182,10 @@ task TEnd
 	}
 
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
-	shotdown = true;
-	wait(60);
-	ObjMove_SetAngle(objBoss,-50);
-	ObjMove_SetAcceleration(objBoss,0.1);
-	ObjMove_SetMaxSpeed(objBoss,6);
-	Obj_SetValue(objBoss,"Anim",2);
-	wait(100);
 	Obj_Delete(objBoss);
 
 	loop(30){yield;}
 
 	CloseScript(GetOwnScriptID());
+
 }
