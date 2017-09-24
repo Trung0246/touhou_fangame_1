@@ -60,6 +60,8 @@ surperiors.
 
 She'll find her way back in the end.
 
+The massive bluebell she's holding is fake, in case you didn't notice.
+
 --------------------Stage 2 Mid-boss - A Hazy, Foregone Conclusion--------------------
 
 名: キム じりり
@@ -355,6 +357,8 @@ She thinks that putting in the effort is only being polite, but really, she's ju
 
 She's still as cordial (and needlessly formal) as ever.
 
+The massive bluebell she's holding helps channel currents, in case you didn't notice.
+
 --------------------Stage EX Boss - Heraldric Alien Martyr--------------------
 
 名: 汎鑼 幤頃
@@ -409,6 +413,16 @@ She couldn't go back. Not like this.
 
 So she fled into Gensokyo, seeking out someone who could help her.
 
+--------------------Stage EX Boss(?) - Avian Augur --------------------
+名: 凡作
+Name: Hansa
+
+Species: Bird
+Abilities: Collection of Information(?)
+
+Nusakoro's (divine?) bird friend.
+Nothing more, nothing less.
+
 --------------------Stage PH Mid-Boss - True Goddess Metempsychosis--------------------
 
 名: 水混 有無 (つまざる うむ)
@@ -440,41 +454,44 @@ A goddess who sprung from Izanagi himself.
 Yet another god whose raison d'etre is defending the roads of humans.
 Actually, as a goddess of crossroads, she's a coworker of a certain someone.
 
-She's a carefree, easygoing sort of person who speaks in an inadvertantly business-like tone. For a god, she's rather
-earthly, but as a result is often rather stubborn towards her coworkers. However, she's easily won over by things she
+She's a easygoing but compulsive sort of person who speaks in an inadvertantly business-like tone. For a god, she has a very
+earthly sense of compassion, but as a result is often rather stubborn towards her coworkers. She's easily won over by things she
 considers beautiful.
-As such, danmaku is something that takes absolute hold of her attention. If it wasn't for her terribly short attention
-span, she'd might actually make for a rather sinister opponent.
 
-Despite being an outsider, she's very much like the people of Gensokyo. Somehow, the gods have put her in charge of an
-innumerable fleet of rather unimportant deities. She's used both of these things to inadvertantly cause another incident
-on her god-given "errand run".
+Despite being an outsider, she's very much like the people of Gensokyo. Being a (mostly) responsible
+sort of person, the gods have put her in charge of an innumerable fleet of rather unimportant deities. 
+She's used both of these things to inadvertantly cause another incident on her god-given "errand run".
 
 Like Nusakoro, she's actually quite old. She was born an earthly god, left abandoned by Izanagi as he made his way back
-to the heavens. However, when the heavenly gods returned to make their conquest of Honshu with the humans that worshipped
+to the heavens from Yomi. However, when the heavenly gods returned to make their conquest of Honshu with the humans that worshipped
 them, she sided with them. Thus, she's still maintained a decently high status through the years. 
 
 This was accomplished by "connecting" her heart to those of the heavenly gods. 
 Really, it was both an underhanded betrayal and a magnificent maneuver.
+She felt a bit remorse.
 
-She guided the hearts of humans from point A to point B.
+So, she guided the hearts of humans from point A to point B.
 
-It's been an incredibly long time since then. Humans as of recent have developed things like the "GPS" and the
-"Smartphone" and other little knick-knacks outside the field of Rina-hime's comprehension that could guide them even more
-effectively than a god. So, she's become quite bored.
+It was already the nature of crossroad gods to be kind. Reuniting long separated families, carving a safe path for those
+searching for disappeared friends, drawing a line back home. With things like the "Social Network" in the modern age,
+it seems as if people don't need a god as much as they do a "Smartphone" or "GPS".
 
-Some time before the incident, she noticed a strange connection between a heart in the world of the dead and a world the
-gods sealed away ages ago.
+But there were still some things even human technology could not remedy.
+
+Some time before the incident, she encountered long dead divine spirits who wished to reconnect with their mother,
+bearing an artifact. Longing for usefulness, she sought to resolve this.
 
 Her resulting interactions with Ummu (which she has managed to keep confidential) put the world of the gods into a state
-of panic. Even so, she's tried to clean up her mess.
+of panic. Even so, she's tried to clean up her mess. It's not in her nature to simply let others toil.
 
-Ever clever but never truly dedicated, she was the one who proposed to unseal Nusakoro. Though, as the one who suggest it,
+Ever clever but cunning, she was the one who proposed to unseal Nusakoro. Though, as the one who suggest it,
 she's been put in charge of her for the time being. So, then, she was in charge of the hunt for her when it became evident
 that Nusakoro had failed. It was only a half-hearted search. It's good to see old friends, after all.
 
 She also managed to charm the hearts of the Human Village, setting up a danmaku festival under the guise of doing something
-to lure Nusakoro out. Really, it was just another way for Rina-hime to attempt to combat boredom.
+to lure Nusakoro out. Really, it was just another way for Rina-hime to connect the hearts of humans once more.
 
-She'll probably bum around Gensokyo for a while.
+She'll probably bum around Gensokyo.
 She's learned that she doesn't need to do anything too formal to see danmaku.
+
+For whatever reason, she considers it to be "the purest display of connection between two people."
