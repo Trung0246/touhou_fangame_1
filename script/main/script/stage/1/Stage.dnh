@@ -125,7 +125,7 @@ task Stage_Main() {
 	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");
 
 	SetCommonData("StageWaitTime",0);
-/*	//Stage content
+	//Stage content
 	wait(60);
 	NotifyEventAll(EV_BGM_PLAY,2);
 	//Opening wave
@@ -241,7 +241,7 @@ task Stage_Main() {
 	ascent(i in -1..2){
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);
 	}
-	stageWait(300);*/
+	stageWait(300);
 /*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	stageWait(60);
 	loop(2){
@@ -250,13 +250,13 @@ task Stage_Main() {
 		stageWait(90);
 	}
 	stageWait(120);*/
-/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	//StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
 	//StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
 	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[324,150,2]);
 	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[60,150,2]);
 	stageWait(480);
-	DeleteShotAll(TYPE_SHOT,TYPE_ITEM);*/
+	DeleteShotAll(TYPE_SHOT,TYPE_ITEM);
 	StartScript(boss);
 
 
