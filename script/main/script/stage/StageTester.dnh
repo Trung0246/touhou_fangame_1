@@ -4,7 +4,6 @@
 #Text["Debug script magic go!!"]
 #System["script/main/script/system/Gui.dnh"]
 #Player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
-#Background["script/main/script/stage/1/background/Background.dnh"]
 
 //#include "script/main/script/system/Init.dnh"
 
@@ -21,9 +20,12 @@
 	Maingame_Init;
 	
 	CreateCommonDataArea("GameState");
-	SetAreaCommonData("GameState","Difficulty",2);
+	SetAreaCommonData("GameState","Difficulty",1);
+	SetAreaCommonData("GameState","Player",4); //Nonexistent player that basically means "done in stagetester"
+	CreateCommonDataArea("SpellHistory");
+	LoadCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 
-	SetCommonData("player_power", 1.00);
+	SetCommonData("player_power", 2.00);
 	
 	let stage = LoadScript("script/main/script/stage/1/Stage.dnh");
 	StartScript(stage);

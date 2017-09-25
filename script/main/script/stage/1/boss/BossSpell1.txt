@@ -58,7 +58,7 @@ task TWork
 	if(ObjMove_GetX(objBoss) > 192){Obj_SetValue(objBoss,"Anim",1);}
 	else{Obj_SetValue(objBoss,"Anim",2);}
 	wait(30);
-	SpellCast;
+	SpellCast(3+diff);
 	let n;
 	let m;
 	let shot;

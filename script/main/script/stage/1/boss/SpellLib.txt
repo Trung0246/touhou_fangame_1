@@ -1,5 +1,4 @@
-
-task SpellCast{
+task SpellCast(spellNum){
 	NotifyEventAll(EV_BACKGROUND_SPELLCAST,0);
 	SetCommonData("SpellActive",true);
 	PortraitTime;
@@ -11,8 +10,13 @@ task SpellCast{
 	ObjRender_SetPosition(back,374,300,0);
 	ObjRender_SetAlpha(back,0);
 
+	let spellFile = ObjFile_Create(OBJ_FILE_TEXT);
+	ObjFile_Open(spellFile, "script/main/script/data/spellname.txt");
+	let spellName = SplitString(ObjFileT_GetLineText(spellFile,spellNum),"|")[1];
+	Obj_Delete(spellFile);
+
 	let name = ObjText_Create();
-	ObjText_SetText(name,"Placeholder Sign \"Name Not Final\"");
+	ObjText_SetText(name,spellName);
 	ObjText_SetFontSize(name,12);
 	ObjText_SetFontBorderWidth(name,1);
 	ObjText_SetFontBorderType(name,BORDER_FULL);
@@ -53,8 +57,13 @@ task SpellCast{
 		yield;
 	}
 
-	let attempts = 30;
-	let caps = 28;
+	let historyString = itoa(GetAreaCommonData("GameState","Player",4)) ~ itoa(spellNum);
+
+	let attempts = GetAreaCommonData("SpellHistory",historyString ~ "A",0);
+	let caps = GetAreaCommonData("SpellHistory",historyString ~ "C",0);
+	attempts++;
+	SetAreaCommonData("SpellHistory",historyString ~ "A",attempts);
+	SaveCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 
 	let historyNum = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(historyNum,"script/main/img/system/spellname.png");
@@ -77,7 +86,6 @@ task SpellCast{
 	let spellbonus = 1000000*GetAreaCommonData("GameState","Stage",1)*(GetAreaCommonData("GameState","Difficulty",1)+1);
 	let decrease = ((2/3)*spellbonus)/(ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID(),INFO_TIMER)-5);
 	decrease /= 30;
-	WriteLog(decrease);
 
 	let bonus = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(bonus,"script/main/img/system/spellname.png");
@@ -103,6 +111,15 @@ task SpellCast{
 		}
 		yield;
 	}
+
+	//oh my god ancient code from my first script
+	let objScene = GetEnemyBossSceneObjectID();
+	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
+        	+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
+		SetAreaCommonData("SpellHistory",historyString ~ "C",caps+1);
+		SaveCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
+	}
+
 	Obj_Delete(bonus);
 	Obj_Delete(historyNum);
 	descent(i in 0..16){

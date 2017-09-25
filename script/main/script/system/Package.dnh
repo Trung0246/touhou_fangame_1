@@ -51,6 +51,8 @@
 task LoadSaveData {
 	CreateCommonDataArea("Settings");
 	LoadCommonDataAreaA2("Settings", "script/main/save/Settings.dat");
+	CreateCommonDataArea("SpellHistory");
+	LoadCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 }
 
 task InitBGM {
