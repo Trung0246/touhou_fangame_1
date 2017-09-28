@@ -1,0 +1,167 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss spell #2"]
+#Text["Had enough ocean yet?"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/1/boss/Anim.txt"
+#include "script/main/script/stage/1/boss/SpellLib.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,420);
+	Animation_Azure(objBoss);
+	BossAura_Azure(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1250);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(40);
+	}
+}
+
+let shotdown = false;
+
+task TWork
+{
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_delay = [35,22,30,26][diff];
+	let diff_speed = [1.5,2,2.5,2][diff];
+	let diff_fall = diff >= 2;
+
+	ObjMove_SetDestAtWeight(objBoss,192,120,8,5);
+	if(ObjMove_GetX(objBoss) > 192){Obj_SetValue(objBoss,"Anim",1);}
+	else{Obj_SetValue(objBoss,"Anim",2);}
+	wait(30);
+	SpellCast(7+diff);
+	let n = 0;
+	let movement = 0.9*rand_sign();
+	wait(30);
+	Obj_SetValue(objBoss,"Anim",0);
+	wait(90);
+	let shot;
+	SendOutOcean;
+	wait(240);
+	while(!Obj_IsDeleted(objBoss)){
+		ObjMove_SetPosition(objBoss,192+sin(n)*120,120);
+		n += movement;
+		yield;
+	}
+
+	task SendOutOcean{
+		let ypos = 100;
+		let size = 1;
+		let angle = rand(0,360);
+		let rotation = 4*rand_sign();
+		TheUsual;
+
+		ascent(i in 0..120){
+			ypos = 120+3*i;
+			size = i/2;
+			yield;
+		}
+
+		wait(60);
+		ButWithBubblesToo;
+		wait(60);
+		AndAlsoBullets;
+		
+		task TheUsual{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..8){
+					shot = SPShotA1(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,0,0,BBALL_BLUE,10);
+					InstaDelete(shot);
+				}
+				angle += rotation+rand(0,1);
+				yield;
+			}
+		}
+
+		task ButWithBubblesToo{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..8){
+					if(Obj_IsDeleted(objBoss)){break;}
+					shot = SPShotB2(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,rand(-1,1),-rand(0,1),0,0.01,0,1,BUBBLE_BLUE,0);
+					FadeIn(shot);
+					wait(1);
+				}
+			}
+		}
+
+		task AndAlsoBullets{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..8){
+					shot = SPShotB1(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,-(192-ObjMove_GetX(objBoss))/100,-diff_speed,RBALL_BLUE,10);
+					if(diff_fall){FallBackDown(shot);}
+				}
+				wait(diff_delay);
+			}
+
+			task FallBackDown(obj){
+				while(ObjMove_GetY(obj) > 15 && !Obj_IsDeleted(obj)){yield;}
+				if(!Obj_IsDeleted(obj)){
+					SPShotA2(ObjMove_GetX(obj),ObjMove_GetY(obj),-diff_speed,90,0.1,2,DROP_CYAN,5);
+					ObjShot_SetDeleteFrame(obj,0);
+				}
+			}
+		}
+
+	}
+}
+
+task FadeIn(shot){
+	ascent(i in 0..20){
+		ObjRender_SetAlpha(shot,i*13);
+		yield;
+	}
+}
+
+task InstaDelete(shot){
+	ObjShot_SetSpellResist(shot,true);
+	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+	ObjRender_SetColor(shot,128,128,256);
+	wait(9);
+	Obj_Delete(shot);
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+}

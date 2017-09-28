@@ -177,6 +177,7 @@ task InitHeaders{
 }
 
 task InitDifficulty {
+	wait(5);
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(obj,dir ~ "diff_ph.png");
 	let difficulty = GetAreaCommonData("GameState","Difficulty",1);

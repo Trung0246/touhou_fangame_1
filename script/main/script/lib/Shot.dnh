@@ -46,10 +46,12 @@ task SPBulletDelay(obj,time){
 	let scale = 1.5/time;
 	let alpha = 256/time;
 	let n;
+	ObjShot_SetIntersectionEnable(obj,false);
 	descent(i in 0..time){
 		n = 1+scale*i;
 		ObjRender_SetScaleXYZ(obj,n,n,1);
 		ObjRender_SetAlpha(obj,256-i*alpha);
 		yield;
 	}
+	ObjShot_SetIntersectionEnable(obj,true);
 }

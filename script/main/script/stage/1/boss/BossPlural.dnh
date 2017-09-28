@@ -23,8 +23,10 @@
 task Plural_Main() {
 	SetAreaCommonData("GameState","CurrentBoss",0);
 	let obj = ObjEnemyBossScene_Create();
+	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "BossNon1.txt");
 	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "BossSpell1.txt");
-	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "BossNon2.txt");
+	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "BossNon2.txt");
+	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "BossSpell2.txt");
 	ObjEnemyBossScene_LoadInThread(obj);
 	ObjEnemyBossScene_Regist(obj);
 
