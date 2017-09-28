@@ -81,7 +81,7 @@ task TWork
 			if(Obj_IsDeleted(objBoss)){break;}
 			dist += 0.8;
 			ascent(j in 0..3){
-				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,0,RBALL_BLUE,15);
+				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,0,RBALL_CYAN,15);
 				InstaDelete(shot);
 			}
 			yield;
@@ -93,7 +93,7 @@ task TWork
 			if(Obj_IsDeleted(objBoss)){break;}
 			dist -= 5;
 			ascent(j in 0..3){
-				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,0,RBALL_BLUE,15);
+				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,0,RBALL_CYAN,15);
 				InstaDelete(shot);
 			}
 			yield;
@@ -118,7 +118,7 @@ task TWork
 		while(dist > 0){
 			if(Obj_IsDeleted(objBoss)){break;}
 			ascent(j in 0..3){
-				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,j*120+n+150,DROP_BLUE+count%2,10);
+				shot = SPShotA1(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,j*120+n+150,DROP_CYAN+(count%2)*4,10);
 				ObjMove_AddPatternA2(shot,200-dist/5,NO_CHANGE,NO_CHANGE,0.1,0,3);
 				ObjMove_AddPatternB2(shot,260-dist/5,NO_CHANGE,NO_CHANGE,0,0.1,0,diff_speed);
 				SPShotA2(ObjMove_GetX(objBoss)+cos(j*120+n)*dist,ObjMove_GetY(objBoss)+sin(j*120+n)*dist,0,j*120+n,0.05,2,BALL_BLUE,20);
@@ -133,7 +133,7 @@ task TWork
 task InstaDelete(shot){
 	ObjShot_SetSpellResist(shot,true);
 	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
-	ObjRender_SetColor(shot,128,128,256);
+	ObjRender_SetColor(shot,128,256,256);
 	wait(15);
 	Obj_Delete(shot);
 }

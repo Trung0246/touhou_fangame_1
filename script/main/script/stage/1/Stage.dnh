@@ -187,7 +187,6 @@ task Stage_Main() {
 	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
 
 	stageWait(200);
-	NotifyEvent(background,EV_BACKGROUND_1,0);
 	SetCommonData("Switch to Phase 2?",true);
 	StartScript(midboss);
 	CheckBossActive(midboss);
@@ -242,14 +241,14 @@ task Stage_Main() {
 		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);
 	}
 	stageWait(300);
-/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	stageWait(60);
 	loop(2){
 		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
 		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180]);
 		stageWait(90);
 	}
-	stageWait(120);*/
+	stageWait(120);
 	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	//StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
 	//StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
@@ -257,6 +256,8 @@ task Stage_Main() {
 	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[60,150,2]);
 	stageWait(480);
 	DeleteShotAll(TYPE_SHOT,TYPE_ITEM);
+	stageWait(300);
+	NotifyEventAll(EV_BGM_PLAY,3);
 	StartScript(boss);
 
 
