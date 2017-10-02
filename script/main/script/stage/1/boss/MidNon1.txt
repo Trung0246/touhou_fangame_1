@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Boss testing"]
-#Text["feat. dangerous ocean fairy"]
+#Title["Midboss nonspell #1"]
+#Text["feat. Dangerous Ocean Fairy"]
 #System["script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/Utils.dnh"
@@ -55,7 +55,7 @@ task TWork
 	Obj_SetValue(objBoss,"Anim",2);
 	ObjMove_SetDestAtFrame(objBoss,192-15,140,110);
 	wait(110);
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
 	wait(10);
 	Obj_SetValue(objBoss,"Anim",3);
 	wait(100);
@@ -84,7 +84,8 @@ task TWork
 		}
 		wait(30);
 		let diff = GetAreaCommonData("GameState","Difficulty",1);
-		let diff_shotdelay = [20,15,12,10][diff];
+		let diff_shotdelay = [20,15,11,10][diff];
+		let diff_speed = [1.5,2.5,3.5,4][diff];
 		while(!shotdown){
 			ascent(i in 0..6){
 				shot = SPShotB2(192+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DROP_BLUE,10);
@@ -146,7 +147,7 @@ task TEnd
 		yield;
 	}
 
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
 	shotdown = true;
 	wait(60);
 	ObjMove_SetAngle(objBoss,-50);

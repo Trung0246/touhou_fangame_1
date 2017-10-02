@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Spell test"]
+#Title["Boss spell #1"]
 #Text["Not Instant Not Bodhi"]
 #System["script/main/script/system/Gui.dnh"]
 

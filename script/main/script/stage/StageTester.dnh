@@ -25,7 +25,7 @@
 	CreateCommonDataArea("SpellHistory");
 	LoadCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 
-	SetCommonData("player_power", 2.00);
+	SetCommonData("player_power", 1.00);
 	
 	let stage = LoadScript("script/main/script/stage/1/Stage.dnh");
 	StartScript(stage);

@@ -17,8 +17,22 @@ function CreateShotRaindrop(x, y, xspd, yspd, xaccel, yaccel, xmax, ymax, graphi
 }
 
 task CheckPlayerCollect(raindrop, graphic) {
+	let angle = rand(0,360);
+	let aura = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(aura,"script/main/img/bullet/drops.png");
+	ObjSprite2D_SetSourceRect(aura,48,0,80,32);
+	ObjSprite2D_SetDestCenter(aura);
+	let color = GetShotDataInfoA1(ObjShot_GetImageID(raindrop),TARGET_ENEMY,INFO_DELAY_COLOR);
+	ObjRender_SetColor(aura,color[0],color[1],color[2]);
+	ObjRender_SetBlendType(aura,BLEND_ADD_ARGB);
+	ObjRender_SetAlpha(aura,128);
+
 	let objPlayer = GetPlayerObjectID();
 	while (!Obj_IsDeleted(raindrop)) {
+		ObjRender_SetPosition(aura,ObjMove_GetX(raindrop),ObjMove_GetY(raindrop),0);
+		ObjRender_SetAngleZ(aura,angle);
+		angle += 2;
+
 		let x = ObjMove_GetX(objPlayer) - ObjMove_GetX(raindrop);
 		let y = ObjMove_GetY(objPlayer) - ObjMove_GetY(raindrop);
 		
@@ -26,9 +40,17 @@ task CheckPlayerCollect(raindrop, graphic) {
 		
 		if (x*x + y*y <= collectRange) {
 			NotifyEventAll(EV_USER + 100, graphic);
-			ObjShot_FadeDelete(raindrop);
+			Obj_Delete(raindrop);
 			break;
 		}
 		yield;
 	}
+	let scale;
+	descent(i in 0..16){
+		ObjRender_SetAlpha(aura,i*8);
+		scale = i/16;
+		ObjRender_SetScaleXYZ(aura,scale,scale,1);
+		yield;
+	}
+	Obj_Delete(aura);
 }

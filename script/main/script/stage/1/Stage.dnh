@@ -32,7 +32,7 @@
 
 @Event{
 	alternative(GetEventType())
-	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y]
+	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y, enemy object id]
 		let arg = GetEventArgument(0);
 		let obj;
 		alternative(arg[0])
@@ -59,15 +59,15 @@
 			CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
 		}
 		case(FAIRY_PLAIN){
-			loop(3){
-				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
-				ObjItem_SetRenderScoreEnable(obj, false);
-				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
-				ObjItem_SetRenderScoreEnable(obj, false);
-			}
+			obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
 			let dir = (floor(arg[1]/192)%2)*2-1;
-			ascent(i in 0..2){
-				CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED,0);
+			if(Obj_GetValueD(arg[3],"Flavor",1) == 0){
+				ascent(i in 0..2){
+					CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED,0);
+				}
 			}
 		}
 		case(FAIRY_SUPERRAIN){
@@ -126,7 +126,7 @@ task Stage_Main() {
 
 	SetCommonData("StageWaitTime",0);
 	//Stage content
-	wait(60);
+	wait(90);
 	NotifyEventAll(EV_BGM_PLAY,2);
 	//Opening wave
 	ascent(i in 0..3){
@@ -141,22 +141,22 @@ task Stage_Main() {
 	
 	//Fairy lane wave
 	ascent(i in -1..2){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*120,180-absolute(i)*10]);
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*120,140-absolute(i)*10,90+i*10]);
 	}
 	stageWait(120);
 	ascent(i in -2..3){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*80,140-absolute(i)*10]);
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*80,100-absolute(i)*10,90+i*8]);
 	}
 	stageWait(180);
 	ascent(i in -3..4){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,100-absolute(i)*10]);
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*40,60-absolute(i)*10,90+i*3]);
 	}
 	stageWait(60);
 	ascent(i in -1..2){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*100,60-absolute(i)*10]);
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*100,20-absolute(i)*10,90+i*15]);
 	}
 	stageWait(60);
-	StageEnemy(192,-100,FAIRY_RAINCIRCLE,16,12,55,[192,30]);
+	StageEnemy(192,-100,FAIRY_RAINCIRCLE,16,12,55,[192,0,90]);
 
 	stageWait(360);
 
@@ -166,27 +166,39 @@ task Stage_Main() {
 	stageWait(230);
 
 	descent(i in 0..4){
-		StageEnemy(-32,120+i*30,FAIRY_PLAIN,16,12,50,[0]);
-		stageWait(100);
+		ascent(j in 0..3){
+			StageEnemy(-32,120+i*30,FAIRY_PLAIN,16,12,50,[0,j]);
+			stageWait(30);
+		}
+		stageWait(10);
 	}
 
 	stageWait(120);
 
 	descent(i in 0..4){
-		StageEnemy(416,120+i*30,FAIRY_PLAIN,16,12,50,[180]);
-		stageWait(100);
+		ascent(j in 0..3){
+			StageEnemy(416,120+i*30,FAIRY_PLAIN,16,12,50,[180,j]);
+			stageWait(30);
+		}
+		stageWait(10);
 	}
 
 	stageWait(120);
 
-	StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0]);
-	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
-	stageWait(150);
+	ascent(i in 0..3){
+		StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0,i]);
+		StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180,i]);
+		stageWait(30);
+	}
+	stageWait(60);
 
-	StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0]);
-	StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180]);
+	ascent(i in 0..3){
+		StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0,i]);
+		StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180,i]);
+		stageWait(30);
+	}
 
-	stageWait(200);
+	stageWait(110);
 	SetCommonData("Switch to Phase 2?",true);
 	StartScript(midboss);
 	CheckBossActive(midboss);
@@ -209,17 +221,25 @@ task Stage_Main() {
 
 	//V-shape fairies
 	StageEnemy(80,-50,FAIRY_OBLIGATORY,24,16,250,[192,50]);
-	stageWait(180);
+	stageWait(50);
+	loop(3){
+		StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+		stageWait(10);
+	}
+	stageWait(100);
 
 	StageEnemy(100,-100,FAIRY_OBLIGATORY,24,16,250,[192,200]);
 	StageEnemy(284,-100,FAIRY_OBLIGATORY,24,16,250,[192,100]);
-	stageWait(300);
+	stageWait(200);
+	StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+	StageEnemy(512,100,FAIRY_SPAM,16,12,10,[180+rand(-15,15)]);
+	stageWait(100);
 
 	StageEnemy(120,-50,FAIRY_OBLIGATORY,24,16,350,[192,50]);
 
 	stageWait(60);
 	loop(5){
-	//	StageEnemy(-128,150,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+		StageEnemy(512,150,FAIRY_SPAM,16,12,10,[180+rand(-15,15)]);
 		stageWait(15);
 	}
 
@@ -229,26 +249,28 @@ task Stage_Main() {
 	stageWait(120);
 	StageEnemy(416,200,FAIRY_RAINFALL,24,16,250,[100,100,-1]);
 	stageWait(150);
-	loop(3){
-		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
-		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180]);
-		stageWait(90);
+	ascent(i in 0..6){
+		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,i%3]);
+		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,i%3]);
+		stageWait(45);
 	}
 	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,250,[284,100,1]);
 	stageWait(300);
 	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
 	ascent(i in -1..2){
-		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10]);
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10,90+i*5]);
 	}
 	stageWait(300);
-	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	stageWait(60);
 	loop(2){
-		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0]);
-		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180]);
+		ascent(i in 0..3){
+			StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,i]);
+			StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,i]);
+		}
 		stageWait(90);
 	}
-	stageWait(120);
+	stageWait(120);*/
 	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
 	//StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
 	//StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
