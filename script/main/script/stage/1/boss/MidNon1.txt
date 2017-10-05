@@ -41,7 +41,7 @@ let objBoss;
 	}
 	case(EV_REQUEST_TIMER)
 	{
-		SetScriptResult(25);
+		SetScriptResult(20);
 	}
 }
 
@@ -149,12 +149,14 @@ task TEnd
 
 	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
 	shotdown = true;
-	wait(60);
-	ObjMove_SetAngle(objBoss,-50);
-	ObjMove_SetAcceleration(objBoss,0.1);
-	ObjMove_SetMaxSpeed(objBoss,6);
-	Obj_SetValue(objBoss,"Anim",2);
-	wait(100);
+	if(GetAreaCommonData("GameState","Difficulty",1) < 2){
+		wait(60);
+		ObjMove_SetAngle(objBoss,-50);
+		ObjMove_SetAcceleration(objBoss,0.1);
+		ObjMove_SetMaxSpeed(objBoss,6);
+		Obj_SetValue(objBoss,"Anim",2);
+		wait(100);
+	}
 	Obj_Delete(objBoss);
 
 	loop(30){yield;}
