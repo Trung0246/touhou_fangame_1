@@ -97,6 +97,7 @@ task SpellCast(spellNum){
 	DecreaseSpellBonus;
 	while(!Obj_IsDeleted(bonus) && ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 		temp = floor(spellbonus);
+		temp -= temp%10;
 		number = [];
 		while(temp > 0){
 			number = number ~ [temp%10];
@@ -121,7 +122,7 @@ task SpellCast(spellNum){
         	+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
 		SetAreaCommonData("SpellHistory",historyString ~ "C",caps+1);
 		SaveCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
-		NotifyEventAll(EV_SPELL_CAPTURE,0);
+		NotifyEventAll(EV_SPELL_CAPTURE,spellbonus - spellbonus%10);
 	}
 	else{
 		NotifyEventAll(EV_SPELL_FAILURE,0);

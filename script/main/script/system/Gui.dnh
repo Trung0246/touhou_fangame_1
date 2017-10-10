@@ -78,7 +78,7 @@ let timerActive = false;
 	}
 	case (EV_EXTEND_LIFE){ ShowExtend(); }
 	case (EV_EXTEND_SPELL){ PlaySFX(SFX_BOMBEXTEND); }
-	case (EV_SPELL_CAPTURE){ ShowSpellCap(); }
+	case (EV_SPELL_CAPTURE){ ShowSpellCap(GetEventArgument(0)); }
 	case (EV_SPELL_FAILURE){ ShowSpellFail(); }
 }
 
@@ -988,13 +988,17 @@ task ShowExtend {
 	Obj_Delete(obj);
 }
 
-task ShowSpellCap{
+task ShowSpellCap(bonus){
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(obj, dir ~ "popup.png");
 	ObjSprite2D_SetSourceRect(obj,0,0,256,32);
 	ObjSprite2D_SetDestCenter(obj);
-	Obj_SetRenderPriority(obj,0.7);
+	Obj_SetRenderPriority(obj,0.79);
 	ObjRender_SetPosition(obj,192,120,0);
+
+	AddScoreSmooth(bonus);
+	ShowBonus;
+
 	let color;
 	ascent(i in 0..17){
 		color = 256-(i%2)*128;
@@ -1006,7 +1010,55 @@ task ShowSpellCap{
 		ObjRender_SetScaleY(obj,i/16);
 		yield;
 	}
-	Obj_Delete(obj);}
+	Obj_Delete(obj);
+
+	task ShowBonus{
+		let numbers = [];
+		let comma = 0;
+		while(bonus > 0){
+			if(comma != 3){
+				numbers = numbers ~ [bonus%10];
+				bonus = floor(bonus/10);
+				comma++;
+			}
+			else{
+				numbers = numbers ~ [12];
+				comma = 0;
+			}
+		}
+		ascent(i in 0..length(numbers)){
+			let num = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(num,digitPath);
+			ObjSprite2D_SetSourceRect(num,numbers[i]*16,0,(numbers[i]+1)*16,24);
+			ObjSprite2D_SetDestCenter(num);
+			ObjRender_SetPosition(num,240-i*12,145,0);
+			MaterializeNumber(num,i*3);
+			wait(3);
+		}
+	}
+
+	task MaterializeNumber(num,delay){
+		ColorsToo;
+		ascent(i in 0..17){
+			ObjRender_SetAlpha(num,i*16);
+			yield;
+		}
+		wait(77-delay);
+		descent(i in 0..16){
+			ObjRender_SetScaleY(num,i/16);
+			yield;
+		}
+		Obj_Delete(num);
+
+		task ColorsToo{
+			ascent(i in 0..17){
+				color = 256-(i%2)*128;
+				ObjRender_SetColor(num,color,color,color);
+				wait(2);
+			}
+		}
+	}
+}
 
 task ShowSpellFail {
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
