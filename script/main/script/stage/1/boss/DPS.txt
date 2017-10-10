@@ -1,0 +1,149 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["DPS"]
+#Text["'cause Marisa"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/1/boss/Anim.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,120);
+	Animation_Azure(objBoss);
+	BossAura_Azure(objBoss);
+	ObjMove_SetDestAtWeight(objBoss,192,80,8,5);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(10000);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(300);
+	}
+}
+
+task TWork
+{	let time = 0;
+	let reset = false;
+	let totalDmg = 0;
+	let damageThisFrame = 0;
+	let totalDmgText = ObjText_Create();
+	let spellDisplay = ObjText_Create();
+	ObjText_SetMaxWidth(totalDmgText,384);
+	ObjRender_SetPosition(totalDmgText,0,140,0);
+	ObjText_SetHorizontalAlignment(totalDmgText,ALIGNMENT_CENTER);
+	ObjText_SetFontSize(totalDmgText,15);
+	Obj_SetRenderPriority(totalDmgText,0.79);
+	let DTFText = ObjText_Create();
+	ObjText_SetMaxWidth(DTFText,384);
+	ObjRender_SetPosition(DTFText,0,160,0);
+	ObjText_SetHorizontalAlignment(DTFText,ALIGNMENT_CENTER);
+	ObjText_SetFontSize(DTFText,15);
+	Obj_SetRenderPriority(DTFText,0.79);
+	let DPSText = ObjText_Create();
+	ObjText_SetMaxWidth(DPSText,384);
+	ObjRender_SetPosition(DPSText,0,180,0);
+	ObjText_SetHorizontalAlignment(DPSText,ALIGNMENT_CENTER);
+	ObjText_SetFontSize(DPSText,15);
+	Obj_SetRenderPriority(DPSText,0.79);
+	CheckReset;
+	CheckDamage;
+
+	while(!Obj_IsDeleted(objBoss)){
+		damageThisFrame = 10000 - ObjEnemy_GetInfo(objBoss,INFO_LIFE);
+		totalDmg += damageThisFrame;
+		
+		ObjText_SetText(totalDmgText,"Total damage: " ~ ToString(totalDmg));  
+		ObjText_SetText(DTFText,"Damage this frame: " ~ ToString(damageThisFrame));
+		if(time > 0){
+			ObjText_SetText(DPSText,"Damage per second: " ~ ToString(totalDmg/(time/60)));
+		}
+		else{
+			ObjText_SetText(DPSText,"Damage per second: " ~ ToString(0));
+		}
+		
+		ObjEnemy_SetLife(objBoss,10000);
+		yield;
+	}
+
+	task CheckReset{
+		let nodmgtime = 0;
+		while(!Obj_IsDeleted(objBoss)){
+			while(damageThisFrame == 0){
+				nodmgtime++;
+				if(nodmgtime > 300){
+					totalDmg = 0;
+					reset = true;
+					break;
+				}
+				yield;
+			}
+			nodmgtime = 0;
+			yield;
+		}
+	}
+
+	task CheckDamage{
+		while(!Obj_IsDeleted(objBoss)){
+			while(damageThisFrame == 0){
+				yield;
+			}
+			time = 0;
+			totalDmg = 0;
+			while(!reset){
+				time++;
+				yield;
+			}
+			reset = false;
+			yield;
+		}
+	}
+}
+
+task InstaDelete(shot){
+	ObjShot_SetSpellResist(shot,true);
+	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+	ObjRender_SetColor(shot,128,128,256);
+	wait(6);
+	Obj_Delete(shot);
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}

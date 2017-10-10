@@ -45,7 +45,7 @@
 			}
 			let dir = (floor(arg[1]/192)%2)*2-1;
 			ascent(i in -1..2){
-				CreateShotRaindrop(arg[1],arg[2],(-3-i/2)*dir,-2-i,0.05*dir,0.05,0,2,RAINDROP_RED+absolute(i),0);
+				CreateShotRaindrop(arg[1],arg[2],(-3-i/2)*dir,-2-i,0.05*dir,0.05,0,2,RAINDROP_RED+1-i,0);
 			}
 		}
 		case(FAIRY_RAINCIRCLE){
@@ -66,7 +66,7 @@
 			let dir = (floor(arg[1]/192)%2)*2-1;
 			if(Obj_GetValueD(arg[3],"Flavor",1) == 0){
 				ascent(i in 0..2){
-					CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED,0);
+					CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED+i*2,0);
 				}
 			}
 		}
@@ -87,17 +87,17 @@
 				ObjItem_SetRenderScoreEnable(obj, false);
 			}
 			let xspd;
-			ascent(i in 0..4){
+			ascent(i in 0..2){
 				xspd = cos(45+i*90);
 				CreateShotRaindrop(arg[1],arg[2],xspd/2,sin(45+i*90),xspd/-100,0.05,0,2,RAINDROP_RED,0);
 			}
 		}
 		case(FAIRY_SPAM){
-			obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			/*obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 			ObjItem_SetRenderScoreEnable(obj, false);
 			obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 			ObjItem_SetRenderScoreEnable(obj, false);
-			CreateShotRaindrop(arg[1],arg[2],0,-3,0,0.05,0,2,RAINDROP_RED,0);
+			CreateShotRaindrop(arg[1],arg[2],0,-3,0,0.05,0,2,RAINDROP_RED,0);*/
 		}
 		case(FAIRY_RAINFALL){
 			loop(4){
@@ -106,9 +106,9 @@
 				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
 				ObjItem_SetRenderScoreEnable(obj, false);
 			}
-			loop(2){
+			/*loop(2){
 				CreateShotRaindrop(arg[1],arg[2],rand(-0.1,0.1),-3,0,0.05,0,2,RAINDROP_RED,0);
-			}
+			}*/
 		}
 
 	}
@@ -123,6 +123,10 @@ task Stage_Main() {
 	//Init boss scripts
 	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");
 	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");
+
+	/*let DPS = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/DPSPlural.dnh");
+	StartScript(DPS);
+	wait(90000);*/
 
 	SetCommonData("StageWaitTime",0);
 	//Stage content
@@ -250,8 +254,8 @@ task Stage_Main() {
 	StageEnemy(416,200,FAIRY_RAINFALL,24,16,250,[100,100,-1]);
 	stageWait(150);
 	ascent(i in 0..6){
-		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,i%3]);
-		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,i%3]);
+		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,1]);
+		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,1]);
 		stageWait(45);
 	}
 	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,250,[284,100,1]);

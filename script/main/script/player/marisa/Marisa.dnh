@@ -10,11 +10,11 @@
 let speed = 5.0;
 let speedFocus = 2.2;
 
-let hitBox = 2.7;
+let hitBox = 2.2;
 let grazeBox = 36;
 let itemBox = 48;
 
-let itemLine = 120;
+let itemLine = 150;
 
 let clip = 12; //12
 
@@ -25,10 +25,10 @@ let lossFrame = 3;
 
 let shotDelay = 2;
 let shotDamage = 3;
-let homingDelay = 10;
+let homingDelay = 7;
 let homingDamage = 5;
-let missileDelay = 5;
-let missileDamage = 1;
+let missileDelay = 6;
+let missileDamage = 3;
 
 let grazeDelay = 60 * 3;
 
@@ -63,7 +63,7 @@ let dir = GetCurrentScriptDirectory();
 	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
 	SetPlayerLife(GetCommonData("player_life", 2));
 	SetPlayerSpell(GetCommonData("player_spell", 3));
-	SetPlayerPower(GetCommonData("player_power", 1));
+	SetPlayerPower(GetCommonData("player_power", 0));
 
 	//SetPlayerInvincibilityFrame(invisibleFrame);
 	SetPlayerDownStateFrame(downFrame);
@@ -149,7 +149,6 @@ let dir = GetCurrentScriptDirectory();
 	let pX = GetPlayerX();
 	let pY = GetPlayerY();
 	ObjRender_SetPosition(objPlayer, pX, pY, 0);
-	CollectItemsInCircle(pX, pY, itemBox);
 	yield;
 }
 
@@ -240,11 +239,8 @@ task Player_Render() {
 
 task Hitbox_Render() {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	let obj2 = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, dir ~ "img/hitbox.png");
 	Obj_SetRenderPriority(obj, 0.7);
-	ObjPrim_SetTexture(obj2, dir ~ "img/hitbox.png");
-	Obj_SetRenderPriorityI(obj2, 21);
 	let angle = 22.5;
 	let scale = 2.75;
 	let alpha = 0;
@@ -254,7 +250,6 @@ task Hitbox_Render() {
 	while (!Obj_IsDeleted(objPlayer)) {
 		let playerState = GetPlayerState();
 		ObjSpriteList2D_ClearVertexCount(obj);
-		ObjSpriteList2D_ClearVertexCount(obj2);
 		if (isFocus && playerState == STATE_NORMAL) {
 			Render();
 			scale = max(scale - 2 / 10, 64 / (64 - hitBox * 4.5));
@@ -263,14 +258,14 @@ task Hitbox_Render() {
 			alpha = 0;
 			scale = 2.75;
 		}
-		if (grazeTime > 0) {
+		/*if (grazeTime > 0) {
 			Render2();
 			scale2 = grazeBox / 42 * 4;
 			alpha2 = min(alpha2 + 255 / 100, (grazeTime / grazeDelay) * 80);
 			grazeTime --;
 		} else {
 			grazeTime = 0;
-		}
+		}*/
 		angle += 3;
 		angle2 -= 1.1;
 		yield;
@@ -297,23 +292,23 @@ task Hitbox_Render() {
 	}
 
 	function Render2() {
-		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
-		ObjRender_SetX(obj2, GetPlayerX());
-		ObjRender_SetY(obj2, GetPlayerY());
-		ObjRender_SetAngleZ(obj2, angle2);
-		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj2, alpha2);
-		ObjSpriteList2D_AddVertex(obj2);
+		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX());
+		ObjRender_SetY(obj, GetPlayerY());
+		ObjRender_SetAngleZ(obj, angle2);
+		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj, alpha2);
+		ObjSpriteList2D_AddVertex(obj);
 
-		ObjSpriteList2D_SetSourceRect(obj2, 64, 0, 127, 63);
-		ObjSpriteList2D_SetDestRect(obj2, -32, -32, 32, 32);
-		ObjRender_SetX(obj2, GetPlayerX());
-		ObjRender_SetY(obj2, GetPlayerY());
-		ObjRender_SetAngleZ(obj2, -angle2);
-		ObjRender_SetScaleXYZ(obj2, scale2, scale2, 1.0);
-		ObjRender_SetAlpha(obj2, alpha2);
-		ObjSpriteList2D_AddVertex(obj2);
+		ObjSpriteList2D_SetSourceRect(obj, 64, 0, 127, 63);
+		ObjSpriteList2D_SetDestRect(obj, -32, -32, 32, 32);
+		ObjRender_SetX(obj, GetPlayerX());
+		ObjRender_SetY(obj, GetPlayerY());
+		ObjRender_SetAngleZ(obj, -angle2);
+		ObjRender_SetScaleXYZ(obj, scale2, scale2, 1.0);
+		ObjRender_SetAlpha(obj, alpha2);
+		ObjSpriteList2D_AddVertex(obj);
 	}
 }
 
@@ -394,7 +389,7 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = GetCommonData("player_power", 1);
+	let powerData = GetCommonData("player_power", 4);
 	let dist = 40;
 	if (powerData >= 4) {
 		startChange = -60;
@@ -534,7 +529,9 @@ function Orb_Manage() {
 }*/
 
 task Shot_Missile_Create(x, y) {
-	let objShot = CreatePlayerShotA1(x, y + 32, 0, -90, missileDamage, 1, 3);
+	let objShot = CreatePlayerShotA1(x, y + 16, 0, -90, missileDamage, 1, 3);
+	let lastX = ObjMove_GetX(objShot);
+	let lastY = ObjMove_GetY(objShot);
 	ObjRender_SetAlpha(objShot, 220);
 	ObjRender_SetAngleZ(objShot, -90);
 	yield;
@@ -542,10 +539,16 @@ task Shot_Missile_Create(x, y) {
 	speedIncr;
 
 	task speedIncr {
-		while(ObjMove_GetSpeed(objShot) < 22 && !Obj_IsDeleted(objShot)){
+		while(ObjMove_GetSpeed(objShot) < 22){
 			ObjMove_SetSpeed(objShot,ObjMove_GetSpeed(objShot)+0.4);
 			yield;
 		}
+	}
+
+	while (!Obj_IsDeleted(objShot)) {
+		lastX = ObjMove_GetX(objShot);
+		lastY = ObjMove_GetY(objShot);
+		yield;
 	}
 }
 

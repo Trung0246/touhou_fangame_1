@@ -92,8 +92,10 @@ task SpellCast(spellNum){
 	let temp;
 	let n;
 	let number = [];
+
+	let objScene = GetEnemyBossSceneObjectID();
 	DecreaseSpellBonus;
-	while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+	while(!Obj_IsDeleted(bonus) && ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 		temp = floor(spellbonus);
 		number = [];
 		while(temp > 0){
@@ -111,13 +113,18 @@ task SpellCast(spellNum){
 		}
 		yield;
 	}
+	
+	while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){yield;}
 
 	//oh my god ancient code from my first script
-	let objScene = GetEnemyBossSceneObjectID();
 	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
         	+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
 		SetAreaCommonData("SpellHistory",historyString ~ "C",caps+1);
 		SaveCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
+		NotifyEventAll(EV_SPELL_CAPTURE,0);
+	}
+	else{
+		NotifyEventAll(EV_SPELL_FAILURE,0);
 	}
 
 	Obj_Delete(bonus);
@@ -137,10 +144,24 @@ task SpellCast(spellNum){
 
 
 	task DecreaseSpellBonus{
-		wait(300);
-		while(!Obj_IsDeleted(objBoss)){
+		loop(300){
+			if(!(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
+        		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0)){break;}
+			yield;
+		}
+		while(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
+        		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
 			spellbonus -= decrease;
 			wait(2);
+		}
+		if(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+			Obj_Delete(bonus);
+			yield;
+			bonus = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(bonus,"script/main/img/system/spellname.png");
+			ObjSprite2D_SetSourceRect(bonus,0,48,64,64);
+			ObjSprite2D_SetDestRect(bonus,0,0,64,16);
+			ObjRender_SetPosition(bonus,232,20,0);
 		}
 	}
 

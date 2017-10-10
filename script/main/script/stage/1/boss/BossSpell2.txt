@@ -38,7 +38,7 @@ let objBoss;
 	alternative(GetEventType())
 	case(EV_REQUEST_LIFE)
 	{
-		SetScriptResult(1250);
+		SetScriptResult(1700);
 	}
 	case(EV_REQUEST_TIMER)
 	{
@@ -51,8 +51,8 @@ let shotdown = false;
 task TWork
 {
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	let diff_delay = [35,22,30,26][diff];
-	let diff_speed = [1.5,2,2.5,2][diff];
+	let diff_delay = [35,22,32,27][diff];
+	let diff_speed = [1.5,2,2,2][diff];
 	let diff_fall = diff >= 2;
 
 	ObjMove_SetDestAtWeight(objBoss,192,120,8,5);
@@ -75,7 +75,7 @@ task TWork
 	}
 
 	task SendOutOcean{
-		let ypos = 100;
+		let ypos = 120;
 		let size = 1;
 		let angle = rand(0,360);
 		let rotation = 4*rand_sign();

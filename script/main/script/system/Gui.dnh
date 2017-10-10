@@ -78,6 +78,8 @@ let timerActive = false;
 	}
 	case (EV_EXTEND_LIFE){ ShowExtend(); }
 	case (EV_EXTEND_SPELL){ PlaySFX(SFX_BOMBEXTEND); }
+	case (EV_SPELL_CAPTURE){ ShowSpellCap(); }
+	case (EV_SPELL_FAILURE){ ShowSpellFail(); }
 }
 
 task InitFrame {
@@ -983,6 +985,46 @@ task ShowExtend {
 		ObjRender_SetAlpha(obj,i*16);
 		yield;
 	}
+	Obj_Delete(obj);
+}
+
+task ShowSpellCap{
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,0,0,256,32);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.7);
+	ObjRender_SetPosition(obj,192,120,0);
+	let color;
+	ascent(i in 0..17){
+		color = 256-(i%2)*128;
+		ObjRender_SetColor(obj,color,color,color);
+		wait(2);
+	}
+	wait(60);
+	descent(i in 0..16){
+		ObjRender_SetScaleY(obj,i/16);
+		yield;
+	}
+	Obj_Delete(obj);}
+
+task ShowSpellFail {
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,128,128,256,160);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.7);
+	ObjRender_SetPosition(obj,192,120,0);
+	ascent(i in 0..17){
+		ObjRender_SetAlpha(obj,i*16);
+		yield;
+	}
+	wait(60);
+	descent(i in 0..32){
+		ObjRender_SetAlpha(obj,i*8);
+		yield;
+	}
+	Obj_Delete(obj);
 }
 
 function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigit, isSmallFloat) {

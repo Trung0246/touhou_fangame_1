@@ -109,6 +109,7 @@ task RainFairyBehavior(enemy,extra){
 		wait(rand(30,40));
 		angle = GetAngleToPlayer(shot);
 		if(Obj_IsDeleted(shot)){return;}
+		if(ObjMove_GetX(shot) < -16 || ObjMove_GetX(shot) > 400){ObjShot_SetDeleteFrame(shot,0);}
 		let rain = SPShotA2(ObjMove_GetX(shot),ObjMove_GetY(shot),2,angle,0.1,4,RICE_BLUE,10);
 		ObjMove_AddPatternB2(rain,0,NO_CHANGE,NO_CHANGE,0,0.05,0,4);
 
@@ -353,7 +354,7 @@ task RainfallFairyBehavior(enemy,extra){
 		shots = shots ~ [SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy),0,0,RBALL_CYAN,0)];
 		ObjShot_SetAutoDelete(shots[i],false);
 		ObjShot_SetSpellResist(shots[i],true);
-		LetThereBeRain(shots[i],i%2);
+		LetThereBeRain(shots[i],i%2,i);
 	}
 	loop(100){
 		UpdateCircle;
@@ -384,13 +385,13 @@ task RainfallFairyBehavior(enemy,extra){
 	wait(240);
 	Obj_Delete(enemy);
 
-	task LetThereBeRain(obj,delay){
+	task LetThereBeRain(obj,delay,i){
 		wait(diff_spawnrate*(delay/2));
 		while(!Obj_IsDeleted(obj)){
 			loop(diff_spawnrate){
 				if(Obj_IsDeleted(obj)){break;}
 				if(Obj_IsDeleted(enemy)){
-					CreateShotRaindrop(ObjMove_GetX(obj),ObjMove_GetY(obj),0,0,0,0.01,0,2,RAINDROP_GREEN,0);
+					CreateShotRaindrop(ObjMove_GetX(obj),ObjMove_GetY(obj),0,0,0,0.01,0,2,RAINDROP_GREEN+i%2,0);
 					ObjShot_SetDeleteFrame(obj,0);
 				}
 				yield;
