@@ -1,11 +1,59 @@
-#include "script/main/script/lib/Utils.dnh"
-#include "script/default_system/Default_ShotConst.txt"
-#include "script/main/script/lib/Event.dnh"
-#include "script/main/script/system/Raindrop.dnh"
-
 local {
 	//Fuck off
 }
+
+//Basic init to be called on game start
+function Base_Init() {
+	SetCommonData("player_point", 10000);
+
+	SetCommonData("player_life_max", 8); //8, cap of original life
+	SetCommonData("player_life_piece", 0);
+
+	SetCommonData("player_score_change", 0);
+	SetCommonData("player_score_max", 2147483647); //2147483647, cap of int, rounded
+	SetCommonData("player_score_speed", 8);
+
+	SetCommonData("player_graze_max", 500000); //500000, cap of Touhou 16
+
+	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
+	SetCommonData("player_spell_piece", 0);
+
+	SetCommonData("item_raindrop_red", 0);
+	SetCommonData("item_raindrop_green", 0);
+	SetCommonData("item_raindrop_blue", 0);
+
+	SetCommonData("item_raindrop_change", 1); //Additive amount when raindrop collected
+	//^By the way, why is that a thing?
+}
+
+//Specific inits for game modes
+function Maingame_Init{
+	SetCommonData("player_power", 1.00);
+	SetCommonData("player_life", 2);
+	SetCommonData("player_spell", 3);
+}
+
+function Extra_Init{
+	SetCommonData("player_power", 4.00);
+	SetCommonData("player_life", 2);
+	SetCommonData("player_spell", 3);
+}
+
+function Practice_Init{
+	SetCommonData("player_power", 4.00);
+	SetCommonData("player_life", 8);
+	SetCommonData("player_spell", 8);
+}
+
+function SpellPractice_Init{
+	SetCommonData("player_power", 4.00);
+	SetCommonData("player_life", 0);
+	SetCommonData("player_spell", 0);
+}
+
+
+
+//Old Trung code do not use this ever
 
 function Package_Init() {
 	//Call when opening exe
@@ -38,41 +86,4 @@ function Package_Init() {
 			SetAreaCommonData("main", character[i] ~ "_lunatic_practice_stage_" ~ IntToString(j) ~ "_hiscore", 0);
 		}
 	}
-}
-
-function Start_Init() {
-  //Call when stage 1 start
-	SetCommonData("player_power", 0);
-	SetCommonData("player_point", 10000);
-
-	SetCommonData("player_life", 2);
-	SetCommonData("player_life_max", 8); //8, cap of original life
-	SetCommonData("player_life_piece", 0);
-
-	SetCommonData("player_score_change", 0);
-	SetCommonData("player_score_max", 2147483647); //2147483647, cap of int, rounded
-	SetCommonData("player_score_speed", 8);
-
-	SetCommonData("player_graze_max", 500000); //500000, cap of Touhou 16
-
-	SetCommonData("player_spell", 3);
-	SetCommonData("player_spell_max", 8); //8, cap of original spell, 681 738, 749, 741
-	SetCommonData("player_spell_piece", 0);
-
-	SetCommonData("item_raindrop_red", 0);
-	SetCommonData("item_raindrop_green", 0);
-	SetCommonData("item_raindrop_blue", 0);
-
-	SetCommonData("item_raindrop_change", 1); //Additive amount when raindrop collected
-}
-
-function Stage_Init() {
-  //Call when at the start of every stage 
-	let dir = GetModuleDirectory() ~ "script/main/";
-	LoadTexture(dir ~ "img/system/front00.png");
-	LoadTexture(dir ~ "img/system/ascii.png");
-	InstallFont(dir ~ "text/font/russell-square-std.ttf");
-
-	StartShotScript(dir ~ "script/system/Shot.dnh");
-	StartItemScript(dir ~ "script/system/Items.dnh");
 }

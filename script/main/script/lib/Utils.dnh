@@ -25,6 +25,11 @@ function wait_f(label, frame) {
 
 //Math function
 
+//returns 1 or -1 (Badz)
+function rand_sign{
+	return floor(rand(0,2))*2-1;
+}
+
 //Special coordinate accessors (Python)
 function GetCenterX() {
 	let calc = GetStgFrameWidth() / 2;

@@ -1,0 +1,18 @@
+//Constants for events everywhere
+let EV_RAINDROP_COLLECT = EV_USER+100; //Called when a raindrop is collected
+let EV_ENEMY_SHOOTDOWN = EV_USER+101; //Called in stage scripts when an enemy is shot down
+let EV_BGM_STOP = EV_USER+111; //Pause BGM
+let EV_BGM_RESUME = EV_USER+112; //Resume BGM
+let EV_BGM_PLAY = EV_USER+113; //Play BGM
+let EV_SFX_PLAY = EV_USER+115; //Play SFX 
+let EV_BACKGROUND_1 = EV_USER+120; //Background events to use however you wish
+let EV_BACKGROUND_2 = EV_USER+121;
+let EV_BACKGROUND_3 = EV_USER+122;
+let EV_BACKGROUND_4 = EV_USER+123;
+let EV_BACKGROUND_5 = EV_USER+124;
+let EV_BACKGROUND_SPELLCAST = EV_USER+125; //Spawn spell background
+let EV_BACKGROUND_SPELLBREAK = EV_USER+126; //Dissolve spell background
+let EV_EXTEND_LIFE = EV_USER+130; //Player got an extra life!
+let EV_EXTEND_SPELL = EV_USER+131; //Player got an extra bomb!
+let EV_SPELL_CAPTURE = EV_USER+132; //Player captured a spellcard!
+let EV_SPELL_FAILURE = EV_USER+133; //Player failed a spellcard!

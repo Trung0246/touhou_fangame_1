@@ -1,0 +1,165 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Midboss nonspell #1"]
+#Text["feat. Dangerous Ocean Fairy"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/1/boss/Anim.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,360);
+	Animation_Azure(objBoss);
+	BossAura_Azure(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(950);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(20);
+	}
+}
+
+let shotdown = false;
+
+task TWork
+{
+	let wind = 0;
+	SetOffTheWind;
+	ObjMove_SetPosition(objBoss,192-15,-120);
+	Obj_SetValue(objBoss,"Anim",2);
+	ObjMove_SetDestAtFrame(objBoss,192-15,140,110);
+	wait(110);
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
+	wait(10);
+	Obj_SetValue(objBoss,"Anim",3);
+	wait(100);
+	Obj_SetValue(objBoss,"Anim",0);
+	let angle = rand(0,360);
+	let shot;
+	let size;
+	let rotation = 5*rand_sign();
+	ActualFiring;
+	BossMovement;
+
+	while(!shotdown){
+		ascent(i in 0..6){
+			shot = SPShotB2(192+cos(angle+i*60)*size*2.5,ObjMove_GetY(objBoss)-10+sin(angle+i*60)*size,1,0,0,0,0,0,RBALL_BLUE,5);
+			InstaDelete(shot);
+		}
+		angle -= rotation;
+		yield;
+	}
+
+	task ActualFiring{
+		//Putting this here is probably a sin against good coding practices but you can't stop me
+		ascent(i in 0..31){
+			size = i*2;
+			yield;
+		}
+		wait(30);
+		let diff = GetAreaCommonData("GameState","Difficulty",1);
+		let diff_shotdelay = [20,15,11,10][diff];
+		let diff_speed = [1.5,2.5,3.5,4][diff];
+		while(!shotdown){
+			ascent(i in 0..6){
+				shot = SPShotB2(192+cos(angle+i*60)*150,ObjMove_GetY(objBoss)+sin(angle+i*60)*60,cos(angle+i*60)*0.5+wind,-4,0,0.1,0,4,DROP_BLUE,10);
+			}
+			wait(diff_shotdelay+floor(rand(-1,1)));
+		}
+	}
+
+	task BossMovement{
+		let objPlayer = GetPlayerObjectID();
+		let dest;
+		wait(190);
+		while(!shotdown){
+			dest = ObjMove_GetX(objPlayer)+rand(-50,50);
+			dest = max(min(dest,282),102);
+			if(dest > ObjMove_GetX(objBoss)){Obj_SetValue(objBoss,"Anim",2);}
+			else{Obj_SetValue(objBoss,"Anim",1);}
+			ObjMove_SetDestAtFrame(objBoss,dest,140,50);
+
+			PlaySFX(SFX_SHOT1);
+			ascent(i in -5..6){
+				ascent(j in 0..2){
+					ascent(k in 0..2){
+						shot = SPShotA1(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),5,235+i*2.5+j*70+k*180,SCALE_CYAN,10);
+						ObjMove_AddPatternB2(shot,10,NO_CHANGE,NO_CHANGE,0,0.1,0,4);
+					}
+				}
+			}
+			
+			wait(50);
+			Obj_SetValue(objBoss,"Anim",0);
+			wait(190);
+		}
+		
+	}
+
+	task SetOffTheWind{
+		let n = 0;
+		while(!Obj_IsDeleted(objBoss)){
+			n += 2;
+			wind = sin(n);
+			yield;
+		}
+	}
+}
+
+task InstaDelete(shot){
+	ObjShot_SetSpellResist(shot,true);
+	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+	ObjRender_SetColor(shot,128,128,256);
+	wait(5);
+	Obj_Delete(shot);
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_SHOT, TYPE_ITEM);
+	shotdown = true;
+	if(GetAreaCommonData("GameState","Difficulty",1) < 2){
+		wait(60);
+		ObjMove_SetAngle(objBoss,-50);
+		ObjMove_SetAcceleration(objBoss,0.1);
+		ObjMove_SetMaxSpeed(objBoss,6);
+		Obj_SetValue(objBoss,"Anim",2);
+		wait(100);
+	}
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+}

@@ -1,0 +1,273 @@
+local{
+	LoadEnemyShotData(GetCurrentScriptDirectory ~ "shotData.dnh");
+}
+
+//Dots
+let DOT_RED	= 1;
+let DOT_MAGENTA	= 2;
+let DOT_BLUE	= 3;
+let DOT_CYAN	= 4;
+let DOT_GREEN	= 5;
+let DOT_YELLOW	= 6;
+let DOT_ORANGE	= 7;
+let DOT_GREY	= 8;
+
+//Dark Dots
+let DDOT_RED	= 9;
+let DDOT_MAGENTA	= 10;
+let DDOT_BLUE	= 11;
+let DDOT_CYAN	= 12;
+let DDOT_GREEN	= 13;
+let DDOT_YELLOW	= 14;
+let DDOT_ORANGE	= 15;
+let DDOT_GREY	= 16;
+
+//Balls
+let BALL_RED	= 17;
+let BALL_MAGENTA	= 18;
+let BALL_BLUE	= 19;
+let BALL_CYAN	= 20;
+let BALL_GREEN	= 21;
+let BALL_YELLOW	= 22;
+let BALL_ORANGE	= 23;
+let BALL_GREY	= 24;
+
+//Ringed Balls
+let RBALL_RED	= 25;
+let RBALL_MAGENTA	= 26;
+let RBALL_BLUE	= 27;
+let RBALL_CYAN	= 28;
+let RBALL_GREEN	= 29;
+let RBALL_YELLOW	= 30;
+let RBALL_ORANGE	= 31;
+let RBALL_GREY	= 32;
+
+//Rice
+let RICE_RED	= 33;
+let RICE_MAGENTA	= 34;
+let RICE_BLUE	= 35;
+let RICE_CYAN	= 36;
+let RICE_GREEN	= 37;
+let RICE_YELLOW	= 38;
+let RICE_ORANGE	= 39;
+let RICE_GREY	= 40;
+
+//Dark Rice
+let DRICE_RED	= 41;
+let DRICE_MAGENTA	= 42;
+let DRICE_BLUE	= 43;
+let DRICE_CYAN	= 44;
+let DRICE_GREEN	= 45;
+let DRICE_YELLOW	= 46;
+let DRICE_ORANGE	= 47;
+let DRICE_GREY	= 48;
+
+//Scales
+let SCALE_RED	= 49;
+let SCALE_MAGENTA	= 50;
+let SCALE_BLUE	= 51;
+let SCALE_CYAN	= 52;
+let SCALE_GREEN	= 53;
+let SCALE_YELLOW	= 54;
+let SCALE_ORANGE	= 55;
+let SCALE_GREY	= 56;
+
+//Kunai
+let KUNAI_RED	= 57;
+let KUNAI_MAGENTA	= 58;
+let KUNAI_BLUE	= 59;
+let KUNAI_CYAN	= 60;
+let KUNAI_GREEN	= 61;
+let KUNAI_YELLOW	= 62;
+let KUNAI_ORANGE	= 63;
+let KUNAI_GREY	= 64;
+
+//Icicles
+let ICE_RED	= 65;
+let ICE_MAGENTA	= 66;
+let ICE_BLUE	= 67;
+let ICE_CYAN	= 68;
+let ICE_GREEN	= 69;
+let ICE_YELLOW	= 70;
+let ICE_ORANGE	= 71;
+let ICE_GREY	= 72;
+
+//Missiles
+let MISSILE_RED	= 73;
+let MISSILE_MAGENTA	= 74;
+let MISSILE_BLUE	= 75;
+let MISSILE_CYAN	= 76;
+let MISSILE_GREEN	= 77;
+let MISSILE_YELLOW	= 78;
+let MISSILE_ORANGE	= 79;
+let MISSILE_GREY	= 80;
+
+//Amulets
+let AMULET_RED	= 81;
+let AMULET_MAGENTA	= 82;
+let AMULET_BLUE	= 83;
+let AMULET_CYAN	= 84;
+let AMULET_GREEN	= 85;
+let AMULET_YELLOW	= 86;
+let AMULET_ORANGE	= 87;
+let AMULET_GREY	= 88;
+
+//Droplets
+let DROP_RED	= 89;
+let DROP_MAGENTA	= 90;
+let DROP_BLUE	= 91;
+let DROP_CYAN	= 92;
+let DROP_GREEN	= 93;
+let DROP_YELLOW	= 94;
+let DROP_ORANGE	= 95;
+let DROP_GREY	= 96;
+
+//Stars
+let STAR_RED	= 97;
+let STAR_MAGENTA	= 98;
+let STAR_BLUE	= 99;
+let STAR_CYAN	= 100;
+let STAR_GREEN	= 101;
+let STAR_YELLOW	= 102;
+let STAR_ORANGE	= 103;
+let STAR_GREY	= 104;
+
+//Coins
+let COIN_RED	= 105;
+let COIN_MAGENTA	= 106;
+let COIN_BLUE	= 107;
+let COIN_CYAN	= 108;
+let COIN_GREEN	= 109;
+let COIN_YELLOW	= 110;
+let COIN_ORANGE	= 111;
+let COIN_GREY	= 112;
+
+//Big Balls
+let BBALL_RED	= 113;
+let BBALL_MAGENTA	= 114;
+let BBALL_BLUE	= 115;
+let BBALL_CYAN	= 116;
+let BBALL_GREEN	= 117;
+let BBALL_YELLOW	= 118;
+let BBALL_ORANGE	= 119;
+let BBALL_GREY	= 120;
+
+//Big Rice
+let BRICE_RED	= 121;
+let BRICE_MAGENTA	= 122;
+let BRICE_BLUE	= 123;
+let BRICE_CYAN	= 124;
+let BRICE_GREEN	= 125;
+let BRICE_YELLOW	= 126;
+let BRICE_ORANGE	= 127;
+let BRICE_GREY	= 128;
+
+//Butterflies
+let FAIRY_RED	= 129;
+let FAIRY_MAGENTA	= 130;
+let FAIRY_BLUE	= 131;
+let FAIRY_CYAN	= 132;
+let FAIRY_GREEN	= 133;
+let FAIRY_YELLOW	= 134;
+let FAIRY_ORANGE	= 135;
+let FAIRY_GREY	= 136;
+
+//Knives
+let KNIFE_RED	= 137;
+let KNIFE_MAGENTA	= 138;
+let KNIFE_BLUE	= 139;
+let KNIFE_CYAN	= 140;
+let KNIFE_GREEN	= 141;
+let KNIFE_YELLOW	= 142;
+let KNIFE_ORANGE	= 143;
+let KNIFE_GREY	= 144;
+
+//Hearts
+let HEART_RED	= 145;
+let HEART_MAGENTA	= 146;
+let HEART_BLUE	= 147;
+let HEART_CYAN	= 148;
+let HEART_GREEN	= 149;
+let HEART_YELLOW	= 150;
+let HEART_ORANGE	= 151;
+let HEART_GREY	= 152;
+
+//Arrows
+let ARROW_RED	= 153;
+let ARROW_MAGENTA	= 154;
+let ARROW_BLUE	= 155;
+let ARROW_CYAN	= 156;
+let ARROW_GREEN	= 157;
+let ARROW_YELLOW	= 158;
+let ARROW_ORANGE	= 159;
+let ARROW_GREY	= 160;
+
+//Big Stars
+let BSTAR_RED	= 161;
+let BSTAR_MAGENTA	= 162;
+let BSTAR_BLUE	= 163;
+let BSTAR_CYAN	= 164;
+let BSTAR_GREEN	= 165;
+let BSTAR_YELLOW	= 166;
+let BSTAR_ORANGE	= 167;
+let BSTAR_GREY	= 168;
+
+//Bubbles
+let BUBBLE_RED	= 169;
+let BUBBLE_MAGENTA	= 170;
+let BUBBLE_BLUE	= 171;
+let BUBBLE_CYAN	= 172;
+let BUBBLE_GREEN	= 173;
+let BUBBLE_YELLOW	= 174;
+let BUBBLE_ORANGE	= 175;
+let BUBBLE_GREY	= 176;
+
+//Orbs
+let ORB_RED	= 177;
+let ORB_MAGENTA	= 178;
+let ORB_BLUE	= 179;
+let ORB_CYAN	= 180;
+let ORB_GREEN	= 181;
+let ORB_YELLOW	= 182;
+let ORB_ORANGE	= 183;
+let ORB_GREY	= 184;
+
+//Fireballs
+let FIRE_RED	= 185;
+let FIRE_MAGENTA	= 186;
+let FIRE_BLUE	= 187;
+let FIRE_CYAN	= 188;
+let FIRE_GREEN	= 189;
+let FIRE_YELLOW	= 190;
+let FIRE_ORANGE	= 191;
+let FIRE_GREY	= 192;
+
+//Musical Notes
+let NOTE_RED	= 193;
+let NOTE_MAGENTA	= 194;
+let NOTE_BLUE	= 195;
+let NOTE_CYAN	= 196;
+let NOTE_GREEN	= 197;
+let NOTE_YELLOW	= 198;
+let NOTE_ORANGE	= 199;
+let NOTE_GREY	= 200;
+
+//Straight Lasers
+let SLASER_RED	= 201;
+let SLASER_MAGENTA	= 202;
+let SLASER_BLUE	= 203;
+let SLASER_CYAN	= 204;
+let SLASER_GREEN	= 205;
+let SLASER_YELLOW	= 206;
+let SLASER_ORANGE	= 207;
+let SLASER_GREY	= 208;
+
+//Curved Lasers
+let CLASER_RED	= 209;
+let CLASER_MAGENTA	= 210;
+let CLASER_BLUE	= 211;
+let CLASER_CYAN	= 212;
+let CLASER_GREEN	= 213;
+let CLASER_YELLOW	= 214;
+let CLASER_ORANGE	= 215;
+let CLASER_GREY	= 216;

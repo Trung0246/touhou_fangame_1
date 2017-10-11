@@ -1,23 +1,29 @@
 //How to include this file: wait until #TouhouDanmakufu[Stage] made, then include this script as #System["script/main/script/system/Gui.dnh"]
 #include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
-let dir = GetModuleDirectory() ~ "script/main/img/system/";
+let dir = "script/main/img/system/";
 let guiPath = dir ~ "front00.png";
-let digitPath = dir ~ "ascii.png";
+let digitPath = dir ~ "hud_nums.png";
 let lifeBarPath = dir ~ "lifebar.png";
 let bossScene = ID_INVALID;
+let timerActive = false;
 
 @Initialize {
-	LoadTexture(guiPath);
+/*	LoadTexture(guiPath);
 	LoadTexture(digitPath);
-	LoadTexture(lifeBarPath);
+	LoadTexture(lifeBarPath);*/
 
 	InitFrame();
 	InitLine();
+	InitHeaders();
+	InitDifficulty();
 	UpdateHiScore();
 	UpdateScore();
 	UpdatePlayerLife();
 	UpdatePlayerSpell();
+	UpdatePlayerRaindrops();
 	UpdatePower();
 	UpdatePoint(); //Blue drop bonus //144 * 24 for phantasm, ... 304 x 46 for disable
 	UpdateGraze();
@@ -41,7 +47,9 @@ let bossScene = ID_INVALID;
 		ascent (i in 0..length(tempObj)) {
 			UpdateBossXPos(tempObj[i]);
 		}
-		UpdateBossTimer();
+		if(!timerActive){
+			UpdateBossTimer();
+		}
 	}
 	case (EV_END_BOSS_STEP) {
 		
@@ -68,32 +76,32 @@ let bossScene = ID_INVALID;
 			SetCommonData("player_life", tempLife - 1);
 		}
 	}
+	case (EV_EXTEND_LIFE){ ShowExtend(); }
+	case (EV_EXTEND_SPELL){ PlaySFX(SFX_BOMBEXTEND); }
+	case (EV_SPELL_CAPTURE){ ShowSpellCap(GetEventArgument(0)); }
+	case (EV_SPELL_FAILURE){ ShowSpellFail(); }
 }
 
 task InitFrame {
-	//328, 703 //right
-	//47, 703 //left
-	//563, 24 //top
-	//563, 23 //bottom
 
 	let frame = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(frame,guiPath);
+	ObjPrim_SetTexture(frame,"script/main/img/system/frame.png");
 	Obj_SetRenderPriority(frame, 0.1);
-	ObjRender_SetBlendType(frame, 0); //TO hide tiny black line
+	ObjRender_SetBlendType(frame, 0);
 	//left
-	ObjSpriteList2D_SetSourceRect(frame,0,0,63,959); //47 703
+	ObjSpriteList2D_SetSourceRect(frame,0,0,32,480); 
 	ObjSpriteList2D_SetDestRect(frame,0,0,32,480);
 	ObjSpriteList2D_AddVertex(frame);
 	//top
-	ObjSpriteList2D_SetSourceRect(frame,0,960,767,991); //703 562 727
+	ObjSpriteList2D_SetSourceRect(frame,0,480,384,496);
 	ObjSpriteList2D_SetDestRect(frame,32,0,416,16);
 	ObjSpriteList2D_AddVertex(frame);
 	//bottom
-	ObjSpriteList2D_SetSourceRect(frame,0,992,767,1023); //0 726 562 750
+	ObjSpriteList2D_SetSourceRect(frame,0,496,384,512);
 	ObjSpriteList2D_SetDestRect(frame,32,464,416,480);
 	ObjSpriteList2D_AddVertex(frame);
 	//right
-	ObjSpriteList2D_SetSourceRect(frame,64,0,511,959); //47 0 375 703
+	ObjSpriteList2D_SetSourceRect(frame,32,0,256,480);
 	ObjSpriteList2D_SetDestRect(frame,416,0,640,480);
 	ObjSpriteList2D_AddVertex(frame);
 }
@@ -130,17 +138,84 @@ task InitLine {
 		ObjSpriteList2D_AddVertex(obj);
 	}
 }
-task UpdateHiScore {
-	let objScore = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objScore, guiPath);
-	Obj_SetRenderPriority(objScore, 0.1);
-	ObjSprite2D_SetSourceRect(objScore, 512, 0, 655, 35); //Plus 1 at 375 because some weird problem that a black line appear 375 + 1, 26 * 0 + 1, 375 + 104, (26 * 1) - 1
-	ObjSprite2D_SetDestRect(objScore, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objScore, 0.75);
-	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 223);
-	ObjRender_SetY(objScore, 38);
+task InitHeaders{
+	let headers = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(headers,"script/main/img/system/hud.png");
+	Obj_SetRenderPriority(headers, 0.1);
+	//HiScore
+	ObjSpriteList2D_SetSourceRect(headers,0,0,96,24);
+	ObjSpriteList2D_SetDestRect(headers,417,38,513,60);
+	ObjSpriteList2D_AddVertex(headers);
 
+	//Score
+	ObjSpriteList2D_SetSourceRect(headers,0,24,96,48);
+	ObjSpriteList2D_SetDestRect(headers,417,60,513,84);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Lives
+	ObjSpriteList2D_SetSourceRect(headers,0,48,96,72);
+	ObjSpriteList2D_SetDestRect(headers,417,93,513,117);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Bombs
+	ObjSpriteList2D_SetSourceRect(headers,0,72,96,96);
+	ObjSpriteList2D_SetDestRect(headers,417,128,513,152);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Graze
+	ObjSpriteList2D_SetSourceRect(headers,96,0,192,24);
+	ObjSpriteList2D_SetDestRect(headers,430,223,526,247);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//Power
+	ObjSpriteList2D_SetSourceRect(headers,96,24,192,48);
+	ObjSpriteList2D_SetDestRect(headers,430,179,526,203);
+	ObjSpriteList2D_AddVertex(headers);
+
+	//PIV
+	ObjSpriteList2D_SetSourceRect(headers,96,48,192,72);
+	ObjSpriteList2D_SetDestRect(headers,430,200,526,224);
+	ObjSpriteList2D_AddVertex(headers);
+}
+
+task InitDifficulty {
+	wait(5);
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj,dir ~ "diff_ph.png");
+	let difficulty = GetAreaCommonData("GameState","Difficulty",1);
+	ObjSprite2D_SetSourceRect(obj,0,difficulty*32,128,(difficulty+1)*32);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.79);
+	if(GetAreaCommonData("GameState","Starting",true)){
+		ObjRender_SetPosition(obj,192,16,0);
+		let color;
+		ascent(i in 5..66){
+			color = 192+sin(i*18)*64;
+			ObjRender_SetColor(obj,color,color,color);
+			yield;
+		}
+		wait(30);
+		descent(i in 0..10){
+			ObjRender_SetScaleY(obj,i/10);
+			yield;
+		}
+	}
+	Obj_SetRenderPriority(obj,0.1);
+	ObjRender_SetPosition(obj,528,20,0);
+	if(GetAreaCommonData("GameState","Starting",true)){
+		ObjRender_SetScaleY(obj,1);
+		ascent(i in 0..21){
+			ObjRender_SetAlpha(obj,i*26);
+			yield;
+		}
+	}
+	SetAreaCommonData("GameState","Starting",false);
+	
+	
+	
+}
+
+task UpdateHiScore {
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
@@ -155,16 +230,6 @@ task UpdateHiScore {
 	}
 }
 task UpdateScore {
-	let objScore = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objScore, guiPath);
-	Obj_SetRenderPriority(objScore, 0.1);
-	//ObjSprite2D_SetSourceRect(objScore, 375 + 1, 26 * 1, 375 + 104, (26 * 2) - 1); //Plus 1 at 375 because some weird problem that a black line appear
-	ObjSprite2D_SetSourceRect(objScore, 512, 0 + 36, 655, 35 + 36);
-	ObjSprite2D_SetDestRect(objScore, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objScore, 0.75);
-	ObjRender_SetScaleY(objScore, 0.75);
-	ObjRender_SetX(objScore, 640 - 223);
-	ObjRender_SetY(objScore, 60);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -200,17 +265,6 @@ task UpdateScore {
 	}
 }
 task UpdateGraze {
-	let objGraze = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objGraze, guiPath);
-	Obj_SetRenderPriority(objGraze, 0.1);
-	//ObjSprite2D_SetSourceRect(objGraze, 479, 26 * 1, 479 + 127, (26 * 2) - 1);
-	//ObjSprite2D_SetDestRect(objGraze, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objGraze, 656, 0 + 36, 831, 35 + 36);
-	ObjSprite2D_SetDestRect(objGraze, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objGraze, 0.75);
-	ObjRender_SetScaleY(objGraze, 0.75);
-	ObjRender_SetX(objGraze, 640 - 210);
-	ObjRender_SetY(objGraze, 223);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -230,22 +284,10 @@ task UpdateGraze {
 	}
 }
 task UpdatePower {
-	let objPower = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objPower, guiPath);
-	Obj_SetRenderPriority(objPower, 0.1);
-	//ObjSprite2D_SetSourceRect(objPower, 479, 26 * 3, 479 + 127, (26 * 4) - 1);
-	//ObjSprite2D_SetDestRect(objPower, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objPower, 656, 0 + 36 * 3, 831 - 3, 35 + 36 * 3);
-	ObjSprite2D_SetDestRect(objPower, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objPower, 0.75);
-	ObjRender_SetScaleY(objPower, 0.75);
-	ObjRender_SetX(objPower, 640 - 210);
-	ObjRender_SetY(objPower, 225 - 46);
-
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
-	ObjRender_SetY(obj, 225 - 46 + 3);
+	ObjRender_SetY(obj, 180);
 	ObjRender_SetColor(obj, 219, 127, 70); //221 111 42
 
 	while (true) {
@@ -259,7 +301,7 @@ task UpdatePower {
 		}
 		number = min(number, 4);
 		let tempString = rtos("0.00", number);
-		let listNum = [IntToString(tempString[0]), ".", IntToString(tempString[2]), IntToString(tempString[3])];
+		let listNum = [ToString(tempString[0]), ".", ToString(tempString[2]), ToString(tempString[3])];
 		listNum = listNum ~ ["/", "4", ".", "0", "0"];
 
 		ObjSpriteList2D_ClearVertexCount(obj);
@@ -267,15 +309,15 @@ task UpdatePower {
 			let num = listNum[i];
 			ObjRender_SetX(obj, 640 - 20 - (length(listNum) - 1 - i) * 12);
 			if (ToString(num) == ".") {
-				ObjSpriteList2D_SetSourceRect(obj, 176, 144 + 1, 191, 159 + 1);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, 176, 0, 191, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 				ObjRender_SetX(obj, ObjRender_GetX(obj) + 1.5);
 			} else if (ToString(num) == "/") {
-				ObjSpriteList2D_SetSourceRect(obj, 160, 144, 175, 159);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, 160, 0, 175, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 			} else {
-				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 144, (atoi(num) + 1) * 16, 144 + 16);
-				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 16);
+				ObjSpriteList2D_SetSourceRect(obj, atoi(num) * 16, 0, (atoi(num) + 1) * 16, 24);
+				ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 			}
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -283,18 +325,6 @@ task UpdatePower {
 	}
 }
 task UpdatePoint {
-	let objPoint = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objPoint, guiPath);
-	Obj_SetRenderPriority(objPoint, 0.1);
-	//ObjSprite2D_SetSourceRect(objPoint, 479, 26 * 2, 479 + 127, (26 * 3) - 1);
-	//ObjSprite2D_SetDestRect(objPoint, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objPoint, 656, 0 + 36 * 2, 831 - 3, 35 + 36 * 2);
-	ObjSprite2D_SetDestRect(objPoint, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objPoint, 0.75);
-	ObjRender_SetScaleY(objPoint, 0.75);
-	ObjRender_SetX(objPoint, 640 - 210);
-	ObjRender_SetY(objPoint, 225 - 25);
-
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
 	Obj_SetRenderPriority(obj, 0.1);
@@ -307,24 +337,14 @@ task UpdatePoint {
 		}
 		number = GetCommonData("player_point", 0); 
 
-		RenderNumber(obj, 640 - 20, 225 - 22 + 2, number, -1, true, false, 0, false);
+		RenderNumber(obj, 620, 201, number, -1, true, false, 0, false);
 		yield;
 	}
 }
 task UpdatePlayerLife {
-	let objLife = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objLife, guiPath);
-	Obj_SetRenderPriority(objLife, 0.1);
-	//ObjSprite2D_SetSourceRect(objLife, 375 + 1, 26 * 2, 375 + 104, (26 * 3) - 1); //Plus 1 at 375 because some weird problem that a black line appear
-	ObjSprite2D_SetSourceRect(objLife, 512, 0 + 36 * 2, 655, 35 + 36 * 2);
-	ObjSprite2D_SetDestRect(objLife, 0, 0, 120, 30);
-	ObjRender_SetScaleX(objLife, 0.75);
-	ObjRender_SetScaleY(objLife, 0.75);
-	ObjRender_SetX(objLife, 640 - 212.5 - 10);
-	ObjRender_SetY(objLife, 93);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(obj, guiPath);
+	ObjPrim_SetTexture(obj, "script/main/img/system/lifespell2.png");
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 94 + 2);
 	ObjRender_SetScaleX(obj, 0.7);
@@ -358,7 +378,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 727 + 1, 1, 750 - 1, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 992, 0, 1023, 31);
+			ObjSpriteList2D_SetSourceRect(obj, 80, 0, 96, 16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -370,7 +390,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
 			//ObjSpriteList2D_SetSourceRect(obj, 609 + floor(pieceCount * 5) * 24 - pieceCount, 1, 630 + 1 + floor(pieceCount * 5) * 24 - pieceCount, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832 + floor(pieceCount * 5) * 32, 0, 863 + floor(pieceCount * 5) * 32, 31);
+			ObjSpriteList2D_SetSourceRect(obj, pieceCount*16, 0, (pieceCount+1)*16, 16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -380,7 +400,7 @@ task UpdatePlayerLife {
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 609, 1, 630 + 1, 25);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832, 0, 863, 31);
+			ObjSpriteList2D_SetSourceRect(obj, 0,0,16,16);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -388,21 +408,11 @@ task UpdatePlayerLife {
 		yield;
 	}
 }
+
 task UpdatePlayerSpell {
-	let objSpell = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(objSpell, guiPath);
-	Obj_SetRenderPriority(objSpell, 0.1);
-	//ObjSprite2D_SetSourceRect(objSpell, 479, 0 + 1, 605, 25);
-	//ObjSprite2D_SetDestRect(objSpell, 0, 0, 128, 26);
-	ObjSprite2D_SetSourceRect(objSpell, 656, 0, 831, 35);
-	ObjSprite2D_SetDestRect(objSpell, 0, 0, 146.6666666, 30);
-	ObjRender_SetScaleX(objSpell, 0.75);
-	ObjRender_SetScaleY(objSpell, 0.75);
-	ObjRender_SetX(objSpell, 640 - 212.5 - 10);
-	ObjRender_SetY(objSpell, 127.25);
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-	ObjPrim_SetTexture(obj, guiPath);
+	ObjPrim_SetTexture(obj, "script/main/img/system/lifespell2.png");
 	Obj_SetRenderPriority(obj, 0.1);
 	ObjRender_SetY(obj, 130);
 	ObjRender_SetScaleX(obj, 0.7);
@@ -436,7 +446,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 - (number - count) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 727, 0 + 27, 750 - 1, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 992, 32, 1023, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, 80,16,96,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -448,7 +458,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 + (count) * 16);
 			//ObjSpriteList2D_SetSourceRect(obj, 608 + floor(pieceCount * 5) * 24 - pieceCount, 0 + 27, 630 + 2 + floor(pieceCount * 5) * 24 - pieceCount, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 2, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832 + floor(pieceCount * 5) * 32, 32, 863 + floor(pieceCount * 5) * 32, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, pieceCount*16,16,(pieceCount+1)*16,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 		}
@@ -458,7 +468,7 @@ task UpdatePlayerSpell {
 			ObjRender_SetX(obj, 640 - 152 - (count + 1) * -16);
 			//ObjSpriteList2D_SetSourceRect(obj, 608, 0 + 27, 630 + 1, 25 + 27);
 			//ObjSpriteList2D_SetDestRect(obj, 0, 0, 24 + 1, 26);
-			ObjSpriteList2D_SetSourceRect(obj, 832, 32, 863, 31 + 32);
+			ObjSpriteList2D_SetSourceRect(obj, 0,16,16,32);
 			ObjSpriteList2D_SetDestRect(obj, 0, 0, 24, 24);
 			ObjSpriteList2D_AddVertex(obj);
 			count ++;
@@ -467,6 +477,68 @@ task UpdatePlayerSpell {
 		yield;
 	}
 }
+
+task UpdatePlayerRaindrops {
+	let max = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(max, digitPath);
+	Obj_SetRenderPriority(max, 0.1);
+	ObjRender_SetColor(max, 192,192,255);
+
+	ObjRender_SetPosition(max,592,150,0);
+	ObjSpriteList2D_SetSourceRect(max,160,0,176,24);
+	ObjSpriteList2D_SetDestRect(max,0,0,10,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,32,0,48,24);
+	ObjSpriteList2D_SetDestRect(max,10,0,20,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,0,0,16,24);
+	ObjSpriteList2D_SetDestRect(max,20,0,30,16);
+	ObjSpriteList2D_AddVertex(max);
+
+	ObjRender_SetY(max,116);
+	ObjSpriteList2D_SetSourceRect(max,160,0,176,24);
+	ObjSpriteList2D_SetDestRect(max,0,0,10,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,32,0,48,24);
+	ObjSpriteList2D_SetDestRect(max,10,0,20,16);
+	ObjSpriteList2D_AddVertex(max);
+	ObjSpriteList2D_SetSourceRect(max,0,0,16,24);
+	ObjSpriteList2D_SetDestRect(max,20,0,30,16);
+	ObjSpriteList2D_AddVertex(max);
+	
+	let life = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(life, digitPath);
+	Obj_SetRenderPriority(life, 0.1);
+	ObjRender_SetColor(life, 192,192,255);
+	ObjRender_SetPosition(life,582,116,0);
+
+	let bomb = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+	ObjPrim_SetTexture(bomb, digitPath);
+	Obj_SetRenderPriority(bomb, 0.1);
+	ObjRender_SetColor(bomb, 192,192,255);
+	ObjRender_SetPosition(bomb,582,150,0);
+
+	let count = [];
+	let number;
+	let objs = [life,bomb];
+	while (true) {
+		count = [GetCommonData("item_raindrop_red", 0),GetCommonData("item_raindrop_green", 0)];
+		
+		ascent(j in 0..2){
+			ObjSpriteList2D_ClearVertexCount(objs[j]);
+			ascent(i in 0..2){
+				number = floor(count[j]%10);
+				ObjSpriteList2D_SetSourceRect(objs[j],number*16,0,(number+1)*16,24);
+				ObjSpriteList2D_SetDestRect(objs[j],i*-10,0,(i-1)*-10,16);
+				ObjSpriteList2D_AddVertex(objs[j]);
+				count[j] = count[j] / 10;
+			}
+		}
+		yield;
+	}
+
+}
+
 task UpdateBossLife {
 	let active = false;
 
@@ -495,7 +567,7 @@ task UpdateBossLife {
 		let divisions = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 		Obj_SetRenderPriority(divisions, 0.76);
 		ObjPrim_SetTexture(divisions, lifeBarPath);
-		ObjSpriteList2D_SetSourceRect(divisions, 16, 0, 31, 15);
+		ObjSpriteList2D_SetSourceRect(divisions, 16, 0, 32, 16);
 		redrawDivisions();
 
 		//Will be called again to update them when the lifebar is emptied
@@ -504,8 +576,8 @@ task UpdateBossLife {
 			ObjSpriteList2D_ClearVertexCount(divisions);
 			ascent(i in 0..length(listLifeDiv) - 1) {
 				let angle = listLifeDiv[i] * 360 - 90;
-				ObjSpriteList2D_SetDestRect(divisions, -2, -4, 3, 4);
-				ObjRender_SetPosition(divisions, cos(angle) * 62, sin(angle) * 62, 0);
+				ObjSpriteList2D_SetDestRect(divisions, -4, -8, 4, 8);
+				ObjRender_SetPosition(divisions, cos(angle) * 60, sin(angle) * 60, 0);
 				ObjRender_SetAngleZ(divisions, angle + 90);
 				ObjSpriteList2D_AddVertex(divisions);
 			}
@@ -517,12 +589,12 @@ task UpdateBossLife {
 		Obj_SetRenderPriority(lifebar, 0.75);
 		ObjPrim_SetTexture(lifebar, lifeBarPath);
 		ObjPrim_SetPrimitiveType(lifebar, PRIMITIVE_TRIANGLESTRIP);
-		ObjPrim_SetVertexCount(lifebar, 64);
+		ObjPrim_SetVertexCount(lifebar, 62);
 
 		let circle = ObjPrim_Create(OBJ_PRIMITIVE_2D);
 		ObjPrim_SetTexture(circle, lifeBarPath);
 		ObjPrim_SetPrimitiveType(circle, PRIMITIVE_TRIANGLESTRIP);
-		ObjPrim_SetVertexCount(circle, 64);
+		ObjPrim_SetVertexCount(circle, 62);
 		Obj_SetRenderPriority(circle, 0.74);
 
 		//Set up textures for all the circular parts
@@ -530,16 +602,16 @@ task UpdateBossLife {
 			let indexVert = iVert * 2;
 
 			ObjPrim_SetVertexUVT(circle, indexVert + 0, 8, 0);
-			ObjPrim_SetVertexUVT(circle, indexVert + 1, 15, 31);
+			ObjPrim_SetVertexUVT(circle, indexVert + 1, 16, 31);
 
 			ObjPrim_SetVertexUVT(lifebar, indexVert + 0, 0, 0);
-			ObjPrim_SetVertexUVT(lifebar, indexVert + 1, 7, 31); //4, 16
+			ObjPrim_SetVertexUVT(lifebar, indexVert + 1, 8, 31); //4, 16
 		}
 
-		//Finalize the empty circles
+		//Finalize the empty circle
 		ascent(i in 0..31) {
 			ascent(j in 0..2) {
-				ObjPrim_SetVertexPosition(circle, i * 2 + j, cos(i * 12) * (64 - j * 4), sin(i * 12) * (64 - j * 4), 0);
+				ObjPrim_SetVertexPosition(circle, i * 2 + j, cos(i * 12) * (64 - j * 5), sin(i * 12) * (64 - j * 5), 0);
 			}
 		}
 
@@ -570,7 +642,7 @@ task UpdateBossLife {
 				let xpos = cos(-i * angle - 90);
 				let ypos = sin(-i * angle - 90);
 				ascent(j in 0..2) {
-					ObjPrim_SetVertexPosition(lifebar, i * 2 + j, xpos * (64 - j * 4), ypos * (64 - j * 4), 0);
+					ObjPrim_SetVertexPosition(lifebar, i * 2 + j, xpos * (64 - j * 5), ypos * (64 - j * 5), 0);
 				}
 			}
 
@@ -591,11 +663,8 @@ task UpdateBossLife {
 }
 task UpdateBossTimer {
 	yield;
-	/*let timeout1 = ObjSound_Create;
-	ObjSound_Load(timeout1, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout1.wav");
-	let timeout2 = ObjSound_Create;
-	ObjSound_Load(timeout2, GetCurrentScriptDirectory() ~"../snd/sfx/system_timeout2.wav");*/
 
+	timerActive = true;
 	let active = true;
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 	ObjPrim_SetTexture(obj, digitPath);
@@ -605,26 +674,24 @@ task UpdateBossTimer {
 
 	let time;
 	let sec = 0;
-	//active = true;
+	let ypos = 0;
 
-	//CheckSpell;
+	CheckSpell;
 	CheckRemainingTime();
 	CheckTimerFade();
+	let boss = GetEnemyBossObjectID();
 	while (bossScene != ID_INVALID) {
 		time = ObjEnemyBossScene_GetInfo(bossScene, INFO_TIMERF);
 		sec = min(99.99, time / 60);
-		//Sorry Trung but I'm not in the mood for wrestling with your rendering function today; comment out the rendering stuff above and uncomment this to see why
-		RenderNumber(obj, 192 + 12, 0, sec, 2, false, true, 2, true);
+		RenderNumber(obj, 192 + 12, ypos, sec, 2, false, true, 2, true);
 		yield;
 
 	}
 	active = false;
 	//This is the part where the timer goes away and everything is trashed
 	Obj_Delete(obj);
-	//Obj_Delete(timeout1);
-	//Obj_Delete(timeout2);
-
-
+	timerActive = false;
+	
 	task CheckTimerFade {
 		let objPlayer = GetPlayerObjectID();
 		while (active) {
@@ -638,26 +705,27 @@ task UpdateBossTimer {
 			yield;
 		}
 	}
-	//TODO: update this once we decide how to check if a spell is active
-	/*task CheckSpell {
+
+	task CheckSpell {
 		while(active){
 			while(!GetCommonData("SpellActive",false) && active){
 				yield;
 			}
+			wait(52);
 			ascent(i in 0..35){
-				ObjRender_SetY(obj,i);
+				ypos = i;
 				yield;
 			}
 			while(GetCommonData("SpellActive",false) && active){
-				ObjRender_SetY(obj,35);
+				ypos = 35;
 				yield;
 			}
 			descent(i in 0..35){
-				ObjRender_SetY(obj,i);
+				ypos = i;
 				yield;
 			}
 		}
-	}*/
+	}
 
 	task CheckRemainingTime {
 		while (active) {
@@ -684,13 +752,13 @@ task UpdateBossTimer {
 
 		task Beep {
 			if (sec > 5) {
-				//ObjSound_Play(timeout1);
+				PlaySFX(SFX_TIMEOUT1);
 				descent(i in 0..5) {
 					ObjRender_SetScaleXYZ(obj, 1 + i / 20, 1 + i / 20, 0);
 					yield;
 				}
 			} else {
-				//ObjSound_Play(timeout2);
+				PlaySFX(SFX_TIMEOUT2);
 				descent(i in 0..5) {
 					ObjRender_SetScaleXYZ(obj, 1 + i / 10, 1 + i / 10, 0);
 					yield;
@@ -699,6 +767,7 @@ task UpdateBossTimer {
 		}
 	}
 }
+
 task UpdateBossStep {
 	let active = false;
 	while (true) {
@@ -706,6 +775,7 @@ task UpdateBossStep {
 			if (!active) {
 				active = true;
 				RenderStep();
+				RenderName;
 			}
 		}
 		yield;
@@ -715,7 +785,7 @@ task UpdateBossStep {
 		let stars = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
 		Obj_SetRenderPriority(stars, 0.75);
 		ObjPrim_SetTexture(stars, lifeBarPath);
-		ObjSpriteList2D_SetSourceRect(stars, 16, 16, 31, 31);
+		ObjSpriteList2D_SetSourceRect(stars, 16, 16, 32, 32);
 		
 		task updateStars(count) {
 			ObjSpriteList2D_ClearVertexCount(stars);
@@ -732,7 +802,7 @@ task UpdateBossStep {
 		let countRemStep = ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT);
 		updateStars(countRemStep);
 		yield;
-		while (true) {
+		while (bossScene != ID_INVALID) {
 			countRemStep = ObjEnemyBossScene_GetInfo(bossScene, INFO_REMAIN_STEP_COUNT);
 			if (lastRemStep != countRemStep) {
 				updateStars(countRemStep);
@@ -740,6 +810,8 @@ task UpdateBossStep {
 			}
 			yield;
 		}
+		Obj_Delete(stars);
+		active = false;
 
 		task CheckStarFade {
 			yield;
@@ -758,9 +830,21 @@ task UpdateBossStep {
 			}
 		}
 
-		Obj_Delete(stars);
 	}
-	active = false;
+
+	task RenderName {
+		wait(5);
+		let name = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(name,"script/main/img/enemy/ename.png");
+		let which = GetAreaCommonData("GameState","CurrentBoss",0);
+		ObjSprite2D_SetSourceRect(name,0,which*16,256,(which+1)*16);
+		ObjSprite2D_SetDestRect(name,0,0,256,16);
+		ObjRender_SetPosition(name,0,0,256);
+		while(active){yield;}
+		Obj_Delete(name);
+
+	}
+
 }
 task UpdateBossXPos (obj) {
 	let objBossMark = ObjPrim_Create(OBJ_SPRITE_2D);
@@ -885,6 +969,116 @@ task UpdateReplayFps {
 	}
 }
 
+task ShowExtend {
+	PlaySFX(SFX_EXTEND);
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,0,128,128,160);
+	Obj_SetRenderPriority(obj,0.3);
+	ObjRender_SetPosition(obj,192,100,0);
+	ascent(i in 0..17){
+		ObjSprite2D_SetDestRect(obj,-64,0,64,i*2);
+		yield;
+	}
+	wait(60);
+	descent(i in 0..17){
+		ObjRender_SetAlpha(obj,i*16);
+		yield;
+	}
+	Obj_Delete(obj);
+}
+
+task ShowSpellCap(bonus){
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,0,0,256,32);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.79);
+	ObjRender_SetPosition(obj,192,120,0);
+
+	AddScoreSmooth(bonus);
+	ShowBonus;
+
+	let color;
+	ascent(i in 0..17){
+		color = 256-(i%2)*128;
+		ObjRender_SetColor(obj,color,color,color);
+		wait(2);
+	}
+	wait(60);
+	descent(i in 0..16){
+		ObjRender_SetScaleY(obj,i/16);
+		yield;
+	}
+	Obj_Delete(obj);
+
+	task ShowBonus{
+		let numbers = [];
+		let comma = 0;
+		while(bonus > 0){
+			if(comma != 3){
+				numbers = numbers ~ [bonus%10];
+				bonus = floor(bonus/10);
+				comma++;
+			}
+			else{
+				numbers = numbers ~ [12];
+				comma = 0;
+			}
+		}
+		ascent(i in 0..length(numbers)){
+			let num = ObjPrim_Create(OBJ_SPRITE_2D);
+			ObjPrim_SetTexture(num,digitPath);
+			ObjSprite2D_SetSourceRect(num,numbers[i]*16,0,(numbers[i]+1)*16,24);
+			ObjSprite2D_SetDestCenter(num);
+			ObjRender_SetPosition(num,240-i*12,145,0);
+			MaterializeNumber(num,i*3);
+			wait(3);
+		}
+	}
+
+	task MaterializeNumber(num,delay){
+		ColorsToo;
+		ascent(i in 0..17){
+			ObjRender_SetAlpha(num,i*16);
+			yield;
+		}
+		wait(77-delay);
+		descent(i in 0..16){
+			ObjRender_SetScaleY(num,i/16);
+			yield;
+		}
+		Obj_Delete(num);
+
+		task ColorsToo{
+			ascent(i in 0..17){
+				color = 256-(i%2)*128;
+				ObjRender_SetColor(num,color,color,color);
+				wait(2);
+			}
+		}
+	}
+}
+
+task ShowSpellFail {
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj, dir ~ "popup.png");
+	ObjSprite2D_SetSourceRect(obj,128,128,256,160);
+	ObjSprite2D_SetDestCenter(obj);
+	Obj_SetRenderPriority(obj,0.7);
+	ObjRender_SetPosition(obj,192,120,0);
+	ascent(i in 0..17){
+		ObjRender_SetAlpha(obj,i*16);
+		yield;
+	}
+	wait(60);
+	descent(i in 0..32){
+		ObjRender_SetAlpha(obj,i*8);
+		yield;
+	}
+	Obj_Delete(obj);
+}
+
 function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigit, isSmallFloat) {
 	if (floatDigit < 0) {
 		floatDigit = 0;
@@ -903,11 +1097,13 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 
 	let size = 12;
 	let size2 = 0;
+	let size3 = 0;
 	let switch = false;
 
 	if (isSmallFloat) {
 		size = 9;
 		size2 = 6;
+		size3 = 3;
 	}
 
 	if (havePeriod && floatDigit > 0) {
@@ -923,9 +1119,9 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 			}
 			if (num != 0 || switch == true) {
 				switch = true;
-				ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
+				ObjSpriteList2D_SetSourceRect(obj, num * 16, 0, (num + 1) * 16, 24);
 				ObjRender_SetX(obj, x - (digits - 1 - i) * size);
-				ObjSpriteList2D_SetDestRect(obj, (0 + zeroCount * size), size2, (16 + zeroCount * size) - size2, 16);
+				ObjSpriteList2D_SetDestRect(obj, (0 + zeroCount * size), size3, (16 + zeroCount * size) - size2, 24-size3);
 				ObjSpriteList2D_AddVertex(obj);
 				xCount += size;
 			} else {
@@ -935,8 +1131,8 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 				zeroCount ++;
 			}
 		}
-		ObjSpriteList2D_SetSourceRect(obj, 176, 144 + 1, 191, 159 + 1);
-		ObjSpriteList2D_SetDestRect(obj, 0, 0 + 2, 16, 16 + 2);
+		ObjSpriteList2D_SetSourceRect(obj, 176, 0, 192, 24);
+		ObjSpriteList2D_SetDestRect(obj, 0, 0, 16, 24);
 		if (isSmallFloat) {
 			ObjRender_SetX(obj, ObjRender_GetX(obj) - 2 + (zeroCount - 1) * 9);
 			xCount += 1;
@@ -959,12 +1155,12 @@ function RenderNumber(obj, x, y, number, digit, haveComma, havePeriod, floatDigi
 	descent (i in 0 .. digits) {
 		let num = listNum[i];
 		ObjRender_SetX(obj, x - (digits - 1 - i) * 12 - xCount);
-		ObjSpriteList2D_SetSourceRect(obj, num * 16, 144, (num + 1) * 16, 144 + 16);
-		ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0, 16 - commaCount * 6, 16);	
+		ObjSpriteList2D_SetSourceRect(obj, num * 16, 0, (num + 1) * 16, 24);
+		ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0, 16 - commaCount * 6, 24);	
 		ObjSpriteList2D_AddVertex(obj);
 		if ((digits - i) % 3 == 0 && i != digits && i != 0 && haveComma) {
-			ObjSpriteList2D_SetSourceRect(obj, 224, 144 + 1, 239, 159 + 1);
-			ObjSpriteList2D_SetDestRect(obj, 0 - commaCount * 6, 0 + 4, 16 - commaCount * 6, 16 + 4);
+			ObjSpriteList2D_SetSourceRect(obj, 192, 0, 208, 24);
+			ObjSpriteList2D_SetDestRect(obj, -4 - commaCount * 6, 0 + 4, 12 - commaCount * 6, 16 + 4);
 			ObjRender_SetX(obj, ObjRender_GetX(obj) - 5);
 			commaCount ++;
 			ObjSpriteList2D_AddVertex(obj);

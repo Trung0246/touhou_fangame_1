@@ -21,10 +21,9 @@
 }
 
 task Plural_Main() {
-	/*let dir = GetModuleDirectory() ~ "script/main/script/stage/1/boss/";
-
+	SetAreaCommonData("GameState","CurrentBoss",0);
 	let obj = ObjEnemyBossScene_Create();
-	ObjEnemyBossScene_Add(obj, 0, dir ~ "");
+	ObjEnemyBossScene_Add(obj, 0, GetCurrentScriptDirectory() ~ "DPS.txt");
 	ObjEnemyBossScene_LoadInThread(obj);
 	ObjEnemyBossScene_Regist(obj);
 
@@ -32,5 +31,5 @@ task Plural_Main() {
 		yield;
 	}
 
-	CloseScript(GetOwnScriptID());*/
+	CloseScript(GetOwnScriptID());
 }

@@ -1,0 +1,191 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss nonspell #2"]
+#Text["can we please quit it with the rain?"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/1/boss/Anim.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,240);
+	Animation_Azure(objBoss);
+	BossAura_Azure(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1650);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(30);
+	}
+}
+
+task TWork
+{
+	Obj_SetValue(objBoss,"Anim",0);
+	wait(30);
+	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	if(ObjMove_GetX(objBoss) > 192){Obj_SetValue(objBoss,"Anim",1);}
+	else{Obj_SetValue(objBoss,"Anim",2);}
+	wait(30);
+	let angle = rand(0,360);
+	let shot;
+	let size;
+	let rotation = 2*rand_sign();
+	wait(30);
+	Obj_SetValue(objBoss,"Anim",0);
+	wait(30);
+	BULLETS;
+	SizeShift;
+	Obj_SetValue(objBoss,"Anim",3);
+
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_delay = [20,18,15,13][diff];
+	let diff_sway = [0.5,1,1.5,2][diff];
+
+	while(!Obj_IsDeleted(objBoss)){
+		ascent(i in 0..7){
+			shot = SPShotB2(192+cos(angle+i*51)*size*2,ObjMove_GetY(objBoss)-10+sin(angle+i*51)*size,1,0,0,0,0,0,RBALL_CYAN,9);
+			InstaDelete(shot);
+		}
+		angle += rotation;
+		yield;
+	}
+
+	task BULLETS{
+		wait(90);
+		NoCheatingPlease;
+		let current;
+		CurrentTask;
+		while(!Obj_IsDeleted(objBoss)){
+			ascent(i in 0..7){
+				shot = SPShotA1(192+cos(angle+i*51)*size*2,ObjMove_GetY(objBoss)-10+sin(angle+i*51)*size,1,angle+i*51,RBALL_CYAN,10);
+				ObjMove_AddPatternB2(shot,0,NO_CHANGE,NO_CHANGE,0,0.02,0,4);
+				CurrentMove(shot);
+			}
+			wait(diff_delay);
+		}
+
+		task CurrentTask{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..360){
+					current = sin(i)*diff_sway;
+					yield;
+				}
+			}
+		}
+
+		task CurrentMove(obj){
+			while(!Obj_IsDeleted(obj)){
+				ObjMove_SetX(obj,ObjMove_GetX(obj)+current);
+				yield;
+			}
+		}
+
+		task NoCheatingPlease{
+			let n;
+			let objPlayer = GetPlayerObjectID();
+			while(!Obj_IsDeleted(objBoss)){
+				if(ObjMove_GetY(objPlayer) < 100){
+					n = rand(-15,15);
+					ascent(i in 0..12){
+						SPShotB2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),cos(i*30+n)*2,sin(i*30+n)-3.5,0,0.05,0,5,BUBBLE_BLUE,15);
+					}
+					wait(30);
+				}
+				wait(10);
+			}
+		}
+	}
+
+	task SizeShift{
+		ascent(i in 0..60){
+			size = i;
+			yield;
+		}
+		Obj_SetValue(objBoss,"Anim",0);
+		while(!Obj_IsDeleted(objBoss)){
+			ascent(i in 0..120){
+				size = 60+sin(i*3)*10;
+				yield;
+			}
+		}
+	}
+
+	/*task BossMovement{
+		let objPlayer = GetPlayerObjectID();
+		let dest;
+		wait(190);
+		while(!shotdown){
+			dest = ObjMove_GetX(objPlayer)+rand(-50,50);
+			dest = max(min(dest,282),102);
+			if(dest > ObjMove_GetX(objBoss)){Obj_SetValue(objBoss,"Anim",2);}
+			else{Obj_SetValue(objBoss,"Anim",1);}
+			ObjMove_SetDestAtFrame(objBoss,dest,140,50);
+
+			PlaySFX(SFX_SHOT1);
+			ascent(i in -5..6){
+				ascent(j in 0..2){
+					ascent(k in 0..2){
+						shot = SPShotA1(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),5,235+i*2.5+j*70+k*180,SCALE_CYAN,10);
+						ObjMove_AddPatternB2(shot,10,NO_CHANGE,NO_CHANGE,0,0.1,0,4);
+					}
+				}
+			}
+			
+			wait(50);
+			Obj_SetValue(objBoss,"Anim",0);
+			wait(190);
+		}
+		
+	}*/
+}
+
+task InstaDelete(shot){
+	ObjShot_SetSpellResist(shot,true);
+	ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+	ObjRender_SetColor(shot,128,256,256);
+	wait(8);
+	Obj_Delete(shot);
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}

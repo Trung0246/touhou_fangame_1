@@ -25,10 +25,10 @@ let lossFrame = 3;
 
 let shotDelay = 2;
 let shotDamage = 3;
-let homingDelay = 10;
+let homingDelay = 7;
 let homingDamage = 5;
-let missileDelay = 5;
-let missileDamage = 1;
+let missileDelay = 6;
+let missileDamage = 3;
 
 let grazeDelay = 60 * 3;
 

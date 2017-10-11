@@ -4,20 +4,21 @@
 #Text["Stage text"]
 #System["script/main/script/system/Gui.dnh"]
 #Player["script/main/script/player/reimu/Reimu.dnh"]
-#Background["script/main/script/stage/1/background/Background.dnh"]
+//#Background["script/main/script/stage/1/background/Background.dnh"]
 
-//Everything is included in this file and if you need to include something ask me
-#include "script/main/script/system/Init.dnh"
+//#include "script/main/script/system/Init.dnh"
 
-//DO NOT DO ANYTHING IN THIS FILE YET UNTIL FURTHER NOTICE
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Stage.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/script/lib/Raindrop.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/stage/1/Enemy.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
 
 @Initialize {
-  	//Put this function temporary here and read this in Init.dnh to understand how to call this function
-	Start_Init();
-  
-  	//Always call this function in every start of a stage script
-	Stage_Init();
-	
+	Stage_Init;
 	Stage_Main();
 }
 
@@ -29,24 +30,262 @@
 	
 }
 
-task Stage_Main() {
-	let dir = GetCurrentScriptDirectory();
-	let step = [
-		dir ~ "/wave/Wave.dnh",
-		dir ~ "/boss/Plural.dnh"
-	];
-	let idScript = ID_INVALID;
-
-	ascent (i in 0..length(step)) {
-		idScript = LoadScriptInThread(step[i]);
-		StartScript(idScript);
-		while (!IsCloseScript(idScript) && GetPlayerState() != STATE_END) {
-			yield;
+@Event{
+	alternative(GetEventType())
+	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y, enemy object id]
+		let arg = GetEventArgument(0);
+		let obj;
+		alternative(arg[0])
+		case(FAIRY_STREAM){
+			loop(4){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let dir = (floor(arg[1]/192)%2)*2-1;
+			ascent(i in -1..2){
+				CreateShotRaindrop(arg[1],arg[2],(-3-i/2)*dir,-2-i,0.05*dir,0.05,0,2,RAINDROP_RED+1-i,0);
+			}
 		}
+		case(FAIRY_RAINCIRCLE){
+			loop(2){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let dir = rand(-1,1);
+			CreateShotRaindrop(arg[1],arg[2],dir/2,-3,0.01*-dir,0.05,0.1*dir,2,RAINDROP_GREEN,0);
+		}
+		case(FAIRY_PLAIN){
+			obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			let dir = (floor(arg[1]/192)%2)*2-1;
+			if(Obj_GetValueD(arg[3],"Flavor",1) == 0){
+				ascent(i in 0..2){
+					CreateShotRaindrop(arg[1],arg[2],-(dir+i/2),-3,0.01*dir,0.05,0.1*-dir,1.5,RAINDROP_RED+i*2,0);
+				}
+			}
+		}
+		case(FAIRY_SUPERRAIN){
+			loop(6){
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let xspd;
+			ascent(i in 0..8){
+				xspd = cos(i*45);
+				CreateShotRaindrop(arg[1],arg[2],xspd,sin(i*45),xspd/-100,0.05,0,2,RAINDROP_BLUE,0);
+			}
+		}
+		case(FAIRY_OBLIGATORY){
+			loop(6){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let xspd;
+			ascent(i in 0..2){
+				xspd = cos(45+i*90);
+				CreateShotRaindrop(arg[1],arg[2],xspd/2,sin(45+i*90),xspd/-100,0.05,0,2,RAINDROP_RED,0);
+			}
+		}
+		case(FAIRY_SPAM){
+			/*obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+			ObjItem_SetRenderScoreEnable(obj, false);
+			CreateShotRaindrop(arg[1],arg[2],0,-3,0,0.05,0,2,RAINDROP_RED,0);*/
+		}
+		case(FAIRY_RAINFALL){
+			loop(4){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			/*loop(2){
+				CreateShotRaindrop(arg[1],arg[2],rand(-0.1,0.1),-3,0,0.05,0,2,RAINDROP_RED,0);
+			}*/
+		}
+
+	}
+}
+
+task Stage_Main() {
+	
+	//Here have a background
+	let background = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./background/Background.dnh");
+	StartScript(background);
+
+	//Init boss scripts
+	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");
+	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");
+
+	/*let DPS = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/DPSPlural.dnh");
+	StartScript(DPS);
+	wait(90000);*/
+
+	SetCommonData("StageWaitTime",0);
+	//Stage content
+	wait(90);
+	NotifyEventAll(EV_BGM_PLAY,2);
+	//Opening wave
+	ascent(i in 0..3){
+		ascent(j in 0..2){
+			StageEnemy(100+j*184,-50,FAIRY_STREAM,16,12,100,[284-j*184,100+i*32,i%2+2]);
+		}
+		stageWait(10);
+	}
+	stageWait(360);
+	StageTitle(1);
+	stageWait(300);
+	
+	//Fairy lane wave
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*120,140-absolute(i)*10,90+i*10]);
+	}
+	stageWait(120);
+	ascent(i in -2..3){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*80,100-absolute(i)*10,90+i*8]);
+	}
+	stageWait(180);
+	ascent(i in -3..4){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*40,60-absolute(i)*10,90+i*3]);
+	}
+	stageWait(60);
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*100,20-absolute(i)*10,90+i*15]);
+	}
+	stageWait(60);
+	StageEnemy(192,-100,FAIRY_RAINCIRCLE,16,12,55,[192,0,90]);
+
+	stageWait(360);
+
+	//Rain section
+	let rainmaker = StageEnemy(192,-200,INVISIBLE_RAIN,0,0,1000,"This doesn't do anything, so I can put something dumb in it and you can't stop me.");
+
+	stageWait(230);
+
+	descent(i in 0..4){
+		ascent(j in 0..3){
+			StageEnemy(-32,120+i*30,FAIRY_PLAIN,16,12,50,[0,j]);
+			stageWait(30);
+		}
+		stageWait(10);
 	}
 
-	//TODO: do shit with this wait loop
-	loop(240){yield;}
+	stageWait(120);
 
-	CloseStgScene();
+	descent(i in 0..4){
+		ascent(j in 0..3){
+			StageEnemy(416,120+i*30,FAIRY_PLAIN,16,12,50,[180,j]);
+			stageWait(30);
+		}
+		stageWait(10);
+	}
+
+	stageWait(120);
+
+	ascent(i in 0..3){
+		StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0,i]);
+		StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180,i]);
+		stageWait(30);
+	}
+	stageWait(60);
+
+	ascent(i in 0..3){
+		StageEnemy(-32,100,FAIRY_PLAIN,16,12,50,[0,i]);
+		StageEnemy(416,100,FAIRY_PLAIN,16,12,50,[180,i]);
+		stageWait(30);
+	}
+
+	stageWait(110);
+	SetCommonData("Switch to Phase 2?",true);
+	StartScript(midboss);
+	CheckBossActive(midboss);
+	yield;
+	Obj_SetValue(rainmaker,"BossTime",true);
+	
+	stageWait(960);
+
+	//Super rain fairy filler
+	StageEnemy(192,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(90);
+	StageEnemy(192+120,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(90);
+	StageEnemy(192-120,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(120);
+	StageEnemy(192+80,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(60);
+	StageEnemy(192-80,-100,FAIRY_SUPERRAIN,24,16,150,[50]);
+	stageWait(240);
+
+	//V-shape fairies
+	StageEnemy(80,-50,FAIRY_OBLIGATORY,24,16,250,[192,50]);
+	stageWait(50);
+	loop(3){
+		StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+		stageWait(10);
+	}
+	stageWait(100);
+
+	StageEnemy(100,-100,FAIRY_OBLIGATORY,24,16,250,[192,200]);
+	StageEnemy(284,-100,FAIRY_OBLIGATORY,24,16,250,[192,100]);
+	stageWait(200);
+	StageEnemy(-128,100,FAIRY_SPAM,16,12,10,[rand(-15,15)]);
+	StageEnemy(512,100,FAIRY_SPAM,16,12,10,[180+rand(-15,15)]);
+	stageWait(100);
+
+	StageEnemy(120,-50,FAIRY_OBLIGATORY,24,16,350,[192,50]);
+
+	stageWait(60);
+	loop(5){
+		StageEnemy(512,150,FAIRY_SPAM,16,12,10,[180+rand(-15,15)]);
+		stageWait(15);
+	}
+
+	stageWait(45);
+
+	//Final section with rainfall fairies
+	stageWait(120);
+	StageEnemy(416,200,FAIRY_RAINFALL,24,16,250,[100,100,-1]);
+	stageWait(150);
+	ascent(i in 0..6){
+		StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,1]);
+		StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,1]);
+		stageWait(45);
+	}
+	StageEnemy(-32,200,FAIRY_RAINFALL,24,16,250,[284,100,1]);
+	stageWait(300);
+	StageEnemy(416,150,FAIRY_RAINFALL,24,16,200,[192,100,-1]);
+	ascent(i in -1..2){
+		StageEnemy(192+i*40,-100+absolute(i)*10,FAIRY_RAINCIRCLE,16,12,55,[192-i*60,150-absolute(i)*10,90+i*5]);
+	}
+	stageWait(300);
+/*	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	stageWait(60);
+	loop(2){
+		ascent(i in 0..3){
+			StageEnemy(-32,70,FAIRY_PLAIN,16,12,50,[0,i]);
+			StageEnemy(416,70,FAIRY_PLAIN,16,12,50,[180,i]);
+		}
+		stageWait(90);
+	}
+	stageWait(120);*/
+	StageEnemy(-32,150,FAIRY_RAINFALL,24,16,200,[192,100,1]);
+	//StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[284,100,2]);
+	//StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[100,100,2]);
+	StageEnemy(284,-50,FAIRY_STREAM,16,12,100,[324,150,2]);
+	StageEnemy(100,-50,FAIRY_STREAM,16,12,100,[60,150,2]);
+	stageWait(480);
+	DeleteShotAll(TYPE_SHOT,TYPE_ITEM);
+	stageWait(300);
+	NotifyEventAll(EV_BGM_PLAY,3);
+	StartScript(boss);
+
+
+	//CloseStgScene();
 }

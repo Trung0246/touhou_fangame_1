@@ -1,13 +1,523 @@
 #include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
-@Initialize {
+let CSD = GetCurrentScriptDirectory;
+
+let sceneObj = GetEnemyBossSceneObjectID;
+
+// Textures
+let cloudTex = "script/main/img/stage/1/Clouds.png";
+let floorTex = "script/main/img/stage/1/Path.png";
+let rainTex = "script/main/img/stage/1/Rain.png";
+
+/*LoadTexture(cloudTex);
+LoadTexture(floorTex);
+LoadTexture(rainTex);*/
+
+let scrollSpeed = 8;
+let spellBG;
+
+@Initialize{
+	Call;
+	CallStage;
+	VariableTest;
+}
+
+@MainLoop{
+	yield;
+}
+
+task Call{
+	loop{
+		
+		while(GetCommonData("Is Spell?",false) == false){ yield;}
+	
+		if(GetCommonData("Is Spell?",false) == true){
+			SpellBackground;
+		}
+	
+		while(GetCommonData("Is Spell?",false) == true){yield;}
+		yield;
+	}
+}
+
+@Event{
+	alternative(GetEventType())
+		case(EV_BACKGROUND_SPELLCAST){
+			SpellBG;
+		}
+		case(EV_BACKGROUND_SPELLBREAK){
+			Obj_SetValue(spellBG,"End",true);
+		}
 	
 }
 
-@MainLoop {
+task SpellBG{
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,"script/main/img/stage/1/spell1.png");
+	ObjSprite2D_SetSourceRect(back,0,0,1276,1296);
+	ObjSprite2D_SetDestCenter(back);
+	ObjRender_SetPosition(back,192,224,0);
+	ObjRender_SetScaleXYZ(back,0.5,0.5,0.5);
+	Obj_SetRenderPriority(back,0.25);
+	spellBG = back;
 
+	let wave = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(wave,"script/main/img/stage/1/spell2.png");
+	ObjSprite2D_SetSourceRect(wave,0,0,720,720);
+	ObjSprite2D_SetDestCenter(wave);
+	ObjRender_SetPosition(wave,192,224,0);
+	ObjRender_SetColor(wave,128,128,256);
+	Obj_SetRenderPriority(wave,0.26);
+	MoveWave;
+	CheckDelete;
+
+	ascent(i in 0..65){
+		ObjRender_SetAlpha(back,i*4);
+		ObjRender_SetAlpha(wave,i);
+		yield;
+	}
+
+	task MoveWave{
+		let vertical = 0;
+		while(!Obj_IsDeleted(wave)){
+			ascent(i in 0..149){
+				vertical += 0.5;
+				ObjRender_SetY(wave,224+sin(vertical)*20);
+				ObjRender_SetX(wave,192-i);
+				yield;
+			}
+		}
+	}
+
+	task CheckDelete{
+		while(!Obj_GetValue(back,"End")){yield;}
+		descent(i in 0..33){
+			ObjRender_SetAlpha(back,i*8);
+			ObjRender_SetAlpha(wave,i*2);
+			yield;
+		}
+		Obj_Delete(wave);
+		Obj_Delete(back);
+	}
 }
 
-@Finalize {
+task CallStage{ //Work on this to change stages depending on phase!
+ Phases;
+ SetCamera1;
+}
 
+task SetCamera1{
+	start;
+	startCam;
+	SetCameraPerspectiveClip(16,4096);
+	SetCameraElevationAngle(30);
+	SetCameraAzimuthAngle(-90);
+	SetCameraRadius(16);
+	SetCameraFocusX(0);
+	SetCameraFocusY(640);
+	SetCameraFocusZ(-1024);
+
+	task startCam{
+		ascent(i in 0..270){
+			SetCameraPitch(70-70*sin(i/3));
+			SetCameraRoll(50-50*sin(i/3));
+			SetCameraYaw(5-5*sin(i/3));
+			SetCameraFocusX(512-512*sin(i/3));
+			yield;
+		}
+		let inc = 180;
+		loop(180){
+			//SetCameraPitch(2+2*cos(inc));
+			SetCameraRoll(5+5*cos(inc));
+			SetCameraYaw(2+2*cos(inc-(inc/9)));
+			SetCameraFocusX(48+48*cos(inc));
+			inc+=1;
+			yield;
+		}
+		inc = 0;
+		while(true){
+			//SetCameraPitch(4*cos(inc*2));
+			SetCameraRoll(10*cos(inc));
+			SetCameraYaw(4*cos(inc-20));
+			SetCameraFocusX(96*cos(inc));
+			inc+=0.4;
+			yield;
+		}
+	}
+
+	task start{
+		let scroll = 0;
+		let begin = 0;
+		SetCommonData("Switch to Phase 2?",false);
+		while(scroll < 1024){
+			SetCameraFocusZ(-1024+512+scroll);
+
+			scroll+=begin;
+			if(begin < scrollSpeed){
+				begin+=0.05;
+			}
+			yield;
+		}
+		run;
+	}
+
+	task run{
+		let scroll = 0;
+		while(true){
+			SetCameraFocusZ(-1024+512+scroll);
+			
+			if(scroll >= 1024){
+				scroll = 0;
+			}
+			
+			scroll+=scrollSpeed;
+			yield;
+		}
+	}
+}
+
+task Phases{
+	let objs = MakeFogBG(0,0,2500,200-32,200-32,255-64);
+	SetFog1(200-32,200-32,255-64);
+
+	ascent(i in -1..3){
+		MakeFloor(0,-40,i*1024);
+	}
+
+	ascent(i in 0..3){
+		MakeCloud(-500*i*500,360+i*120,i*1024,i*200);
+		MakeCloud(-750*i*750,420+i*160,i*1024+512,100+i*200);
+	}
+
+	MakeRain;
+
+	ascent(i in 0..280){
+		ObjRender_SetColor(objs,200-32-i/4.5,200-32-i/10,255-64-i/7.5);
+		SetFogParam(GetCommonData("Distance",NULL)[0],GetCommonData("Distance",NULL)[1],200-32-i/4.5,200-32-i/10,255-64-i/7.5);
+		yield;
+	}
+	while(GetCommonData("Switch to Phase 2?",true) != true){
+		yield;
+	}
+	let k = 0;
+	ascent(i in 0..280){
+		SetCameraFocusY(640+256+256*cos((i/280*180)+180));
+		ObjRender_SetColor(objs,(200-32-280/4.5)-i/4,(200-32-280/10)-i/4,(255-64-280/7.5)-i/4);
+		SetCameraPitch(GetCameraPitch+15/280);
+		scrollSpeed+=5/280;
+		yield;
+	}
+	scrollSpeed = 13;
+}
+
+// --------------------------------------------------------------------
+
+function MakeFogBG(X,Y,Z,R,G,B){
+	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
+	ObjPrim_SetTexture(obj,NULL);
+	Obj_SetRenderPriorityI(obj,20);
+	ObjSprite3D_SetSourceDestRect(obj,0,0,6096,6096);
+	ObjRender_SetScaleXYZ(obj,1,1,0);
+	ObjRender_SetZWrite(obj,true);
+	ObjSprite3D_SetBillboard(obj, true);
+	
+	ObjRender_SetPosition(obj,X,Y,Z);
+	
+	ObjRender_SetColor(obj,R,G,B);
+	return obj;
+}
+
+task SetFog1(R,G,B){
+	SetFogEnable(true);
+	SetFogParam(0,0,R,G,B);
+	ascent(i in 0..180){
+		SetCommonData("Distance",[(512/180)*i,(1600/180)*i]);
+		SetFogParam((512/180)*i,(1600/180)*i,R,G,B);
+		yield;
+	}
+	SetFogParam(512,1600,R,G,B);
+	SetCommonData("Distance",[512,1600]);
+	while(GetCommonData("Switch to Phase 2?",true) != true){
+		yield;
+	}
+	ascent(i in 0..280){
+		SetCommonData("Distance",[512+(500/280)*i,1600+(400/280)*i]);
+		SetFogParam(GetCommonData("Distance",NULL)[0],GetCommonData("Distance",NULL)[1],(200-32-280/4.5)-i/4,(200-32-280/10)-i/4,(255-64-280/7.5)-i/4);
+		yield;
+	}
+	//SetFogParam(1024,2048,R,G,B);
+	SetCommonData("Distance",[1012,2000]);
+}
+
+task MakeFloor(X,Y,Z){
+	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
+	ObjPrim_SetTexture(obj,floorTex);
+	Obj_SetRenderPriorityI(obj,20);
+	ObjSprite3D_SetSourceDestRect(obj,0,0,1536,1024);
+	ObjRender_SetScaleXYZ(obj,2,1,0);
+	ObjRender_SetZWrite(obj,true);
+	
+	ObjRender_SetAngleXYZ(obj,90,0,0);
+	
+	ObjRender_SetPosition(obj,X,Y,Z);
+}
+
+task MakeCloud(X,Y,Z,A){
+	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
+	ObjPrim_SetTexture(obj,cloudTex);
+	Obj_SetRenderPriorityI(obj,21);
+	ObjSprite3D_SetSourceDestRect(obj,0,0,256,256);
+	ObjRender_SetScaleXYZ(obj,3,3,0);
+	ObjRender_SetZWrite(obj,false);
+	ObjRender_SetColor(obj,128,255,255);
+	
+	ObjSprite3D_SetBillboard(obj,true);
+	ObjRender_SetAngleZ(obj,A);
+	ObjRender_SetAngleX(obj,-30);
+	
+	ObjRender_SetPosition(obj,X,Y,Z);
+
+	let inc = 0;
+	let count = 0;
+	let s = 0;
+	while(inc < 1024){
+		ObjRender_SetPosition(obj,X+20*cos(count+A),Y+20*sin(count+A),inc+Z+20*sin(count+A));
+		ObjRender_SetAlpha(obj, 26+4*sin(count+A));
+		ObjRender_SetAngleZ(obj,-25+25*sin((count*scrollSpeed/10)/3));
+
+		if(inc >= 1024){
+			inc = 0;
+		}
+		inc+=s;
+
+		if(s < scrollSpeed){
+			s+=0.05;
+		}
+		count+=1;
+		yield;
+	}
+	inc = 0;
+	while(true){
+		ObjRender_SetPosition(obj,X+20*cos(count+A),Y+20*sin(count+A),inc+Z+20*sin(count+A));
+		ObjRender_SetAlpha(obj, 26+4*sin(count+A));
+		ObjRender_SetAngleZ(obj,-25+25*sin((count*scrollSpeed/10)/3));
+
+		if(inc >= 1024){
+			inc = 0;
+		}
+		inc+=scrollSpeed;
+		count+=1;
+		yield;
+	}
+}
+
+task MakeRain{
+	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(obj,rainTex);
+	Obj_SetRenderPriority(obj,0.2);
+	ObjRender_SetAlpha(obj,128);
+	ObjSprite2D_SetSourceRect(obj,0,0,1024,1024);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetPosition(obj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+	//ObjRender_SetColor(obj, 256, 256, 0);
+
+	let spin = 0;
+	while(true){
+		ObjSprite2D_SetSourceRect(obj,0,-spin*20,1024,1024-spin*20);
+		ObjRender_SetAngleZ(obj,-2-5*sin(spin+90));
+		spin+=1;
+		yield;
+	}
+}
+
+// --------------------------------------------------------------------
+
+task SpellBackground{
+	if(GetCommonData("Boss Type",NULL) == "KOGASA"){
+		let down = 0;
+		let path1 = CSD ~ "./../Img/BG/KogasaA.png";
+		let path2 = CSD ~ "./../Img/BG/KogasaB.png";
+		
+		let spellObj = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj,path1);
+		ObjSprite2D_SetSourceRect(spellObj,0,0,384,512);
+		ObjSprite2D_SetDestCenter(spellObj);
+		ObjRender_SetBlendType(spellObj,BLEND_ALPHA);
+		ObjRender_SetAlpha(spellObj,0);
+		ObjRender_SetScaleXYZ(spellObj,1,1,0);
+		Obj_SetRenderPriorityI(spellObj,20);
+		ObjRender_SetPosition(spellObj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		let spellObj1 = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj1,path2);
+		ObjSprite2D_SetSourceRect(spellObj1,0,0,256,256);
+		ObjSprite2D_SetDestCenter(spellObj1);
+		ObjRender_SetBlendType(spellObj1,BLEND_ADD_ARGB);
+		ObjRender_SetAlpha(spellObj1,0);
+		ObjRender_SetScaleXYZ(spellObj1,2.2,2.2,0);
+		Obj_SetRenderPriorityI(spellObj1,21);
+		ObjRender_SetPosition(spellObj1,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		let spellObj2 = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj2,path2);
+		ObjSprite2D_SetSourceRect(spellObj2,0,0,256,256);
+		ObjSprite2D_SetDestCenter(spellObj2);
+		ObjRender_SetBlendType(spellObj2,BLEND_SUBTRACT);
+		ObjRender_SetAlpha(spellObj2,0);
+		ObjRender_SetScaleXYZ(spellObj2,2.2,2.2,0);
+		Obj_SetRenderPriorityI(spellObj2,22);
+		ObjRender_SetPosition(spellObj2,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		alp;
+			task alp{
+			loop(128){
+				ObjRender_SetAlpha(spellObj,down);
+				ObjRender_SetAlpha(spellObj1,down);
+				ObjRender_SetAlpha(spellObj2,down);
+				down+=2;
+				yield;
+			}
+			down = 0;
+		}
+		
+		let slide = 0;
+		loop{
+			if(GetCommonData("Is Spell?",false) == false){dissolve;}
+			ObjRender_SetAngleZ(spellObj1,ObjRender_GetAngleZ(spellObj1)+0.3);
+			ObjRender_SetAngleZ(spellObj2,ObjRender_GetAngleZ(spellObj2)-0.3);
+			ObjSprite2D_SetSourceRect(spellObj,0,0+slide,384,512+slide);
+			slide+=0.4;
+			yield;
+		}
+		task dissolve{
+			loop(255){
+				ObjRender_SetAlpha(spellObj,255-down);
+				ObjRender_SetAlpha(spellObj1,255-down);
+				ObjRender_SetAlpha(spellObj2,255-down);
+				down+=1;
+				yield;
+			}
+			down = 0;
+			Obj_Delete(spellObj);
+			Obj_Delete(spellObj1);
+			Obj_Delete(spellObj2);
+		}
+	}
+	
+	if(GetCommonData("Boss Type",NULL) == "LETTY"){
+		let down = 0;
+		let path1 = CSD ~ "./../Img/BG/Snowflake.png";
+		let path2 = CSD ~ "./../Img/BG/LettyBG.png";
+		
+		let spellObj = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj,path1);
+		ObjSprite2D_SetSourceRect(spellObj,0,0,512,512);
+		ObjSprite2D_SetDestCenter(spellObj);
+		ObjRender_SetBlendType(spellObj,BLEND_SUBTRACT);
+		ObjRender_SetAlpha(spellObj,0);
+		ObjRender_SetScaleXYZ(spellObj,1,1,0);
+		Obj_SetRenderPriorityI(spellObj,22);
+		ObjRender_SetPosition(spellObj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		let spellObj0 = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj0,path1);
+		ObjSprite2D_SetSourceRect(spellObj0,0,0,512,512);
+		ObjSprite2D_SetDestCenter(spellObj0);
+		ObjRender_SetBlendType(spellObj0,BLEND_ALPHA);
+		ObjRender_SetAlpha(spellObj0,0);
+		ObjRender_SetScaleXYZ(spellObj0,1.2,1.2,0);
+		Obj_SetRenderPriorityI(spellObj0,21);
+		ObjRender_SetColor(spellObj0,172,172,172);
+		ObjRender_SetPosition(spellObj0,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		let spellObj1 = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(spellObj1,path2);
+		ObjSprite2D_SetSourceRect(spellObj1,0,0,512,512);
+		ObjSprite2D_SetDestCenter(spellObj1);
+		ObjRender_SetBlendType(spellObj1,BLEND_ALPHA);
+		ObjRender_SetAlpha(spellObj1,0);
+		ObjRender_SetScaleXYZ(spellObj1,1,1,0);
+		Obj_SetRenderPriorityI(spellObj1,20);
+		ObjRender_SetColor(spellObj1,72,72,72);
+		ObjRender_SetPosition(spellObj1,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
+		
+		
+		alp;
+			task alp{
+			loop(128){
+				ObjRender_SetAlpha(spellObj,down/4);
+				ObjRender_SetAlpha(spellObj0,down/4);
+				ObjRender_SetAlpha(spellObj1,down);
+				down+=2;
+				yield;
+			}
+			down = 0;
+		}
+		
+		let slide = 0;
+		loop{
+			if(GetCommonData("Is Spell?",false) == false){dissolve;}
+			ObjRender_SetAngleZ(spellObj,ObjRender_GetAngleZ(spellObj)+0.2);
+			ObjRender_SetAngleZ(spellObj0,ObjRender_GetAngleZ(spellObj0)-0.2);
+			ObjSprite2D_SetSourceRect(spellObj1,0,0+slide,GetStgFrameWidth+2,GetStgFrameHeight+slide);
+			slide+=0.4;
+			yield;
+		}
+		task dissolve{
+			loop(255){
+				ObjRender_SetAlpha(spellObj,(255/8)-down);
+				ObjRender_SetAlpha(spellObj0,(255/8)-down);
+				ObjRender_SetAlpha(spellObj1,255-down);
+				down+=1;
+				yield;
+			}
+			down = 0;
+			Obj_Delete(spellObj);
+			Obj_Delete(spellObj0);
+			Obj_Delete(spellObj1);
+		}
+	}
+}
+
+// --------------------------------------------------------------------
+
+task VariableTest{ // Debug Function by Ultima, thanks!
+
+	let obj = ObjText_Create;
+	Obj_SetVisible(obj,false);
+	ObjText_SetText(obj,IntToString(GetCameraFocusX)~"");
+	ObjText_SetFontSize(obj,32);
+	ObjRender_SetPosition(obj,420,25,0);
+	Obj_SetRenderPriorityI(obj,100);
+	ObjText_SetFontType(obj,"MeiryoKe_PGothic");
+	ObjText_SetFontColorTop(obj, 155, 155, 155);
+	ObjText_SetFontColorBottom(obj, 155, 155, 155);
+	ObjText_SetFontBold(obj, true);
+	ObjText_SetHorizontalAlignment(obj, ALIGNMENT_LEFT);
+	ObjText_SetFontBorderType(obj, BORDER_SHADOW);
+	ObjText_SetFontBorderWidth(obj, 2);
+	ObjText_SetFontBorderColor(obj, 255, 255, 255);
+	
+	loop{
+	if(GetKeyState(KEY_D)==KEY_PUSH&&!Obj_IsVisible(obj)){yield;Obj_SetVisible(obj,true);}
+	if(GetKeyState(KEY_D)==KEY_PUSH&&Obj_IsVisible(obj)){yield;Obj_SetVisible(obj,false);}
+
+	ObjText_SetText(obj,"XFoc: "~IntToString(GetCameraFocusX)~"[r]
+	YFoc: "~IntToString(GetCameraFocusY)~"[r]
+	ZFoc: "~IntToString(GetCameraFocusZ)~"[r]
+	AziAng: "~IntToString(GetCameraAzimuthAngle)~"[r]
+	CamRad: "~IntToString(GetCameraRadius)~"[r]
+	EleAng: "~IntToString(GetCameraElevationAngle)~"[r]
+	Yaw: "~IntToString(GetCameraYaw)~"[r]
+	Pitch: "~IntToString(GetCameraPitch)~"[r]
+	Roll: "~IntToString(GetCameraRoll)~"[r]
+	XPos: "~IntToString(GetCameraX)~"[r]
+	YPos: "~IntToString(GetCameraY)~"[r]
+	ZPos: "~IntToString(GetCameraZ)~""
+	);
+
+	yield;
+	}
+	//END OF TASK
 }

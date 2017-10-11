@@ -1,0 +1,190 @@
+task StageEnemyHitbox(enemy,shotsize,playersize,health,type){
+	ObjEnemy_SetLife(enemy,health);
+	while(!Obj_IsDeleted(enemy)){
+		ObjEnemy_SetIntersectionCircleToShot(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),shotsize);
+		ObjEnemy_SetIntersectionCircleToPlayer(enemy,ObjMove_GetX(enemy),ObjMove_GetY(enemy),playersize);
+		yield;
+		if(ObjEnemy_GetInfo(enemy,INFO_LIFE) <= 0){
+			if(!Obj_IsDeleted(enemy)){
+				//SpawnRaindrops(ObjMove_GetX(enemy),ObjMove_GetY(enemy));
+				NotifyEvent(GetOwnScriptID(),EV_ENEMY_SHOOTDOWN,[type,ObjMove_GetX(enemy),ObjMove_GetY(enemy),enemy]);
+				yield;
+				Obj_Delete(enemy);
+			}
+		}
+	}
+}
+
+task AnimateSmallFairy(obj,color) {
+	Obj_SetValue(obj,"Anim",0);
+	ObjPrim_SetTexture(obj,"script/main/img/enemy/stage/SmallFairy.png");
+	ObjSprite2D_SetDestRect(obj,-16,-16,16,16);
+	while(!Obj_IsDeleted(obj)){
+		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..4){
+				if(Obj_GetValueD(obj,"Anim",0) != 0 || Obj_IsDeleted(obj)){break;}
+				ObjSprite2D_SetSourceRect(obj,i*32,color*32,(i+1)*32,(color+1)*32);
+				wait(6);
+			}
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 1){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",2);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..5){
+				ObjSprite2D_SetSourceRect(obj,128+i*32,color*32,128+(i+1)*32,(color+1)*32);
+				wait(6);
+			}
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 3){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+			while(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+				ascent(i in 0..3){
+					if(Obj_GetValueD(obj,"Anim",0) != 4 || Obj_IsDeleted(obj)){break;}
+					ObjSprite2D_SetSourceRect(obj,288+i*32,color*32,288+(i+1)*32,(color+1)*32);
+					wait(6);
+				}
+			}
+			descent(i in 0..5){
+				ObjSprite2D_SetSourceRect(obj,128+i*32,color*32,128+(i+1)*32,(color+1)*32);
+				wait(6);
+			}
+			ObjRender_SetScaleX(obj,1);
+		}
+		yield;
+	}
+}
+
+task AnimateBigFairy(obj,color) {
+	Obj_SetValue(obj,"Anim",0);
+	ObjPrim_SetTexture(obj,"script/main/img/enemy/stage/LargeFairy.png");
+	ObjSprite2D_SetDestRect(obj,-24,-24,24,24);
+	while(!Obj_IsDeleted(obj)){
+		while(Obj_GetValueD(obj,"Anim",0) == 0 && !Obj_IsDeleted(obj)){
+			ascent(i in 0..4){
+				if(Obj_GetValueD(obj,"Anim",0) != 0 || Obj_IsDeleted(obj)){break;}
+				ObjSprite2D_SetSourceRect(obj,i*48,color*48,(i+1)*48,(color+1)*48);
+				wait(6);
+			}
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 1){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",2);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 2 && !Obj_IsDeleted(obj)){
+			ObjSprite2D_SetSourceRect(obj,192,color*48,240,(color+1)*48);
+			wait(6);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 3){
+			ObjRender_SetScaleX(obj,-1);
+			Obj_SetValue(obj,"Anim",4);
+		}
+		if(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+			while(Obj_GetValueD(obj,"Anim",0) == 4 && !Obj_IsDeleted(obj)){
+				ascent(i in 0..4){
+					if(Obj_GetValueD(obj,"Anim",0) != 4 || Obj_IsDeleted(obj)){break;}
+					ObjSprite2D_SetSourceRect(obj,240+i*48,color*48,240+(i+1)*48,(color+1)*48);
+					wait(6);
+				}
+			}
+			ObjSprite2D_SetSourceRect(obj,192,color*48,240,(color+1)*48);
+			wait(6);
+			ObjRender_SetScaleX(obj,1);
+		}
+		yield;
+	}
+}
+
+task StageTitle(id){
+	id -= 1;
+	let dir = "script/main/img/stage/stage_sp.png";
+
+	let xpos = id%2;
+	let ypos = floor(id/2);
+
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,dir);
+	ObjSprite2D_SetSourceRect(back,xpos*256,36+ypos*128,(xpos+1)*256,60+ypos*128);
+	ObjSprite2D_SetDestCenter(back);
+	ObjRender_SetPosition(back,192,180,0);
+
+	let title = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(title,dir);
+	ObjSprite2D_SetSourceRect(title,xpos*256,ypos*128,(xpos+1)*256,32+ypos*128);
+	ObjSprite2D_SetDestCenter(title);
+	ObjRender_SetAlpha(title,0);
+	ObjRender_SetPosition(title,192,170,0);
+
+	let stage = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(stage,dir);
+	ObjSprite2D_SetSourceRect(stage,(xpos)*256,96+ypos*128,(xpos+1)*256,104+ypos*128);
+	ObjSprite2D_SetDestCenter(stage);
+	ObjRender_SetAlpha(stage,0);
+	ObjRender_SetPosition(stage,192,195,0);
+
+	let descx = (xpos*256);
+	let descy = 60+ypos*128;
+	let desc = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(desc,dir);
+	ObjSprite2D_SetSourceRect(desc,descx,descy,descx+256,descy+32);
+	ObjRender_SetPosition(desc,192,220,0);
+
+	ascent(i in 0..32){
+		ObjRender_SetScaleY(back,i/32);
+		ObjRender_SetAlpha(stage,i*8);
+		yield;
+	}
+
+	wait(20);
+	ascent(i in 0..32){
+		ObjRender_SetAlpha(title,i*8);
+		yield;
+	}
+
+	wait(20);
+	ascent(i in 0..32){
+		ObjSprite2D_SetSourceRect(desc,descx,descy,descx+256,descy+i);
+		ObjSprite2D_SetDestRect(desc,-128,-16,128,i-16);
+		yield;
+	}
+
+	wait(180);
+
+	descent(i in 0..32){
+		ObjRender_SetAlpha(title,i*8);
+		ObjRender_SetScaleY(back,i/32);
+		ObjRender_SetAlpha(stage,i*8);
+		ObjRender_SetAlpha(desc,i*8);
+		yield;
+	}
+	Obj_Delete(title);
+	Obj_Delete(back);
+	Obj_Delete(stage);
+	Obj_Delete(desc);
+
+}
+
+let bossActive = false;
+task CheckBossActive(script){
+	bossActive = true;
+	while(!IsCloseScript(script)){yield;}
+	bossActive = false;
+}
+
+function stageWait(n){
+	wait(n);
+	SetCommonData("StageWaitTime",GetCommonData("StageWaitTime",0)+n);
+	WriteLog("Total stage time: " ~ itoa(GetCommonData("StageWaitTime",0)));
+}
+
+//To be called at the start of every stage because there's no way to do this more efficiently for some reason???
+function Stage_Init() {
+	StartShotScript("script/main/script/system/Shot.dnh");
+	StartItemScript("script/main/script/system/Items.dnh");
+}

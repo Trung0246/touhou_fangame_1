@@ -1,0 +1,75 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["The stage tester"]
+#Text["Debug script magic go!!"]
+#System["script/main/script/system/Gui.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh", "script/main/script/player/marisa/Marisa.dnh"]
+
+//#include "script/main/script/system/Init.dnh"
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/system/Init.dnh"
+#include "script/main/script/lib/BGM.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/script/system/Loading.dnh"
+
+@Initialize {
+	LoadSounds;
+	InitBGM;
+	Base_Init;
+	Maingame_Init;
+	
+	CreateCommonDataArea("GameState");
+	SetAreaCommonData("GameState","Difficulty",1);
+	SetAreaCommonData("GameState","Player",4); //Nonexistent player that basically means "done in stagetester"
+	CreateCommonDataArea("SpellHistory");
+	LoadCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
+
+	SetCommonData("player_power", 1.00);
+	
+	let stage = LoadScript("script/main/script/stage/1/Stage.dnh");
+	StartScript(stage);
+
+	//Normalize player power
+	let objPlayer = GetPlayerObjectID();
+	CreateItemU1(7,ObjMove_GetX(objPlayer),ObjMove_GetY(objPlayer),0);
+}
+
+task InitBGM{
+	CreateCommonDataArea("Settings");
+	LoadCommonDataAreaA2("Settings","script/main/save/Settings.dat");
+	let objBGM = ObjSound_Create();
+	ObjSound_SetSoundDivision(objBGM,SOUND_BGM);
+	ObjSound_SetLoopEnable(objBGM,true);
+	ObjSound_SetVolumeRate(objBGM, GetAreaCommonData("Settings","sound_bgm_volume",100));
+	SetCommonData("ObjBGM",objBGM);
+}
+
+@Event{
+	alternative(GetEventType)
+	case(EV_BGM_STOP){
+		BGM_Stop;
+	}
+	case(EV_BGM_RESUME){
+		BGM_Resume;
+	}
+	case(EV_BGM_PLAY){
+		BGM_Play(GetEventArgument(0));
+	}
+	case(EV_SFX_PLAY){
+		let sounds = GetCommonData("SoundList",[]); //Can and will explode if it's not set up properly for some reason
+		ObjSound_Play(sounds[GetEventArgument(0)]);
+	}
+}
+
+@MainLoop {
+	yield;
+}
+ 
+@Finalize {
+	
+}
+
+//duuuumb fix
+task DisplayTitle{}
+

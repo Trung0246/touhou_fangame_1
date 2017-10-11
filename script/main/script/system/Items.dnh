@@ -1,5 +1,6 @@
 #include "script/main/script/lib/Event.dnh"
 #include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
 
 @Initialize{
 	SetDefaultBonusItemEnable(false);
@@ -72,13 +73,23 @@ let __grazeCount__ = 0;
 				AddScoreSmooth(tempScore);*/
 			}
 		}
-		case (EV_USER + 100) {
+		case (EV_RAINDROP_COLLECT) {
 			alternative (GetEventArgument(0))			
 			case (512) { //Raindrop red
 				SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) + GetCommonData("item_raindrop_change", 0));
+				if(GetCommonData("item_raindrop_red",0) >= 20){
+					SetCommonData("player_life",GetCommonData("player_life",2)+1);
+					SetCommonData("item_raindrop_red", GetCommonData("item_raindrop_red", 0) - 20);
+					NotifyEventAll(EV_EXTEND_LIFE,0);
+				}
 			}
 			case (513) { //Raindrop green
 				SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) + GetCommonData("item_raindrop_change", 0));
+				if(GetCommonData("item_raindrop_green",0) >= 20){
+					SetCommonData("player_spell",GetCommonData("player_spell",2)+1);
+					SetCommonData("item_raindrop_green", GetCommonData("item_raindrop_green", 0) - 20);
+					NotifyEventAll(EV_EXTEND_SPELL,0);
+				}
 			}
 			case (514) { //Raindrop blue
 				SetCommonData("item_raindrop_blue", GetCommonData("item_raindrop_blue", 0) + GetCommonData("item_raindrop_change", 0));
@@ -109,6 +120,7 @@ let __grazeCount__ = 0;
 			Obj_SetRenderPriorityI(obj, 20);
 			ObjItem_SetRenderScoreEnable(obj, false);
 			ObjItem_SetAutoCollectEnable(obj, false);
+			ObjItem_SetDefinedMovePatternA1(obj,ITEM_MOVE_TOPLAYER);
 		}
 		case (EV_GRAZE) {
 			/*let shot = GetEventArgument(1);
