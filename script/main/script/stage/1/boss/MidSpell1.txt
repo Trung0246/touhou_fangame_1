@@ -55,9 +55,9 @@ task TWork
 	else{Obj_SetValue(objBoss,"Anim",2);}
 	wait(30);
 	SpellCast(diff-1);
+	MoreRainForEveryone;
 	wait(60);
 	Obj_SetValue(objBoss,"Anim",0);
-	MoreRainForEveryone;
 	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0){
 		ascent(i in 0..12){
 			shot = SPShotA2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),0.1,GetAngleToPlayer(objBoss)+i*30,0.1,2,BUBBLE_BLUE,20);
@@ -68,13 +68,15 @@ task TWork
 
 	task MoreRainForEveryone{
 		let angle = 0;
-		let wave = 0;
+		let wave = -64;
 		let dir = 0;
+		let size = 0;
+		IncreaseSize;
 		RainLaneTime;
 		RainNotLaneTime;
 		while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0){
 			ascent(i in 0..4){
-				shot = SPShotA1(192+cos(angle+i*90)*192,absolute(sin(angle+i*90))*10,0,0,RBALL_BLUE,10);
+				shot = SPShotA1(192+cos(angle+i*90)*size,absolute(sin(angle+i*90))*10,0,0,RBALL_BLUE,10);
 				InstaDelete(shot);
 			}
 			angle += 6;
@@ -83,19 +85,28 @@ task TWork
 			yield;
 		}
 
+		task IncreaseSize{
+			ascent(i in 0..65){
+				size = i*3;
+				yield;
+			}
+		}
+
 		task RainLaneTime{
+			wait(40);
 			while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0){
 				ascent(i in 0..4){
-					shot = SPShotA2(192+cos(angle+i*90)*192,absolute(sin(angle+i*90))*10,0,90+dir,0.1,2.5,DROP_BLUE,10);
+					shot = SPShotA2(192+cos(angle+i*90)*size,absolute(sin(angle+i*90))*10,0,90+dir,0.1,2.5,DROP_BLUE,10);
 				}
 				wait(10);
 			}
 		}
 
 		task RainNotLaneTime{
+			wait(60);
 			while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0){
 				ascent(i in 0..4){
-					shot = SPShotA2(192+cos(angle+i*90)*192,absolute(sin(angle+i*90))*10,0,90+dir,0.1,4,DROP_CYAN,10);
+					shot = SPShotA2(192+cos(angle+i*90)*size,absolute(sin(angle+i*90))*10,0,90+dir,0.1,4,DROP_CYAN,10);
 				}
 				wait(diff_cyandelay);
 			}

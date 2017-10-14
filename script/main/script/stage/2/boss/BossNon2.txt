@@ -1,0 +1,166 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss nonspell #2"]
+#Text["clouB"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,300);
+	Animation_Azure(objBoss);
+	BossAura_Sakkagumi(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1750);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(60);
+	}
+}
+
+task TWork
+{
+	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_pinkspawn = [5,4,3,3][diff];
+	let diff_redspawn = [6,5,4,3][diff];
+	let diff_redspeed = [1,1.5,1.5,2][diff];
+	let diff_curvetime = [250,450,600,900][diff];
+	wait(120);
+	let angle;
+	let shot;
+	while(!Obj_IsDeleted(objBoss)){
+		angle = GetAngleToPlayer(objBoss);
+		ascent(i in 0..4){
+			shot = SPShotA2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),0,angle+i*90,0.1,6,RBALL_MAGENTA,0);
+			CloudBullet(shot);
+		}
+		wait(420);
+	}
+
+	task CloudBullet(obj){
+		ObjShot_SetSpellResist(obj,true);
+		yield;
+		GetMeSomeDanmaku;
+		PlusSomeSpam;
+		ObjShot_SetIntersectionEnable(obj,false);
+		ObjRender_SetAlpha(obj,0);
+		while(!Obj_IsDeleted(obj)){
+			FunCloud(ObjMove_GetX(obj),ObjMove_GetY(obj));
+			wait(4);
+		}
+
+		task GetMeSomeDanmaku{
+			let wave = rand(0,360);
+			let speed;
+			while(!Obj_IsDeleted(obj)){
+				wave += 38;
+				speed = sin(wave)/4;
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)+60,BALL_MAGENTA,30,132,0.2,diff_curvetime);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)-60,BALL_MAGENTA,30,132,-0.2,diff_curvetime);
+				wait(diff_pinkspawn);
+			}
+		}
+
+		task PlusSomeSpam{
+			while(!Obj_IsDeleted(obj)){
+				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,rand(0,360),RBALL_RED,30,132,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),3,ObjMove_GetAngle(obj),DOT_MAGENTA,30,132,0,0);
+				wait(diff_redspawn);
+			}
+		}
+		
+		task UltraDelayBullet(x,y,speed,angle,graphic,delay,delay2,angular,curvetime){
+			let obj;
+			wait(delay2);
+			if(!Obj_IsDeleted(objBoss)){
+				obj = SPShotA1(x,y,speed,angle,graphic,delay);
+				ObjMove_SetAngularVelocity(obj,angular);
+				wait(curvetime);
+				ObjMove_SetAngularVelocity(obj,0);
+			}
+		}
+
+	}
+
+	task FunCloud(x,y){
+		let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud2.png");
+		ObjSprite2D_SetSourceRect(cloud,0,0,200,200);
+		ObjSprite2D_SetDestCenter(cloud);
+		ObjRender_SetColor(cloud,256,156,218);
+		Obj_SetRenderPriority(cloud,0.6);
+		ObjRender_SetPosition(cloud,x,y,0);
+
+		MoveCloud;
+		ascent(i in 0..32){
+			if(Obj_IsDeleted(objBoss)){break;}
+			ObjRender_SetAlpha(cloud,i*8);
+			yield;
+		}
+		
+		loop(100){
+			if(Obj_IsDeleted(objBoss)){break;}
+			yield;
+		}
+
+		descent(i in 0..16){
+			ObjRender_SetAlpha(cloud,i*16);
+			yield;
+		}
+		Obj_Delete(cloud);
+
+		task MoveCloud{
+			let angle = rand(0,360);
+			let move = [cos(angle)/10,sin(angle)/10];
+			while(!Obj_IsDeleted(cloud)){
+				ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
+				yield;
+			}
+		}
+	}
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}

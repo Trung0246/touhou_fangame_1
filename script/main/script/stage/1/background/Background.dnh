@@ -15,10 +15,10 @@ LoadTexture(floorTex);
 LoadTexture(rainTex);*/
 
 let scrollSpeed = 8;
+let phase2now = false;
 let spellBG;
 
 @Initialize{
-	Call;
 	CallStage;
 	VariableTest;
 }
@@ -27,22 +27,11 @@ let spellBG;
 	yield;
 }
 
-task Call{
-	loop{
-		
-		while(GetCommonData("Is Spell?",false) == false){ yield;}
-	
-		if(GetCommonData("Is Spell?",false) == true){
-			SpellBackground;
-		}
-	
-		while(GetCommonData("Is Spell?",false) == true){yield;}
-		yield;
-	}
-}
-
 @Event{
 	alternative(GetEventType())
+		case(EV_BACKGROUND_1){
+			phase2now = true;
+		}
 		case(EV_BACKGROUND_SPELLCAST){
 			SpellBG;
 		}
@@ -50,56 +39,6 @@ task Call{
 			Obj_SetValue(spellBG,"End",true);
 		}
 	
-}
-
-task SpellBG{
-	let back = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(back,"script/main/img/stage/1/spell1.png");
-	ObjSprite2D_SetSourceRect(back,0,0,1276,1296);
-	ObjSprite2D_SetDestCenter(back);
-	ObjRender_SetPosition(back,192,224,0);
-	ObjRender_SetScaleXYZ(back,0.5,0.5,0.5);
-	Obj_SetRenderPriority(back,0.25);
-	spellBG = back;
-
-	let wave = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(wave,"script/main/img/stage/1/spell2.png");
-	ObjSprite2D_SetSourceRect(wave,0,0,720,720);
-	ObjSprite2D_SetDestCenter(wave);
-	ObjRender_SetPosition(wave,192,224,0);
-	ObjRender_SetColor(wave,128,128,256);
-	Obj_SetRenderPriority(wave,0.26);
-	MoveWave;
-	CheckDelete;
-
-	ascent(i in 0..65){
-		ObjRender_SetAlpha(back,i*4);
-		ObjRender_SetAlpha(wave,i);
-		yield;
-	}
-
-	task MoveWave{
-		let vertical = 0;
-		while(!Obj_IsDeleted(wave)){
-			ascent(i in 0..149){
-				vertical += 0.5;
-				ObjRender_SetY(wave,224+sin(vertical)*20);
-				ObjRender_SetX(wave,192-i);
-				yield;
-			}
-		}
-	}
-
-	task CheckDelete{
-		while(!Obj_GetValue(back,"End")){yield;}
-		descent(i in 0..33){
-			ObjRender_SetAlpha(back,i*8);
-			ObjRender_SetAlpha(wave,i*2);
-			yield;
-		}
-		Obj_Delete(wave);
-		Obj_Delete(back);
-	}
 }
 
 task CallStage{ //Work on this to change stages depending on phase!
@@ -149,7 +88,6 @@ task SetCamera1{
 	task start{
 		let scroll = 0;
 		let begin = 0;
-		SetCommonData("Switch to Phase 2?",false);
 		while(scroll < 1024){
 			SetCameraFocusZ(-1024+512+scroll);
 
@@ -197,7 +135,7 @@ task Phases{
 		SetFogParam(GetCommonData("Distance",NULL)[0],GetCommonData("Distance",NULL)[1],200-32-i/4.5,200-32-i/10,255-64-i/7.5);
 		yield;
 	}
-	while(GetCommonData("Switch to Phase 2?",true) != true){
+	while(!phase2now){
 		yield;
 	}
 	let k = 0;
@@ -238,7 +176,7 @@ task SetFog1(R,G,B){
 	}
 	SetFogParam(512,1600,R,G,B);
 	SetCommonData("Distance",[512,1600]);
-	while(GetCommonData("Switch to Phase 2?",true) != true){
+	while(!phase2now){
 		yield;
 	}
 	ascent(i in 0..280){
@@ -331,152 +269,56 @@ task MakeRain{
 	}
 }
 
-// --------------------------------------------------------------------
 
-task SpellBackground{
-	if(GetCommonData("Boss Type",NULL) == "KOGASA"){
-		let down = 0;
-		let path1 = CSD ~ "./../Img/BG/KogasaA.png";
-		let path2 = CSD ~ "./../Img/BG/KogasaB.png";
-		
-		let spellObj = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj,path1);
-		ObjSprite2D_SetSourceRect(spellObj,0,0,384,512);
-		ObjSprite2D_SetDestCenter(spellObj);
-		ObjRender_SetBlendType(spellObj,BLEND_ALPHA);
-		ObjRender_SetAlpha(spellObj,0);
-		ObjRender_SetScaleXYZ(spellObj,1,1,0);
-		Obj_SetRenderPriorityI(spellObj,20);
-		ObjRender_SetPosition(spellObj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		let spellObj1 = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj1,path2);
-		ObjSprite2D_SetSourceRect(spellObj1,0,0,256,256);
-		ObjSprite2D_SetDestCenter(spellObj1);
-		ObjRender_SetBlendType(spellObj1,BLEND_ADD_ARGB);
-		ObjRender_SetAlpha(spellObj1,0);
-		ObjRender_SetScaleXYZ(spellObj1,2.2,2.2,0);
-		Obj_SetRenderPriorityI(spellObj1,21);
-		ObjRender_SetPosition(spellObj1,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		let spellObj2 = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj2,path2);
-		ObjSprite2D_SetSourceRect(spellObj2,0,0,256,256);
-		ObjSprite2D_SetDestCenter(spellObj2);
-		ObjRender_SetBlendType(spellObj2,BLEND_SUBTRACT);
-		ObjRender_SetAlpha(spellObj2,0);
-		ObjRender_SetScaleXYZ(spellObj2,2.2,2.2,0);
-		Obj_SetRenderPriorityI(spellObj2,22);
-		ObjRender_SetPosition(spellObj2,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		alp;
-			task alp{
-			loop(128){
-				ObjRender_SetAlpha(spellObj,down);
-				ObjRender_SetAlpha(spellObj1,down);
-				ObjRender_SetAlpha(spellObj2,down);
-				down+=2;
+
+// --------------------------------------------------------------------
+task SpellBG{
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,"script/main/img/stage/1/spell1.png");
+	ObjSprite2D_SetSourceRect(back,0,0,1276,1296);
+	ObjSprite2D_SetDestCenter(back);
+	ObjRender_SetPosition(back,192,224,0);
+	ObjRender_SetScaleXYZ(back,0.5,0.5,0.5);
+	Obj_SetRenderPriority(back,0.25);
+	spellBG = back;
+
+	let wave = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(wave,"script/main/img/stage/1/spell2.png");
+	ObjSprite2D_SetSourceRect(wave,0,0,720,720);
+	ObjSprite2D_SetDestCenter(wave);
+	ObjRender_SetPosition(wave,192,224,0);
+	ObjRender_SetColor(wave,128,128,256);
+	Obj_SetRenderPriority(wave,0.26);
+	MoveWave;
+	CheckDelete;
+
+	ascent(i in 0..65){
+		ObjRender_SetAlpha(back,i*4);
+		ObjRender_SetAlpha(wave,i);
+		yield;
+	}
+
+	task MoveWave{
+		let vertical = 0;
+		while(!Obj_IsDeleted(wave)){
+			ascent(i in 0..149){
+				vertical += 0.5;
+				ObjRender_SetY(wave,224+sin(vertical)*20);
+				ObjRender_SetX(wave,192-i);
 				yield;
 			}
-			down = 0;
-		}
-		
-		let slide = 0;
-		loop{
-			if(GetCommonData("Is Spell?",false) == false){dissolve;}
-			ObjRender_SetAngleZ(spellObj1,ObjRender_GetAngleZ(spellObj1)+0.3);
-			ObjRender_SetAngleZ(spellObj2,ObjRender_GetAngleZ(spellObj2)-0.3);
-			ObjSprite2D_SetSourceRect(spellObj,0,0+slide,384,512+slide);
-			slide+=0.4;
-			yield;
-		}
-		task dissolve{
-			loop(255){
-				ObjRender_SetAlpha(spellObj,255-down);
-				ObjRender_SetAlpha(spellObj1,255-down);
-				ObjRender_SetAlpha(spellObj2,255-down);
-				down+=1;
-				yield;
-			}
-			down = 0;
-			Obj_Delete(spellObj);
-			Obj_Delete(spellObj1);
-			Obj_Delete(spellObj2);
 		}
 	}
-	
-	if(GetCommonData("Boss Type",NULL) == "LETTY"){
-		let down = 0;
-		let path1 = CSD ~ "./../Img/BG/Snowflake.png";
-		let path2 = CSD ~ "./../Img/BG/LettyBG.png";
-		
-		let spellObj = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj,path1);
-		ObjSprite2D_SetSourceRect(spellObj,0,0,512,512);
-		ObjSprite2D_SetDestCenter(spellObj);
-		ObjRender_SetBlendType(spellObj,BLEND_SUBTRACT);
-		ObjRender_SetAlpha(spellObj,0);
-		ObjRender_SetScaleXYZ(spellObj,1,1,0);
-		Obj_SetRenderPriorityI(spellObj,22);
-		ObjRender_SetPosition(spellObj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		let spellObj0 = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj0,path1);
-		ObjSprite2D_SetSourceRect(spellObj0,0,0,512,512);
-		ObjSprite2D_SetDestCenter(spellObj0);
-		ObjRender_SetBlendType(spellObj0,BLEND_ALPHA);
-		ObjRender_SetAlpha(spellObj0,0);
-		ObjRender_SetScaleXYZ(spellObj0,1.2,1.2,0);
-		Obj_SetRenderPriorityI(spellObj0,21);
-		ObjRender_SetColor(spellObj0,172,172,172);
-		ObjRender_SetPosition(spellObj0,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		let spellObj1 = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(spellObj1,path2);
-		ObjSprite2D_SetSourceRect(spellObj1,0,0,512,512);
-		ObjSprite2D_SetDestCenter(spellObj1);
-		ObjRender_SetBlendType(spellObj1,BLEND_ALPHA);
-		ObjRender_SetAlpha(spellObj1,0);
-		ObjRender_SetScaleXYZ(spellObj1,1,1,0);
-		Obj_SetRenderPriorityI(spellObj1,20);
-		ObjRender_SetColor(spellObj1,72,72,72);
-		ObjRender_SetPosition(spellObj1,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
-		
-		
-		alp;
-			task alp{
-			loop(128){
-				ObjRender_SetAlpha(spellObj,down/4);
-				ObjRender_SetAlpha(spellObj0,down/4);
-				ObjRender_SetAlpha(spellObj1,down);
-				down+=2;
-				yield;
-			}
-			down = 0;
-		}
-		
-		let slide = 0;
-		loop{
-			if(GetCommonData("Is Spell?",false) == false){dissolve;}
-			ObjRender_SetAngleZ(spellObj,ObjRender_GetAngleZ(spellObj)+0.2);
-			ObjRender_SetAngleZ(spellObj0,ObjRender_GetAngleZ(spellObj0)-0.2);
-			ObjSprite2D_SetSourceRect(spellObj1,0,0+slide,GetStgFrameWidth+2,GetStgFrameHeight+slide);
-			slide+=0.4;
+
+	task CheckDelete{
+		while(!Obj_GetValue(back,"End")){yield;}
+		descent(i in 0..33){
+			ObjRender_SetAlpha(back,i*8);
+			ObjRender_SetAlpha(wave,i*2);
 			yield;
 		}
-		task dissolve{
-			loop(255){
-				ObjRender_SetAlpha(spellObj,(255/8)-down);
-				ObjRender_SetAlpha(spellObj0,(255/8)-down);
-				ObjRender_SetAlpha(spellObj1,255-down);
-				down+=1;
-				yield;
-			}
-			down = 0;
-			Obj_Delete(spellObj);
-			Obj_Delete(spellObj0);
-			Obj_Delete(spellObj1);
-		}
+		Obj_Delete(wave);
+		Obj_Delete(back);
 	}
 }
 

@@ -265,14 +265,14 @@ task Hitbox_Render() {
 			alpha = 0;
 			scale = 2.75;
 		}
-		if (grazeTime > 0) {
+		/*if (grazeTime > 0) {
 			Render2();
 			scale2 = 2.75;
 			alpha2 = min(alpha2 + 255 / 100, (grazeTime / grazeDelay) * 80);
 			grazeTime --;
 		} else {
 			grazeTime = 0;
-		}
+		}*/
 		angle += 3;
 		angle2 -= 1.1;
 		yield;

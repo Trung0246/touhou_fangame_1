@@ -1,0 +1,60 @@
+task BossAura_Sakkagumi(boss){
+	let back = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back,"script/main/img/enemy/boss/2/sakkagumiaura.png");
+	ObjSprite2D_SetSourceRect(back,0,0,160,152);
+	ObjSprite2D_SetDestCenter(back);
+	ObjRender_SetBlendType(back,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(back,192,120,0);
+	Obj_SetRenderPriority(back,0.3);
+	ObjRender_SetAlpha(back,192);
+	RotateCircle(back,1);
+	
+	let back2 = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(back2,"script/main/img/enemy/boss/2/sakkagumiaura.png");
+	ObjSprite2D_SetSourceRect(back2,0,0,160,152);
+	ObjSprite2D_SetDestCenter(back2);
+	ObjRender_SetBlendType(back2,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(back2,192,120,0);
+	Obj_SetRenderPriority(back2,0.3);
+	ObjRender_SetAlpha(back2,192);
+	RotateCircle(back2,-1);
+
+	let circle = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(circle,"script/main/img/enemy/boss/2/sakkagumiaura.png");
+	ObjSprite2D_SetSourceRect(circle,320,0,480,152);
+	ObjSprite2D_SetDestCenter(circle);
+	ObjRender_SetBlendType(circle,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(circle,192,120,0);
+	Obj_SetRenderPriority(circle,0.31);
+	StickToBoss(circle);
+
+	let cloud;
+	cloud = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(cloud,"script/main/img/enemy/boss/2/sakkagumiaura.png");
+	ObjSprite2D_SetSourceRect(cloud,160,0,320,152);
+	ObjSprite2D_SetDestCenter(cloud);
+	ObjRender_SetBlendType(cloud,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(cloud,ObjMove_GetX(boss),ObjMove_GetY(boss),0);
+	Obj_SetRenderPriority(cloud,0.31);
+	ObjRender_SetAlpha(cloud,192);
+	StickToBoss(cloud);
+
+	task RotateCircle(obj,dir){
+		let angle = 0;
+		while(!Obj_IsDeleted(objBoss)){
+			angle += 0.5*dir;
+			ObjRender_SetAngleZ(obj,angle);
+			ObjRender_SetPosition(obj,ObjMove_GetX(boss),ObjMove_GetY(boss),0);
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+
+	task StickToBoss(obj){
+		while(!Obj_IsDeleted(objBoss)){
+			ObjRender_SetPosition(obj,ObjMove_GetX(boss),ObjMove_GetY(boss),0);
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+}
