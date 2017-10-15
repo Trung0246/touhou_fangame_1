@@ -11,6 +11,7 @@
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/img/bullet/shotData_Const.dnh"
 #include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/2/boss/BossCommon.txt"
 #include "script/main/script/stage/1/boss/Anim.txt"
 
 let objBoss;
@@ -74,7 +75,7 @@ task TWork
 		ObjShot_SetIntersectionEnable(obj,false);
 		ObjRender_SetAlpha(obj,0);
 		while(!Obj_IsDeleted(obj)){
-			FunCloud(ObjMove_GetX(obj),ObjMove_GetY(obj));
+			SakkaCloud(ObjMove_GetX(obj),ObjMove_GetY(obj),70);
 			wait(4);
 		}
 
@@ -84,67 +85,17 @@ task TWork
 			while(!Obj_IsDeleted(obj)){
 				wave += 38;
 				speed = sin(wave)/4;
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)+60,BALL_MAGENTA,30,132,0.2,diff_curvetime);
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)-60,BALL_MAGENTA,30,132,-0.2,diff_curvetime);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)+60,BALL_MAGENTA,30,102,0.2,diff_curvetime);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)-60,BALL_MAGENTA,30,102,-0.2,diff_curvetime);
 				wait(diff_pinkspawn);
 			}
 		}
 
 		task PlusSomeSpam{
 			while(!Obj_IsDeleted(obj)){
-				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,rand(0,360),RBALL_RED,30,132,0,0);
-				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),3,ObjMove_GetAngle(obj),DOT_MAGENTA,30,132,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,rand(0,360),RBALL_RED,30,102,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),3,ObjMove_GetAngle(obj),DOT_MAGENTA,30,102,0,0);
 				wait(diff_redspawn);
-			}
-		}
-		
-		task UltraDelayBullet(x,y,speed,angle,graphic,delay,delay2,angular,curvetime){
-			let obj;
-			wait(delay2);
-			if(!Obj_IsDeleted(objBoss)){
-				obj = SPShotA1(x,y,speed,angle,graphic,delay);
-				ObjMove_SetAngularVelocity(obj,angular);
-				wait(curvetime);
-				ObjMove_SetAngularVelocity(obj,0);
-			}
-		}
-
-	}
-
-	task FunCloud(x,y){
-		let type = floor(rand(2,4));
-		let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
-		ObjSprite2D_SetSourceRect(cloud,0,0,200,200);
-		ObjSprite2D_SetDestCenter(cloud);
-		ObjRender_SetColor(cloud,256,156,218);
-		Obj_SetRenderPriority(cloud,0.6);
-		ObjRender_SetPosition(cloud,x,y,0);
-
-		MoveCloud;
-		ascent(i in 0..32){
-			if(Obj_IsDeleted(objBoss)){break;}
-			ObjRender_SetAlpha(cloud,i*8);
-			yield;
-		}
-		
-		loop(100){
-			if(Obj_IsDeleted(objBoss)){break;}
-			yield;
-		}
-
-		descent(i in 0..16){
-			ObjRender_SetAlpha(cloud,i*16);
-			yield;
-		}
-		Obj_Delete(cloud);
-
-		task MoveCloud{
-			let angle = rand(0,360);
-			let move = [cos(angle)/10,sin(angle)/10];
-			while(!Obj_IsDeleted(cloud)){
-				ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
-				yield;
 			}
 		}
 	}

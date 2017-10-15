@@ -59,8 +59,11 @@ task Stage_Main() {
 	StartScript(background);
 
 	//Init boss scripts
-	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");
-	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");*/
+	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");*/
+	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");
+
+	StartScript(boss);
+	wait(90000);
 
 	SetCommonData("StageWaitTime",0);
 	//Stage content

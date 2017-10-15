@@ -24,6 +24,7 @@ task Plural_Main() {
 	SetAreaCommonData("GameState","CurrentBoss",2);
 	let obj = ObjEnemyBossScene_Create();
 	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "BossNon2.txt");
+	ObjEnemyBossScene_Add(obj, 2, GetCurrentScriptDirectory() ~ "BossNon3.txt");
 	ObjEnemyBossScene_LoadInThread(obj);
 	ObjEnemyBossScene_Regist(obj);
 

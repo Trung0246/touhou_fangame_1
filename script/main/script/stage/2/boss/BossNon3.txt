@@ -1,0 +1,130 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss nonspell #3"]
+#Text["Flavor: Cotton Candy Ice"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/2/boss/BossCommon.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,180);
+	Animation_Azure(objBoss);
+	BossAura_Sakkagumi(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1450);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(40);
+	}
+}
+
+task TWork
+{
+	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	let objPlayer = GetPlayerObjectID();
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_icedelay = [5,3,2,2][diff];
+	let diff_maindelay = [6,4,3,2][diff];
+	let diff_wavedelay = [240,200,200,180][diff];
+	wait(120);
+	let angle;
+	let shot;
+	while(!Obj_IsDeleted(objBoss)){
+		angle = GetAngleToPlayer(objBoss);
+		shot = SPShotA2(ObjMove_GetX(objPlayer),0,0,90,0.1,6,RBALL_MAGENTA,0);
+		CloudBullet(shot);
+		CloudDanmakuType1(shot);
+		wait(diff_wavedelay);
+		ObjMove_SetDestAtWeight(objBoss,192+rand(-80,80),140,0.1,1);
+		if(Obj_IsDeleted(objBoss)){break;}
+		ascent(i in 0..2){
+			shot = SPShotA1(ObjMove_GetX(objBoss),0,3,i*180,RBALL_MAGENTA,0);
+			CloudTumble(shot);
+			CloudBullet(shot);
+		}
+		wait(diff_wavedelay);
+	}
+
+	task CloudTumble(obj){
+		while(ObjMove_GetX(obj) > 30 && ObjMove_GetX(obj) < 354 && !Obj_IsDeleted(obj)){
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-20,20),ObjMove_GetY(obj)+rand(-20,20),rand(0.5,2),90,ICE_MAGENTA,1,72,0,0);
+			wait(diff_icedelay);
+		}
+		ObjMove_AddPatternB2(obj,0,0,NO_CHANGE,0,0.1,0,6);
+		while(!Obj_IsDeleted(obj)){
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(1,2),270+rand(-10,10),DOT_RED,10,72,0,0);
+			yield;
+		}
+	}
+
+	task CloudBullet(obj){
+		ObjShot_SetSpellResist(obj,true);
+		yield;
+		ObjShot_SetIntersectionEnable(obj,false);
+		ObjRender_SetAlpha(obj,0);
+		while(!Obj_IsDeleted(obj)){
+			SakkaCloud(ObjMove_GetX(obj),ObjMove_GetY(obj),40);
+			wait(4);
+		}
+	}
+
+	task CloudDanmakuType1(obj){
+		let wave = rand(0,360);
+		let speed;
+		while(!Obj_IsDeleted(obj)){
+			wave += 28;
+			ascent(i in 0..2){
+				speed = sin(wave+i*180)/4;
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)+60,BALL_MAGENTA+i*8,30,72,0.2,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)-60,BALL_MAGENTA+i*8,30,72,-0.2,0);
+			}
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-10,10),DOT_MAGENTA,10,72,0,0);
+			wait(diff_maindelay);
+		}
+	}
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}

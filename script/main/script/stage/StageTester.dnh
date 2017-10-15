@@ -13,21 +13,32 @@
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/script/system/Loading.dnh"
 
+
+
 @Initialize {
+//Stage to test
+let testStage = 2;
+
+//Difficulty (0 to 3)
+let testDifficulty = 1;
+
+//Power to start at
+let testPower = 3.00;
+
 	LoadSounds;
 	InitBGM;
 	Base_Init;
 	Maingame_Init;
 	
 	CreateCommonDataArea("GameState");
-	SetAreaCommonData("GameState","Difficulty",1);
+	SetAreaCommonData("GameState","Difficulty",testDifficulty);
 	SetAreaCommonData("GameState","Player",4); //Nonexistent player that basically means "done in stagetester"
 	CreateCommonDataArea("SpellHistory");
 	LoadCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 
-	SetCommonData("player_power", 1.00);
+	SetCommonData("player_power", testPower);
 	
-	let stage = LoadScript("script/main/script/stage/2/Stage.dnh");
+	let stage = LoadScript("script/main/script/stage/" ~ itoa(testStage) ~ "/Stage.dnh");
 	StartScript(stage);
 
 	//Normalize player power
