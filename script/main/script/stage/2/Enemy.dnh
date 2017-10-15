@@ -1,0 +1,131 @@
+let FAIRY_START = 1;
+task StageEnemy(x,y,type,shotHitbox,playerHitbox,health,extra){
+    if(bossActive){return;}
+    let enemy = ObjEnemy_Create(OBJ_ENEMY);
+    ObjEnemy_Regist(enemy);
+    ObjMove_SetPosition(enemy,x,y);
+    StageEnemyHitbox(enemy,shotHitbox,playerHitbox,health,type);
+    alternative(type)
+        case(FAIRY_START){StartFairyBehavior(enemy,extra);} //[xdest,ydest,colour,direction]
+
+}
+
+//It's not really a fairy anymore, but, you see,
+task StartFairyBehavior(enemy,extra){
+    EnemyCloud(extra[0]+extra[3]*30,extra[1],90+extra[3]*90);
+    ObjMove_SetDestAtWeight(enemy,extra[0],extra[1],10,4);
+    wait(30);
+    AnimateYinYang(enemy,extra[2]);
+    wait(90);
+ 
+    let diff = GetAreaCommonData("GameState","Difficulty",1);
+    let diff_count = [4,5,5,5][diff];
+    let diff_number = [14,14,17,20][diff];
+    let diff_wait = [13,10,9,7][diff];
+    let diff_spin = [2,2.5,2,2][diff];
+    PlaySFX(SFX_SHOT1);
+    let dir = 90;
+    let spin = 0;
+    loop(diff_number){
+    if(Obj_IsDeleted(enemy)){break;}
+        ascent(j in 0..diff_count){
+            let shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy), 3.5, dir + spin, BALL_MAGENTA, 20);
+            let shot1 = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy), 3.5, dir + spin, BALL_GREY, 5);
+            let shot2 = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy), 3.5, dir + spin, BALL_GREY, 5);
+            twist(shot, shot1, shot2);
+                if(extra[3] == 1){ //0 = Left, 1 = Right
+                spin += diff_spin;
+                dir-=360/diff_count;
+            } else{
+                spin -= diff_spin;
+                dir+=360/diff_count;
+            }
+        }
+        wait(diff_wait);
+    }
+    wait(120);
+    if(ObjMove_GetX(enemy) < 192){
+        ObjMove_SetAngle(enemy,290);
+    }
+    else{
+        ObjMove_SetAngle(enemy,-110);
+    }
+    ObjMove_SetAcceleration(enemy,0.05);
+    ObjMove_SetMaxSpeed(enemy,3);
+    wait(120);
+    Obj_Delete(enemy);
+ 
+    task twist(s, s1, s2){
+        ObjMove_SetAcceleration(s, -0.05);
+        ObjMove_SetAcceleration(s1, -0.05);
+        ObjMove_SetAcceleration(s2, -0.05);
+        ObjMove_SetMaxSpeed(s, 0.2);
+        ObjMove_SetMaxSpeed(s1, 0.2);
+        ObjMove_SetMaxSpeed(s2, 0.2);
+        wait(60);
+        ObjMove_SetAngularVelocity(s1, -3);
+        ObjMove_SetAngularVelocity(s2, 3);
+        wait(60);
+        ObjMove_SetAngularVelocity(s1, 0);
+        ObjMove_SetAngularVelocity(s2, 0);
+ 
+        ObjMove_SetAcceleration(s, 0.05);
+        ObjMove_SetAcceleration(s1, 0.05);
+        ObjMove_SetAcceleration(s2, 0.05);
+        ObjMove_SetMaxSpeed(s, diff_number/4);
+        ObjMove_SetMaxSpeed(s1, diff_number/4);
+        ObjMove_SetMaxSpeed(s2, diff_number/4);
+    }
+}
+
+task EnemyCloud(x,y,angle){
+	let type = floor(rand(2,4));
+	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
+	ObjSprite2D_SetSourceRect(cloud,0,0,200,200);
+	ObjSprite2D_SetDestCenter(cloud);
+	ObjRender_SetScaleXYZ(cloud,1.2,1.2,1);
+	Obj_SetRenderPriority(cloud,0.6);
+	ObjRender_SetPosition(cloud,x,y,0);
+	MoveCloud;
+	ascent(i in 0..33){
+		ObjRender_SetAlpha(cloud,i*8);
+		yield;
+	}
+	wait(60);
+	let mini;
+	ascent(i in 0..8){
+		let mini = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(mini,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
+		ObjSprite2D_SetSourceRect(mini,0,0,200,200);
+		ObjSprite2D_SetDestCenter(mini);
+		Obj_SetRenderPriority(mini,0.59);
+		ObjRender_SetScaleXYZ(mini,0.6,0.6,1);
+		ObjRender_SetPosition(mini,ObjRender_GetX(cloud),ObjRender_GetY(cloud),0);
+		MoveMiniCloud(mini,i*45+rand(-20,20));
+	}
+	descent(i in 0..16){
+		ObjRender_SetAlpha(cloud,i*16);
+		yield;
+	}
+	Obj_Delete(cloud);
+
+	task MoveCloud{
+		let move = [cos(angle)/3,sin(angle)/3];
+		while(!Obj_IsDeleted(cloud)){
+			ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
+			yield;
+		}
+	}
+
+	task MoveMiniCloud(obj,a){
+		let n = rand(2,3);
+		let move = [cos(a)*n,sin(a)*n];
+		descent(i in 0..32){
+			ObjRender_SetPosition(obj,ObjRender_GetX(obj)+move[0],ObjRender_GetY(obj)+move[1],0);
+			ObjRender_SetAlpha(obj,i*4);
+			yield;
+		}
+		Obj_Delete(obj);
+	}
+}

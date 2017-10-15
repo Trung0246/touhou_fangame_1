@@ -15,6 +15,42 @@ task StageEnemyHitbox(enemy,shotsize,playersize,health,type){
 	}
 }
 
+task AnimateYinYang(obj,color){
+	let outer = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(outer,"script/main/img/enemy/stage/yinyang.png");
+	ObjSprite2D_SetSourceRect(outer,color*32-1,31,(color+1)*32,64);
+	ObjSprite2D_SetDestRect(outer,-16,-16,16,16);
+	Obj_SetRenderPriority(outer,0.3);
+	ObjRender_SetScaleXYZ(outer,1.5,1.5,1);
+	ObjRender_SetBlendType(outer,BLEND_ADD_ARGB);
+	let inner = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(inner,"script/main/img/enemy/stage/yinyang.png");
+	ObjSprite2D_SetSourceRect(inner,color*32-1,31,(color+1)*32,64);
+	ObjSprite2D_SetDestRect(inner,-16,-16,16,16);
+	Obj_SetRenderPriority(inner,0.3);
+	let orb = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(orb,"script/main/img/enemy/stage/yinyang.png");
+	ObjSprite2D_SetSourceRect(orb,color*32,0,(color+1)*32,32);
+	ObjSprite2D_SetDestRect(orb,-16,-16,16,16);
+	Obj_SetRenderPriority(orb,0.3);
+
+	let inangle = 0;
+	let outangle = 0;
+	while(!Obj_IsDeleted(obj)){
+		inangle += 6;
+		outangle -= 6;
+		ObjRender_SetPosition(orb,ObjMove_GetX(obj),ObjMove_GetY(obj),0);
+		ObjRender_SetPosition(inner,ObjMove_GetX(obj),ObjMove_GetY(obj),0);
+		ObjRender_SetPosition(outer,ObjMove_GetX(obj),ObjMove_GetY(obj),0);
+		ObjRender_SetAngleZ(inner,inangle);
+		ObjRender_SetAngleZ(outer,outangle);
+		yield;
+	}
+	Obj_Delete(orb);
+	Obj_Delete(inner);
+	Obj_Delete(outer);
+}
+
 task AnimateSmallFairy(obj,color) {
 	Obj_SetValue(obj,"Anim",0);
 	ObjPrim_SetTexture(obj,"script/main/img/enemy/stage/SmallFairy.png");

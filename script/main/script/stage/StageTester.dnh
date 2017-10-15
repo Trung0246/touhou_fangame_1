@@ -27,7 +27,7 @@
 
 	SetCommonData("player_power", 1.00);
 	
-	let stage = LoadScript("script/main/script/stage/1/Stage.dnh");
+	let stage = LoadScript("script/main/script/stage/2/Stage.dnh");
 	StartScript(stage);
 
 	//Normalize player power

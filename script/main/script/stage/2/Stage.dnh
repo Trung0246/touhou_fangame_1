@@ -1,0 +1,77 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage test"]
+#Text["Stage text"]
+#System["script/main/script/system/Gui.dnh"]
+#Player["script/main/script/player/reimu/Reimu.dnh"]
+//#Background["script/main/script/stage/1/background/Background.dnh"]
+
+//#include "script/main/script/system/Init.dnh"
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Stage.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/script/lib/Raindrop.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/stage/2/Enemy.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+
+@Initialize {
+	Stage_Init;
+	Stage_Main();
+}
+
+@MainLoop {
+	yield;
+}
+ 
+@Finalize {
+	
+}
+
+@Event{
+	alternative(GetEventType())
+	case(EV_ENEMY_SHOOTDOWN){ //Argument: [enemy type, x, y, enemy object id]
+		let arg = GetEventArgument(0);
+		let obj;
+		alternative(arg[0])
+		case(FAIRY_START){
+			loop(4){
+				obj = CreateItemU1(7,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+				obj = CreateItemU1(9,arg[1]+rand(-20,20),arg[2]+rand(-20,20),0);
+				ObjItem_SetRenderScoreEnable(obj, false);
+			}
+			let dir = (floor(arg[1]/192)%2)*2-1;
+			ascent(i in -1..2){
+				CreateShotRaindrop(arg[1],arg[2],(-3-i/2)*dir,-2-i,0.05*dir,0.05,0,2,RAINDROP_RED+1-i,0);
+			}
+		}
+
+	}
+}
+
+task Stage_Main() {
+/*
+	//Here have a background
+	let background = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./background/Background.dnh");
+	StartScript(background);
+
+	//Init boss scripts
+	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");
+	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");*/
+
+	SetCommonData("StageWaitTime",0);
+	//Stage content
+	wait(90);
+	//NotifyEventAll(EV_BGM_PLAY,2);
+	//Opening wave
+	ascent(i in 0..2){
+		StageEnemy(64+i*256,64,FAIRY_START,16,12,200,[64+i*256,64,0,i*2-1]);
+	}
+	stageWait(420);
+	StageTitle(2);
+	stageWait(300);
+
+}
