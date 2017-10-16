@@ -396,6 +396,73 @@ task Obj_SpinXYZ(obj, xspin, yspin, zspin, i) {
 	}
 }
 
+//Bitwise operators (for future use, believe me, don't remove this ;) )
+//Work with interger only
+
+//These two bits shift may sometimes do weird shit, will replace this later...
+function Bitwise_LeftShift(a, b) { //<<
+	return floor(a * pow(2, b));
+}
+
+function Bitwise_RightShift(a, b) { //>>
+	return floor(a / pow(2, b));
+}
+
+function BitWise_Not(a) { //~
+	return -1 - a;
+}
+
+//Another implementation, but this one act differently...
+function BitWise_Not2(a) {
+	let byteVal = 1;
+	while (byteVal < a) {
+		byteVal *= 2;
+	}
+	return (byteVal - a);
+}
+
+function BitWise_And(a, b) { //&
+	let byteVal = 1;
+	let result = 0;
+	while (a > 0 || b > 0) {
+		if (a % 2 == 1 && b % 2 == 1) {
+			result += byteVal;
+		}
+		a = floor(a / 2);
+		b = floor(b / 2);
+		byteVal *= 2;
+	}
+	return result;
+}
+
+function BitWise_Or(a, b) { //|
+	let byteVal = 1;
+	let result = 0;
+	while (a > 0 || b > 0) {
+		if (a % 2 == 1 || b % 2 == 1) {
+			result += byteVal;
+		}
+		a = floor(a / 2);
+		b = floor(b / 2);
+		byteVal *= 2;
+	}
+	return result;
+}
+
+function BitWise_Xor(a, b) { //^
+	let byteVal = 1;
+	let result = 0;
+	while (a > 0 || b > 0) {
+		if (a % 2 != b % 2) {
+			result += byteVal;
+		}
+		a = floor(a / 2);
+		b = floor(b / 2);
+		byteVal *= 2;
+	}
+	return result;
+}
+
 //Undefined function, do not touch
 
 /*
