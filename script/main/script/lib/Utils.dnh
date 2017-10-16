@@ -397,7 +397,7 @@ task Obj_SpinXYZ(obj, xspin, yspin, zspin, i) {
 }
 
 //Bitwise operators (for future use, believe me, don't remove this ;) )
-//Workk with interger only
+//Work with interger only
 
 //These two bits shift may sometimes do weird shit, will replace this later...
 function Bitwise_LeftShift(a, b) { //<<
