@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Boss nonspell #2"]
-#Text["clouB"]
+#Title["Boss nonspell #1"]
+#Text["That's a pretty good intimidation roll"]
 #System["script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/Utils.dnh"
@@ -39,7 +39,7 @@ let objBoss;
 	alternative(GetEventType())
 	case(EV_REQUEST_LIFE)
 	{
-		SetScriptResult(1750);
+		SetScriptResult(1850);
 	}
 	case(EV_REQUEST_TIMER)
 	{
@@ -49,22 +49,25 @@ let objBoss;
 
 task TWork
 {
-	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
+	ObjMove_SetDestAtWeight(objBoss,192,160,8,5);
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	let diff_pinkspawn = [5,4,3,3][diff];
-	let diff_redspawn = [6,5,4,3][diff];
-	let diff_redspeed = [1,1.5,1.5,2][diff];
-	let diff_curvetime = [250,450,600,900][diff];
+	let diff_mainspawn = [5,3,3,2][diff];
+	let diff_spamspawn = [6,4,3,3][diff];
+	let diff_curvetime = [70,90,110,150][diff];
 	wait(120);
+	let dir = rand_sign();
 	let angle;
 	let shot;
 	while(!Obj_IsDeleted(objBoss)){
-		angle = GetAngleToPlayer(objBoss);
+		angle = GetAngleToPlayer(objBoss)+45;
 		ascent(i in 0..4){
 			shot = SPShotA2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),0,angle+i*90,0.1,6,RBALL_MAGENTA,0);
+			ObjMove_SetAngularVelocity(shot,1.5*dir);
+			ObjMove_AddPatternA2(shot,diff_curvetime,NO_CHANGE,NO_CHANGE,0,0,0);
 			CloudBullet(shot);
 		}
-		wait(420);
+		dir = -dir;
+		wait(360);
 	}
 
 	task CloudBullet(obj){
@@ -85,17 +88,20 @@ task TWork
 			while(!Obj_IsDeleted(obj)){
 				wave += 38;
 				speed = sin(wave)/4;
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)+60,BALL_MAGENTA,30,102,0.2,diff_curvetime);
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),0.8+speed,ObjMove_GetAngle(obj)-60,BALL_MAGENTA,30,102,-0.2,diff_curvetime);
-				wait(diff_pinkspawn);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)+50,RBALL_MAGENTA,30,102,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)-50,RBALL_MAGENTA,30,102,0,0);
+				wait(diff_mainspawn);
 			}
 		}
 
 		task PlusSomeSpam{
+			let a;
 			while(!Obj_IsDeleted(obj)){
-				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,rand(0,360),RBALL_RED,30,102,0,0);
-				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),3,ObjMove_GetAngle(obj),DOT_MAGENTA,30,102,0,0);
-				wait(diff_redspawn);
+				a = GetPointAngle(ObjMove_GetX(obj),ObjMove_GetY(obj),ObjMove_GetX(objBoss),ObjMove_GetY(objBoss));
+				ascent(i in 0..2){
+					UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),1.2,a+i*180,BALL_MAGENTA,30,102,0,0);
+				}
+				wait(diff_spamspawn);
 			}
 		}
 	}

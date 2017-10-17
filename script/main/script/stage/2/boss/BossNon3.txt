@@ -60,7 +60,7 @@ task TWork
 	let shot;
 	while(!Obj_IsDeleted(objBoss)){
 		angle = GetAngleToPlayer(objBoss);
-		shot = SPShotA2(ObjMove_GetX(objPlayer),0,0,90,0.1,6,RBALL_MAGENTA,0);
+		shot = SPShotA2(ObjMove_GetX(objPlayer),0,0,90,0.1,6.2,RBALL_MAGENTA,0);
 		CloudBullet(shot);
 		CloudDanmakuType1(shot);
 		wait(diff_wavedelay);
