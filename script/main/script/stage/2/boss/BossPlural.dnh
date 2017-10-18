@@ -33,5 +33,7 @@ task Plural_Main() {
 		yield;
 	}
 
+	SetAreaCommonData("GameState","CurrentBoss",-1);
+
 	CloseScript(GetOwnScriptID());
 }

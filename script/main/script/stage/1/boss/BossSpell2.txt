@@ -11,7 +11,7 @@
 #include "script/main/script/lib/Event_Const.dnh"
 #include "script/main/img/bullet/shotData_Const.dnh"
 #include "script/main/script/stage/1/boss/Anim.txt"
-#include "script/main/script/stage/1/boss/SpellLib.txt"
+#include "script/main/script/lib/Spellcard.dnh"
 
 let objBoss;
 @Initialize

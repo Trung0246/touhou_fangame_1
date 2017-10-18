@@ -168,8 +168,14 @@ task SpellCast(spellNum){
 
 	task PortraitTime{
 		let portrait = ObjPrim_Create(OBJ_SPRITE_2D);
-		ObjPrim_SetTexture(portrait,"script/main/img/portrait/Azure/portrait.png");
-		ObjSprite2D_SetSourceRect(portrait,0,0,300,476);
+		alternative(GetAreaCommonData("GameState","CurrentBoss",-1))
+			case(0){
+				ObjPrim_SetTexture(portrait,"script/main/img/portrait/Azure/portrait.png");
+				ObjSprite2D_SetSourceRect(portrait,0,0,300,476);
+			}
+			others{ //If for whatever reason there's no portrait, cancel all this
+				return;
+			}
 		ObjSprite2D_SetDestCenter(portrait);
 		Obj_SetRenderPriority(portrait,0.29);
 		ascent(i in -8..9){
