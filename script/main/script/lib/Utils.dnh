@@ -401,11 +401,11 @@ task Obj_SpinXYZ(obj, xspin, yspin, zspin, i) {
 
 //These two bits shift may sometimes do weird shit, will replace this later...
 function Bitwise_LeftShift(a, b) { //<<
-	return floor(a * pow(2, b));
+	return floor(a * power(2, b));
 }
 
 function Bitwise_RightShift(a, b) { //>>
-	return floor(a / pow(2, b));
+	return floor(a / power(2, b));
 }
 
 function BitWise_Not(a) { //~
