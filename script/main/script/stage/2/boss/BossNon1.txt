@@ -88,8 +88,8 @@ task TWork
 			while(!Obj_IsDeleted(obj)){
 				wave += 38;
 				speed = sin(wave)/4;
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)+50,RBALL_MAGENTA,30,102,0,0);
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)-50,RBALL_MAGENTA,30,102,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)+50,RBALL_MAGENTA,30,102,0,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.2+speed,ObjMove_GetAngle(obj)-50,RBALL_MAGENTA,30,102,0,0,0);
 				wait(diff_mainspawn);
 			}
 		}
@@ -99,7 +99,7 @@ task TWork
 			while(!Obj_IsDeleted(obj)){
 				a = GetPointAngle(ObjMove_GetX(obj),ObjMove_GetY(obj),ObjMove_GetX(objBoss),ObjMove_GetY(objBoss));
 				ascent(i in 0..2){
-					UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),1.2,a+i*180,BALL_MAGENTA,30,102,0,0);
+					UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),1.2,a+i*180,BALL_MAGENTA,30,102,0,0,0);
 				}
 				wait(diff_spamspawn);
 			}

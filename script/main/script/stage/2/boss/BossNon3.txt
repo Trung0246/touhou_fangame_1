@@ -52,9 +52,10 @@ task TWork
 	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
 	let objPlayer = GetPlayerObjectID();
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	let diff_icedelay = [5,3,2,2][diff];
+	let diff_icedelay = [5,4,3,3][diff];
 	let diff_maindelay = [6,4,3,2][diff];
-	let diff_wavedelay = [240,200,200,180][diff];
+	let diff_wavedelay = [240,220,200,180][diff];
+	let diff_wavy = [52,42,38,28][diff];
 	wait(120);
 	let angle;
 	let shot;
@@ -76,13 +77,19 @@ task TWork
 
 	task CloudTumble(obj){
 		while(ObjMove_GetX(obj) > 30 && ObjMove_GetX(obj) < 354 && !Obj_IsDeleted(obj)){
-			UltraDelayBullet(ObjMove_GetX(obj)+rand(-20,20),ObjMove_GetY(obj)+rand(-20,20),rand(0.5,2),90,ICE_MAGENTA,1,72,0,0);
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-20,20),ObjMove_GetY(obj)+rand(-20,20),rand(0.8,2),90,DROP_MAGENTA,1,72,0,0,0);
 			wait(diff_icedelay);
 		}
 		ObjMove_AddPatternB2(obj,0,0,NO_CHANGE,0,0.1,0,6);
+		let wave = rand(0,360);
+		let speed;
 		while(!Obj_IsDeleted(obj)){
-			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(1,2),270+rand(-10,10),DOT_RED,10,72,0,0);
-			yield;
+			wave += 52;
+			speed = sin(wave)/4;
+			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.5+speed,0,BALL_MAGENTA,30,72,0.2,0,100);
+			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.5+speed,180,BALL_MAGENTA,30,72,0.2,0,100);
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-5,5),DOT_MAGENTA,10,72,0,0,0);
+			wait(diff_maindelay*2);
 		}
 	}
 
@@ -101,13 +108,13 @@ task TWork
 		let wave = rand(0,360);
 		let speed;
 		while(!Obj_IsDeleted(obj)){
-			wave += 28;
+			wave += diff_wavy;
 			ascent(i in 0..2){
 				speed = sin(wave+i*180)/4;
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)+60,BALL_MAGENTA+i*8,30,72,0.2,0);
-				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)-60,BALL_MAGENTA+i*8,30,72,-0.2,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)+60,BALL_MAGENTA+i*8,30,72,0.2,0,0);
+				UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed-i/4,ObjMove_GetAngle(obj)-60,BALL_MAGENTA+i*8,30,72,-0.2,0,0);
 			}
-			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-10,10),DOT_MAGENTA,10,72,0,0);
+			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-5,5),DOT_MAGENTA,10,72,0,0,0);
 			wait(diff_maindelay);
 		}
 	}

@@ -36,7 +36,7 @@ task SakkaCloud(x,y,duration){
 	}
 }
 
-task UltraDelayBullet(x,y,speed,angle,graphic,delay,delay2,angular,curvetime){
+task UltraDelayBullet(x,y,speed,angle,graphic,delay,delay2,angular,curvetime,deltime){
 	let obj;
 	wait(delay2);
 	if(!Obj_IsDeleted(objBoss)){
@@ -44,5 +44,8 @@ task UltraDelayBullet(x,y,speed,angle,graphic,delay,delay2,angular,curvetime){
 		ObjMove_SetAngularVelocity(obj,angular);
 		wait(curvetime);
 		ObjMove_SetAngularVelocity(obj,0);
+		if(deltime > 0){
+			ObjShot_SetDeleteFrame(obj,deltime);
+		}
 	}
 }
