@@ -423,7 +423,7 @@ function BitWise_Not2(a) {
 
 function BitWise_And(a, b) { //&
 	let byteVal = 1;
-	let result = 0;
+	let resultReturn = 0;
 	while (a > 0 || b > 0) {
 		if (a % 2 == 1 && b % 2 == 1) {
 			result += byteVal;
@@ -432,35 +432,35 @@ function BitWise_And(a, b) { //&
 		b = floor(b / 2);
 		byteVal *= 2;
 	}
-	return result;
+	return resultReturn;
 }
 
 function BitWise_Or(a, b) { //|
 	let byteVal = 1;
-	let result = 0;
+	let resultReturn = 0;
 	while (a > 0 || b > 0) {
 		if (a % 2 == 1 || b % 2 == 1) {
-			result += byteVal;
+			resultReturn += byteVal;
 		}
 		a = floor(a / 2);
 		b = floor(b / 2);
 		byteVal *= 2;
 	}
-	return result;
+	return resultReturn;
 }
 
 function BitWise_Xor(a, b) { //^
 	let byteVal = 1;
-	let result = 0;
+	let resultReturn = 0;
 	while (a > 0 || b > 0) {
 		if (a % 2 != b % 2) {
-			result += byteVal;
+			resultReturn += byteVal;
 		}
 		a = floor(a / 2);
 		b = floor(b / 2);
 		byteVal *= 2;
 	}
-	return result;
+	return resultReturn;
 }
 
 //Undefined function, do not touch
