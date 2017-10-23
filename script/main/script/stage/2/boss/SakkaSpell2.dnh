@@ -1,0 +1,119 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Sakkagumi spell 2"]
+#Text["badz senpai love me"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+let CenterX = GetStgFrameWidth/2;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(4000);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(30);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss, 100, 100);
+	ObjMove_SetPosition(objBoss,CenterX,140);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+function angleToPlayer(obj){
+	let toPlayer = atan2(GetPlayerY-ObjMove_GetY(obj),GetPlayerX-ObjMove_GetX(obj)); // Makes something aim towards the player
+	return toPlayer;
+}
+
+task TMain {
+	SetShotAutoDeleteClip(128,128,128,128);
+	wait(1);
+	spiral;
+	spam;
+}
+
+task spam {
+	let x;
+	let y;
+	loop{
+		x = rand(0,64);
+		y = rand(0,64);
+		CreateShotA1(objBossX+x*cos(rand(0,360)),objBossY+y*sin(rand(0,360)),0.75,rand(0,360),15,20);
+		CreateShotA1(objBossX+x*cos(rand(0,360)),objBossY+y*sin(rand(0,360)),1,rand(0,360),7,20);
+		wait(1);
+	}
+}
+
+task spiral {
+	let x;
+	let y;
+	let angleA = 90;
+	let rad = 180;
+	radinc;
+	loop{
+		x = GetPlayerX;
+		y = GetPlayerY;
+		loop(5){
+			let obj1 = CreateShotA1(x+-rad*cos(angleA),y+-rad*sin(angleA),8,angleA,87,30);
+			ObjMove_AddPatternA2(obj1,1,NO_CHANGE,NO_CHANGE,NO_CHANGE,2.5,6);
+			ObjMove_AddPatternA2(obj1,61,NO_CHANGE,NO_CHANGE,NO_CHANGE,0,6);
+			angleA += 360/5;
+		}
+		angleA += 7;
+		wait(4);
+	}
+
+	task radinc {
+		loop{
+			loop(60){
+				rad--;
+				wait(4);
+			}
+			loop(60){
+				rad++;
+				wait(4);
+			}
+		}
+	}
+}
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
