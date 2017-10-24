@@ -1,4 +1,4 @@
-task SakkaCloud(x,y,duration){
+task SakkaCloud(x,y,duration,scale){
 	let type = floor(rand(2,4));
 	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
@@ -7,6 +7,7 @@ task SakkaCloud(x,y,duration){
 	ObjRender_SetColor(cloud,256,156,218);
 	Obj_SetRenderPriority(cloud,0.6);
 	ObjRender_SetPosition(cloud,x,y,0);
+	ObjRender_SetScaleXYZ(cloud,scale,scale,0);
 
 	MoveCloud;
 	ascent(i in 0..32){

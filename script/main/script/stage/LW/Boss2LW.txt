@@ -1,0 +1,161 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Last Word of Sakkagumi"]
+#Text["Ascend, beyond danmaku that mortals can dodge!"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/2/boss/BossCommon.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
+#include "script/main/script/lib/Spellcard.dnh"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjMove_SetPosition(objBoss,192,-100);
+	SetShotAutoDeleteClip(64,64,64,256);
+	TWork;
+	BossResistance(objBoss,300);
+	Animation_Azure(objBoss);
+	BossAura_Sakkagumi(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(3050);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(60);
+	}
+}
+
+task TWork
+{
+	ascent(i in 0..8){
+		SakkaCloud(192+rand(-50,50),224+rand(-50,50),30-i*3,1.0);
+		wait(3);
+	}
+	wait(30);
+	ObjMove_SetPosition(objBoss,192,224);
+	SpellCast(23);
+	wait(120);
+	let n;
+	let shot;
+	let objPlayer = GetPlayerObjectID();
+	Bubbles;
+	while(!Obj_IsDeleted(objBoss)){
+		n = rand(0,360);
+		ascent(i in 1..8){
+			CloudCircle(i*60,7+i*2,(i%2)*2-1,i*10,n);
+			wait(5);
+		}
+		wait(320);
+	}
+
+	task Bubbles{
+		wait(180);
+		while(!Obj_IsDeleted(objBoss)){
+			shot = SPShotA1(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),0.8,GetAngleToPlayer(objBoss),BUBBLE_MAGENTA,20);
+			ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+			wait(180);
+		}
+	}
+
+	task CloudCircle(dist,count,dir,duration,angle){
+		let split = 360/count;
+		ascent(i in 0..count){
+			SakkaCloudUltra(192+cos(i*split*dir+angle)*dist,224+sin(i*split*dir+angle)*dist,60-i*2+duration,0.9);
+		}
+		wait(60+duration);
+		let pos = [];
+		ascent(i in 0..count){
+			if(Obj_IsDeleted(objBoss)){break;}
+			pos = [192+cos(i*split*dir+angle)*dist,224+sin(i*split*dir+angle)*dist];
+			shot = SPShotA2(pos[0],pos[1],0,270+rand(-2,2),0.01,2,BBALL_MAGENTA,20);
+			ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+			ascent(j in -3..4){
+				shot = SPShotA2(pos[0],pos[1],0,270+j*20,0.01,1,FIRE_MAGENTA,20);
+				ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+			}
+			wait(2);
+		}
+	}
+}
+
+task SakkaCloudUltra(x,y,duration,scale){
+	let type = floor(rand(2,4));
+	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
+	ObjSprite2D_SetSourceRect(cloud,0,0,200,200);
+	ObjSprite2D_SetDestCenter(cloud);
+	ObjRender_SetColor(cloud,256,156,218);
+	Obj_SetRenderPriority(cloud,0.6);
+	ObjRender_SetPosition(cloud,x,y,0);
+	ObjRender_SetScaleXYZ(cloud,scale,scale,0);
+	ObjRender_SetBlendType(cloud,BLEND_ADD_ARGB);
+	ObjRender_SetAlpha(cloud,128);
+
+	MoveCloud;
+	ascent(i in 0..32){
+		if(Obj_IsDeleted(objBoss)){break;}
+		ObjRender_SetAlpha(cloud,i*8);
+		yield;
+	}
+		
+	loop(duration){
+		if(Obj_IsDeleted(objBoss)){break;}
+		yield;
+	}
+
+	descent(i in 0..16){
+		ObjRender_SetAlpha(cloud,i*16);
+		yield;
+	}
+	Obj_Delete(cloud);
+
+	task MoveCloud{
+		let angle = rand(0,360);
+		let move = [cos(angle)/10,sin(angle)/10];
+		while(!Obj_IsDeleted(cloud)){
+			ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
+			yield;
+		}
+	}
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}

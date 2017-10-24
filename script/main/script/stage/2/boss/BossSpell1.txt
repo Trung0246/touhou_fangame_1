@@ -1,0 +1,171 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss spell #1"]
+#Text["Cloud dream?"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/2/boss/BossCommon.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
+#include "script/main/script/lib/Spellcard.dnh"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,300);
+	Animation_Azure(objBoss);
+	BossAura_Sakkagumi(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(1850);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(40);
+	}
+}
+
+task TWork
+{
+	ObjMove_SetDestAtWeight(objBoss,192,120,8,5);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	wait(30);
+	SpellCast(15+diff);
+	let diff_width = [90,110,110,120][diff];
+	let diff_bulletdelay = [6,4,6,5][diff];
+	let diff_space1 = [40,40,30,30][diff];
+	let diff_space2 = [30,30,20,20][diff];
+	wait(120);
+	let x;
+	let n;
+	let m;
+	let shot;
+	let objPlayer = GetPlayerObjectID();
+	BossBullets;
+	while(!Obj_IsDeleted(objBoss)){
+		x = ObjMove_GetX(objPlayer);
+		ascent(i in 2..16){
+			if(Obj_IsDeleted(objBoss)){break;}
+			n = sin(i*12)*120;
+			ascent(j in 0..2){
+				SakkaCloud(x+n*(j*2-1),498-i*20,180-i*8,0.7);
+			}
+			wait(4);
+		}
+		ascent(i in 0..30){
+			if(Obj_IsDeleted(objBoss)){break;}
+			n = sin(i*12)*180;
+			ascent(j in 0..2){
+				SakkaCloud(x+n*(j*2-1),198-i*6,70,0.7);
+			}
+			wait(2);
+		}
+		wait(42);
+		SpamWave;
+		ascent(i in 0..30){
+			if(Obj_IsDeleted(objBoss)){break;}
+			n = sin(i*6)*diff_width;
+			ascent(j in 0..2){
+				ascent(k in 0..4){
+					m = 0;
+					if(k > 0){m = 1;}
+					shot = SPShotA1(x+n*(j*2-1)+rand(-5,5),198-i*3,0.1,90-k*(diff_space1-i/2)*(j*2-1),DROP_MAGENTA-m*24,20);
+					ObjMove_AddPatternA2(shot,60+i,NO_CHANGE,NO_CHANGE,0.1,0,3);
+				}
+			}
+			yield;
+		}
+		ascent(i in 0..31){
+			if(Obj_IsDeleted(objBoss)){break;}
+			n = sin(i*6)*diff_width;
+			ascent(j in 0..2){
+				ascent(k in 0..4){
+					m = 0;
+					if(k > 0){m = 1;}
+					shot = SPShotA1(x+n*(j*2-1)+rand(-5,5),108-i*3,0.1,90-k*(diff_space2+i/2)*(j*2-1),DROP_MAGENTA-m*24,20);
+					ObjMove_AddPatternA2(shot,110+i,NO_CHANGE,NO_CHANGE,0.1,0,3.5);
+				}
+			}
+			yield;
+		}
+		wait(240);
+	}
+
+	task SpamWave{
+		descent(i in 5..31){
+			if(Obj_IsDeleted(objBoss)){break;}
+			n = sin(i*6)*120;
+			ascent(j in 0..2){
+				SPShotA1(x+n*(j*2-1),498-i*10,1,90-(50+i)*(j*2-1)+rand(-8,8),BALL_MAGENTA,20);
+			}
+			wait(2);
+		}
+	}
+
+	task BossBullets{
+		let angle = rand(0,360);
+		let dir = rand_sign();
+		IncreaseAngle;
+		while(!Obj_IsDeleted(objBoss)){
+			RepeatSelf;
+			if(diff < 2){break;}
+			wait(453);
+		}
+		task RepeatSelf{
+			while(!Obj_IsDeleted(objBoss)){
+				ascent(i in 0..6){
+					if(Obj_IsDeleted(objBoss)){break;}
+					SPShotA1(ObjMove_GetX(objBoss)+cos(angle+i*60)*80,ObjMove_GetY(objBoss)+sin(angle+i*60)*80,1.5,angle+i*60+40*dir+rand(-8,8),RBALL_MAGENTA,20);
+					wait(diff_bulletdelay);
+				}
+			}
+		}
+
+		task IncreaseAngle{
+			while(!Obj_IsDeleted(objBoss)){
+				angle += dir;
+				yield;
+			}
+		}
+	}
+}
+
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	loop(30){yield;}
+
+	CloseScript(GetOwnScriptID());
+
+}
