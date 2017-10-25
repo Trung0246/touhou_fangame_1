@@ -63,7 +63,7 @@ let dir = GetCurrentScriptDirectory();
 	SetPlayerClip(0 + clip, 0 + clip, 384 - clip, 448 - clip);
 	SetPlayerLife(GetCommonData("player_life", 2));
 	SetPlayerSpell(GetCommonData("player_spell", 3));
-	SetPlayerPower(GetCommonData("player_power", 0));
+	SetPlayerPower(GetCommonData("player_power", 1));
 
 	//SetPlayerInvincibilityFrame(invisibleFrame);
 	SetPlayerDownStateFrame(downFrame);
@@ -389,7 +389,7 @@ task Orb_Render(obj) {
 }
 
 function Orb_Manage() {
-	let powerData = GetCommonData("player_power", 4);
+	let powerData = GetCommonData("player_power", 1);
 	let dist = 40;
 	if (powerData >= 4) {
 		startChange = -60;
