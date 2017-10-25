@@ -71,7 +71,7 @@ task TWork
 			if(Obj_IsDeleted(objBoss)){break;}
 			n = sin(i*12)*120;
 			ascent(j in 0..2){
-				SakkaCloud(x+n*(j*2-1),498-i*20,180-i*8,0.7);
+				SakkaCloud(x+n*(j*2-1),498-i*20,180-i*8,0.7,75);
 			}
 			wait(4);
 		}
@@ -79,7 +79,7 @@ task TWork
 			if(Obj_IsDeleted(objBoss)){break;}
 			n = sin(i*12)*180;
 			ascent(j in 0..2){
-				SakkaCloud(x+n*(j*2-1),198-i*6,70,0.7);
+				SakkaCloud(x+n*(j*2-1),198-i*6,70,0.7,75);
 			}
 			wait(2);
 		}
