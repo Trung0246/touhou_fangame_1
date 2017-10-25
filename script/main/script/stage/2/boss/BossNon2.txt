@@ -92,10 +92,20 @@ task TWork
 		}
 
 		task PlusSomeSpam{
+			let a = rand(0,360);
 			while(!Obj_IsDeleted(obj)){
-				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,rand(0,360),RBALL_RED,30,102,0,0,0);
+				//UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),diff_redspeed,a,RBALL_RED,30,102,0,0,0);
+				DelayShot(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40));
 				UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),3,ObjMove_GetAngle(obj),DOT_MAGENTA,30,102,0,0,0);
 				wait(diff_redspawn);
+				a += 32;
+			}
+		}
+
+		task DelayShot(x,y){
+			wait(102);
+			if(!Obj_IsDeleted(objBoss)){
+				SPShotA2(x,y,0,rand(0,360),0.01,diff_redspeed,RBALL_MAGENTA,30);
 			}
 		}
 	}

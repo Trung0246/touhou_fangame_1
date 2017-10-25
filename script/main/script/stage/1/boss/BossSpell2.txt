@@ -51,7 +51,7 @@ let shotdown = false;
 task TWork
 {
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	let diff_delay = [35,22,32,27][diff];
+	let diff_delay = [35,22,34,30][diff];
 	let diff_speed = [1.5,2,2,2][diff];
 	let diff_fall = diff >= 2;
 
@@ -68,7 +68,7 @@ task TWork
 	let shot;
 	SendOutOcean;
 	wait(240);
-	while(!Obj_IsDeleted(objBoss)){
+	while(!shotdown){
 		ObjMove_SetPosition(objBoss,192+sin(n)*120,120);
 		n += movement;
 		yield;
@@ -93,7 +93,7 @@ task TWork
 		AndAlsoBullets;
 		
 		task TheUsual{
-			while(!Obj_IsDeleted(objBoss)){
+			while(!shotdown){
 				ascent(i in 0..8){
 					shot = SPShotA1(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,0,0,BBALL_BLUE,10);
 					InstaDelete(shot);
@@ -104,9 +104,9 @@ task TWork
 		}
 
 		task ButWithBubblesToo{
-			while(!Obj_IsDeleted(objBoss)){
+			while(!shotdown){
 				ascent(i in 0..8){
-					if(Obj_IsDeleted(objBoss)){break;}
+					if(shotdown){break;}
 					shot = SPShotB2(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,rand(-1,1),-rand(0,1),0,0.01,0,1,BUBBLE_BLUE,0);
 					FadeIn(shot);
 					wait(1);
@@ -115,7 +115,7 @@ task TWork
 		}
 
 		task AndAlsoBullets{
-			while(!Obj_IsDeleted(objBoss)){
+			while(!shotdown){
 				ascent(i in 0..8){
 					shot = SPShotB1(192+cos(angle+i*45)*size*4,ypos+sin(angle+i*45)*size,-(192-ObjMove_GetX(objBoss))/100,-diff_speed,RBALL_BLUE,10);
 					if(diff_fall){FallBackDown(shot);}
@@ -156,12 +156,14 @@ task TEnd
 	{
 		yield;
 	}
+	shotdown = true;
 
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
-	Obj_Delete(objBoss);
+	//Obj_Delete(objBoss);
+	DramaticBossDeath(objBoss);
 
-	loop(30){yield;}
+	wait(180);
 
 	CloseScript(GetOwnScriptID());
 }

@@ -3,3 +3,35 @@ task BossResistance(obj,duration){
 	wait(duration);
 	ObjEnemy_SetDamageRate(obj,100,100);
 }
+
+task DramaticBossDeath(obj){
+	ascent(i in 0..60){
+		DeleteShotInCircle(TYPE_ALL,TYPE_ITEM,ObjMove_GetX(obj),ObjMove_GetY(obj),i*9);
+		yield;
+	}
+	let pos = [ObjMove_GetX(objBoss),ObjMove_GetY(objBoss)];
+	DramaticCircle(pos[0],pos[1],25);
+	wait(4);
+	ascent(i in 0..4){
+		DramaticCircle(pos[0]+cos(i*90)*50,pos[1]+sin(i*90)*50,21);
+	}
+	Obj_Delete(obj);
+	wait(15);
+	DramaticCircle(pos[0],pos[1],6);
+
+	task DramaticCircle(x,y,deltime){
+		let circle = ObjPrim_Create(OBJ_SPRITE_2D);
+		ObjPrim_SetTexture(circle,"script/main/img/system/circle.png");
+		ObjSprite2D_SetSourceRect(circle,0,0,256,256);
+		ObjSprite2D_SetDestCenter(circle);
+		ObjRender_SetPosition(circle,x,y,0);
+		ObjRender_SetBlendType(circle,BLEND_INV_DESTRGB);
+		ascent(i in 0..60){
+			i *= 0.1;
+			ObjRender_SetScaleXYZ(circle,i,i,1);
+			yield;
+		}
+		wait(deltime);
+		Obj_Delete(circle);
+	}
+}

@@ -1,6 +1,6 @@
 #include "script/main/script/lib/Utils.dnh"
 
-let path = GetModuleDirectory() ~ "script/default_system/img/Default_Shot.png";
+let path = GetModuleDirectory() ~ "script/main/img/bullet/shots.png";
 let path2 = GetModuleDirectory() ~ "script/main/img/effect/effects.png";
 
 @Initialize{

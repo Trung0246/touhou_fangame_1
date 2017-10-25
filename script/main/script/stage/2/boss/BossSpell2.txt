@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Boss spell #2"]
-#Text["You are encouraged to play with the fire"]
+#Text["Lovely, tasty pink fire! <3"]
 #System["script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/Utils.dnh"
@@ -55,7 +55,7 @@ task TWork
 	wait(30);
 	SpellCast(19+diff);
 	let diff_space = [40,35,30,30][diff];
-	let diff_delay = [100,70,50,40][diff];
+	let diff_delay = [100,70,50,45][diff];
 	let diff_spin = [40,20,20,20][diff];
 	let diff_speed = [1.2,1.2,1.4,1.6][diff];
 	let diff_count = [12,15,18,20][diff];
