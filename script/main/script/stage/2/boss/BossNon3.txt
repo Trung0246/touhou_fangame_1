@@ -111,6 +111,7 @@ task TWork
 	task CloudDanmakuType1(obj){
 		let wave = rand(0,360);
 		let speed;
+		BonusAntiCheatWave;
 		while(!Obj_IsDeleted(obj)){
 			wave += diff_wavy;
 			ascent(i in 0..2){
@@ -120,6 +121,27 @@ task TWork
 			}
 			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-5,5),DOT_MAGENTA,10,72,0,0,0);
 			wait(diff_maindelay);
+		}
+
+		task BonusAntiCheatWave{
+			yield;
+			loop(40){
+				if(Obj_IsDeleted(obj)){break;}
+				ascent(i in 0..2){
+					shot = SPShotA1(ObjMove_GetX(obj),ObjMove_GetY(obj),0,ObjMove_GetAngle(obj)+90*(i*2-1),DOT_MAGENTA,0);
+					MaterializeShot(shot);
+				}
+				yield;
+			}
+
+			task MaterializeShot(s){
+				ObjMove_AddPatternA2(s,60,NO_CHANGE,NO_CHANGE,0.01,0,1+speed);
+				ObjRender_SetAlpha(s,0);
+				wait(60);
+				ascent(i in 0..16){
+					ObjRender_SetAlpha(s,i*16);
+				}
+			}
 		}
 	}
 }
@@ -134,7 +156,7 @@ task TEnd
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	Obj_Delete(objBoss);
 
-	loop(30){yield;}
+	wait(30);
 
 	CloseScript(GetOwnScriptID());
 

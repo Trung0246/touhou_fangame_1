@@ -58,7 +58,7 @@ let shotdown = false;
 task TWork
 {
 	ascent(i in 0..8){
-		SakkaCloud(192+rand(-50,50),224+rand(-50,50),30-i*3,1.0,75);
+		SakkaCloud(192+rand(-50,50),224+rand(-50,50),30-i*3,1.0,255);
 		wait(3);
 	}
 	wait(30);
@@ -123,12 +123,11 @@ task SakkaCloudUltra(x,y,duration,scale){
 	ObjRender_SetPosition(cloud,x,y,0);
 	ObjRender_SetScaleXYZ(cloud,scale,scale,0);
 	ObjRender_SetBlendType(cloud,BLEND_ADD_ARGB);
-	ObjRender_SetAlpha(cloud,96);
 
 	MoveCloud;
 	ascent(i in 0..32){
 		if(Obj_IsDeleted(objBoss)){break;}
-		ObjRender_SetAlpha(cloud,i*8);
+		ObjRender_SetAlpha(cloud,i*4);
 		yield;
 	}
 		
@@ -138,7 +137,7 @@ task SakkaCloudUltra(x,y,duration,scale){
 	}
 
 	descent(i in 0..16){
-		ObjRender_SetAlpha(cloud,i*16);
+		ObjRender_SetAlpha(cloud,i*8);
 		yield;
 	}
 	Obj_Delete(cloud);
