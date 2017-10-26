@@ -78,7 +78,7 @@ task TWork
 		ObjShot_SetIntersectionEnable(obj,false);
 		ObjRender_SetAlpha(obj,0);
 		while(!Obj_IsDeleted(obj)){
-			SakkaCloud(ObjMove_GetX(obj),ObjMove_GetY(obj),70,1.0);
+			SakkaCloud(ObjMove_GetX(obj),ObjMove_GetY(obj),70,1.0,75);
 			wait(4);
 		}
 

@@ -1,4 +1,4 @@
-task SakkaCloud(x,y,duration,scale){
+task SakkaCloud(x,y,duration,scale,alpha){
 	let type = floor(rand(2,4));
 	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
@@ -12,7 +12,7 @@ task SakkaCloud(x,y,duration,scale){
 	MoveCloud;
 	ascent(i in 0..32){
 		if(Obj_IsDeleted(objBoss)){break;}
-		ObjRender_SetAlpha(cloud,i*8);
+		ObjRender_SetAlpha(cloud,i*(alpha/32));
 		yield;
 	}
 		
@@ -22,7 +22,7 @@ task SakkaCloud(x,y,duration,scale){
 	}
 
 	descent(i in 0..16){
-		ObjRender_SetAlpha(cloud,i*16);
+		ObjRender_SetAlpha(cloud,i*(alpha/16));
 		yield;
 	}
 	Obj_Delete(cloud);

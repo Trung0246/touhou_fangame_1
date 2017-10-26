@@ -58,7 +58,7 @@ let shotdown = false;
 task TWork
 {
 	ascent(i in 0..8){
-		SakkaCloud(192+rand(-50,50),224+rand(-50,50),30-i*3,1.0);
+		SakkaCloud(192+rand(-50,50),224+rand(-50,50),30-i*3,1.0,75);
 		wait(3);
 	}
 	wait(30);

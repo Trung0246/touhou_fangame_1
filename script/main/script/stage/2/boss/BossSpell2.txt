@@ -83,7 +83,7 @@ task TWork
 			a += diff_spin*d;
 			ascent(i in 0..12){
 				pos = [ObjMove_GetX(objBoss)+cos(i*30+a)*60,ObjMove_GetY(objBoss)+sin(i*30+a)*60];
-				SakkaCloud(pos[0],pos[1],50,0.5);
+				SakkaCloud(pos[0],pos[1],50,0.5,75);
 				loop(4){
 					UltraDelayBullet(pos[0]+rand(-40,40),pos[1]+rand(-40,40),diff_speed,i*30+a,DOT_MAGENTA,20,72,0,0,0);
 				}
@@ -98,7 +98,7 @@ task TWork
 		let spin = 360/diff_count;
 		let start = rand(0,360);
 		ascent(i in 0..diff_count){
-			SakkaCloud(x+cos(i*spin*-dir+start)*100,y+sin(i*spin*-dir+start)*100,20+i*2,0.7);
+			SakkaCloud(x+cos(i*spin*-dir+start)*100,y+sin(i*spin*-dir+start)*100,20+i*2,0.7,75);
 		}
 		wait(52);
 		if(Obj_IsDeleted(objBoss)){return;}
