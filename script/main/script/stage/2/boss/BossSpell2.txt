@@ -67,12 +67,14 @@ task TWork
 	let objPlayer = GetPlayerObjectID();
 	SpiralAway;
 	while(!Obj_IsDeleted(objBoss)){
+		//One circle on the boss, one on the player
 		CloudCircle(max(100,min(284,ObjMove_GetX(objPlayer))),max(100,min(348,ObjMove_GetY(objPlayer))),3,diff_space);
 		CloudCircle(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),6,20);
 		dir = -dir;
 		wait(300);
 	}
 
+	//Main boss danmaku
 	task SpiralAway{
 		let a = rand(0,360);
 		let d = rand_sign();
@@ -91,6 +93,7 @@ task TWork
 		}
 	}
 
+	//Fire circles and lanes
 	task CloudCircle(x,y,count,shift){
 		let spin = 360/diff_count;
 		let start = rand(0,360);
@@ -120,7 +123,7 @@ task TEnd
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	Obj_Delete(objBoss);
 
-	loop(30){yield;}
+	wait(30);
 
 	CloseScript(GetOwnScriptID());
 

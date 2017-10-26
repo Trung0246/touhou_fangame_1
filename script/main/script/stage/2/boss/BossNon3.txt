@@ -61,10 +61,14 @@ task TWork
 	let shot;
 	while(!Obj_IsDeleted(objBoss)){
 		angle = GetAngleToPlayer(objBoss);
+
+		//Falling wave
 		shot = SPShotA2(ObjMove_GetX(objPlayer),0,0,90,0.1,6.2,RBALL_MAGENTA,0);
 		CloudBullet(shot);
 		CloudDanmakuType1(shot);
 		wait(diff_wavedelay);
+
+		//Side wave
 		ObjMove_SetDestAtWeight(objBoss,192+rand(-80,80),140,0.1,1);
 		if(Obj_IsDeleted(objBoss)){break;}
 		ascent(i in 0..2){
@@ -86,8 +90,8 @@ task TWork
 		while(!Obj_IsDeleted(obj)){
 			wave += 52;
 			speed = sin(wave)/4;
-			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.5+speed,0,BALL_MAGENTA,30,72,0.2,0,100);
-			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1.5+speed,180,BALL_MAGENTA,30,72,0.2,0,100);
+			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed,0,BALL_MAGENTA,30,72,0.2,0,100);
+			UltraDelayBullet(ObjMove_GetX(obj),ObjMove_GetY(obj),1+speed,180,BALL_MAGENTA,30,72,0.2,0,100);
 			UltraDelayBullet(ObjMove_GetX(obj)+rand(-40,40),ObjMove_GetY(obj)+rand(-40,40),rand(2,3),90+rand(-5,5),DOT_MAGENTA,10,72,0,0,0);
 			wait(diff_maindelay*2);
 		}

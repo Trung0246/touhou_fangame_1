@@ -66,6 +66,8 @@ task TWork
 	let objPlayer = GetPlayerObjectID();
 	BossBullets;
 	while(!Obj_IsDeleted(objBoss)){
+
+		//Spawn the tower of clouds
 		x = ObjMove_GetX(objPlayer);
 		ascent(i in 2..16){
 			if(Obj_IsDeleted(objBoss)){break;}
@@ -84,7 +86,11 @@ task TWork
 			wait(2);
 		}
 		wait(42);
+
+		//Spawn danmaku over the clouds
 		SpamWave;
+
+		//Pattern of the top half
 		ascent(i in 0..30){
 			if(Obj_IsDeleted(objBoss)){break;}
 			n = sin(i*6)*diff_width;
@@ -114,6 +120,7 @@ task TWork
 		wait(240);
 	}
 
+	//This is the bullets from the bottom half
 	task SpamWave{
 		descent(i in 5..31){
 			if(Obj_IsDeleted(objBoss)){break;}
@@ -125,15 +132,18 @@ task TWork
 		}
 	}
 
+	//Gotta have the boss fire some stuff
 	task BossBullets{
 		let angle = rand(0,360);
 		let dir = rand_sign();
 		IncreaseAngle;
 		while(!Obj_IsDeleted(objBoss)){
 			RepeatSelf;
+			//Don't call yourself again if below Hard
 			if(diff < 2){break;}
 			wait(453);
 		}
+
 		task RepeatSelf{
 			while(!Obj_IsDeleted(objBoss)){
 				ascent(i in 0..6){
@@ -164,7 +174,7 @@ task TEnd
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	Obj_Delete(objBoss);
 
-	loop(30){yield;}
+	wait(30);
 
 	CloseScript(GetOwnScriptID());
 

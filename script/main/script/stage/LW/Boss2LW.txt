@@ -22,7 +22,10 @@ let objBoss;
 	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 	ObjEnemy_Regist(objBoss);
 	ObjMove_SetPosition(objBoss,192,-100);
+
+	//Due to how the pattern works, there's extra space given for bullets from below
 	SetShotAutoDeleteClip(64,64,64,256);
+
 	TWork;
 	BossResistance(objBoss,300);
 	Animation_Azure(objBoss);
@@ -68,6 +71,7 @@ task TWork
 	Bubbles;
 	while(!shotdown){
 		n = rand(0,360);
+		//Cloud circles of increasing size with each having more bullets than the previous one!!!
 		ascent(i in 1..8){
 			CloudCircle(i*60,7+i*2,(i%2)*2-1,i*10,n);
 			wait(5);
@@ -75,6 +79,7 @@ task TWork
 		wait(320);
 	}
 
+	//Literally just some aimed bubbles
 	task Bubbles{
 		wait(180);
 		while(!shotdown){
@@ -84,6 +89,7 @@ task TWork
 		}
 	}
 
+	//Spawn circle of clouds, then dissolve into main pattern
 	task CloudCircle(dist,count,dir,duration,angle){
 		let split = 360/count;
 		ascent(i in 0..count){
@@ -105,6 +111,7 @@ task TWork
 	}
 }
 
+//ADD_ARGB blended and slower-moving variant of SakkaCloud
 task SakkaCloudUltra(x,y,duration,scale){
 	let type = floor(rand(2,4));
 	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
@@ -116,7 +123,7 @@ task SakkaCloudUltra(x,y,duration,scale){
 	ObjRender_SetPosition(cloud,x,y,0);
 	ObjRender_SetScaleXYZ(cloud,scale,scale,0);
 	ObjRender_SetBlendType(cloud,BLEND_ADD_ARGB);
-	ObjRender_SetAlpha(cloud,128);
+	ObjRender_SetAlpha(cloud,96);
 
 	MoveCloud;
 	ascent(i in 0..32){
@@ -155,10 +162,9 @@ task TEnd
 
 	//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
 	//Obj_Delete(objBoss);
+	SetShotAutoDeleteClip(64,64,64,64);
 	DramaticBossDeath(objBoss);
 	shotdown = true;
-	wait(160);
-	DeleteShotAll(TYPE_ALL,TYPE_ITEM);
 	wait(180);
 
 	CloseScript(GetOwnScriptID());
