@@ -54,7 +54,7 @@ task TWork
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	wait(30);
 	SpellCast(15+diff);
-	let diff_width = [90,110,110,120][diff];
+	let diff_width = [90,110,110,115][diff];
 	let diff_bulletdelay = [6,4,6,5][diff];
 	let diff_space1 = [40,40,30,30][diff];
 	let diff_space2 = [30,30,20,20][diff];
@@ -85,7 +85,7 @@ task TWork
 			}
 			wait(2);
 		}
-		wait(42);
+		wait(34);
 
 		//Spawn danmaku over the clouds
 		SpamWave;

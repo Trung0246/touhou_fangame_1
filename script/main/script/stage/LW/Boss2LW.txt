@@ -63,7 +63,7 @@ task TWork
 	}
 	wait(30);
 	ObjMove_SetPosition(objBoss,192,224);
-	SpellCast(23);
+	SpellCast(27);
 	wait(120);
 	let n;
 	let shot;

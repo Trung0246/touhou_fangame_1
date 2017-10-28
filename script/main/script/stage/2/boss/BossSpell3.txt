@@ -1,0 +1,215 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Boss spell #3"]
+#Text["No, I will not reveal who the faces are! ! !"]
+#System["script/main/script/system/Gui.dnh"]
+
+#include "script/main/script/lib/Utils.dnh"
+#include "script/main/script/lib/Shot.dnh"
+#include "script/main/script/lib/Boss.dnh"
+#include "script/main/script/lib/SFX.dnh"
+#include "script/main/script/lib/Event_Const.dnh"
+#include "script/main/img/bullet/shotData_Const.dnh"
+#include "script/main/script/stage/2/boss/Anim.txt"
+#include "script/main/script/stage/2/boss/BossCommon.txt"
+#include "script/main/script/stage/1/boss/Anim.txt"
+#include "script/main/script/lib/Spellcard.dnh"
+
+let objBoss;
+@Initialize
+{
+	LoadEnemyShotData("script/main/img/bullet/shotData.dnh");
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	TWork;
+	BossResistance(objBoss,300);
+	Animation_Azure(objBoss);
+	BossAura_Sakkagumi(objBoss);
+	TEnd;
+}
+
+@MainLoop
+{
+	ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+	yield;
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		SetScriptResult(2250);
+	}
+	case(EV_REQUEST_TIMER)
+	{
+		SetScriptResult(60);
+	}
+}
+
+let shotdown = false;
+task TWork
+{
+	ObjMove_SetDestAtWeight(objBoss,192,80,8,5);
+	let diff = GetAreaCommonData("GameState","Difficulty",1);
+	let diff_lanecount = [5,6,6,8][diff];
+	let diff_spamcount = [3,4,6,5][diff];
+	let diff_spamcount2 = [2,3,3,4][diff];
+	wait(30);
+	SpellCast(23+diff);
+	wait(120);
+	let shot;
+	let dir = rand_sign();
+	let objPlayer = GetPlayerObjectID();
+	HappyFaceProcedure;
+	SadFaceProcedure;
+	while(!Obj_IsDeleted(objBoss)){
+		//errrrrrrrrrrrr, I have nothing left to put here?
+		wait(300);
+	}
+
+	task HappyFaceProcedure{
+		let diff_type = [RBALL_MAGENTA,NOTE_MAGENTA][max(0,diff-2)]; //notes on Lunatic only
+
+		let enemy = ObjEnemy_Create(OBJ_ENEMY);
+		ObjEnemy_Regist(enemy);
+		FaceClouds(enemy,300,120);
+		TransferDamage(enemy);
+		ObjPrim_SetTexture(enemy,"script/main/img/enemy/stage/yinyang.png");
+		ObjSprite2D_SetSourceRect(enemy,96,0,128,32);
+		ObjSprite2D_SetDestCenter(enemy);
+		ObjMove_SetPosition(enemy,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss));
+		ObjMove_SetDestAtWeight(enemy,300,120,6,3);
+
+		//Precalculate the angle to shift the notes in order to save some math
+		let a = 360/diff_lanecount;
+		let shift = GetPointAngle(cos(0)*5,sin(0)*5,cos(a)*5,sin(a)*5);
+
+		let position = [];
+		let n;
+		let destination = 1;
+		wait(120);
+		while(!shotdown){
+			n = GetAngleToPlayer(enemy)+rand(-shift/4,shift/4);
+			ascent(k in 0..3){
+				ascent(i in 0..diff_lanecount){
+					position = [ObjMove_GetX(enemy)+cos(i*a+n)*(50+k*40),ObjMove_GetY(enemy)+sin(i*a+n)*(50+k*40)];
+					SakkaCloud(position[0],position[1],160,0.6,196);
+					ascent(j in 0..8){
+						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180+shift,diff_type,20,40+j*15);
+						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180-shift,diff_type,20,40+j*15);
+					}
+				}
+				wait(30);
+			}
+			wait(20);
+			destination = -destination;
+			ObjMove_SetDestAtWeight(enemy,192+rand(30,150)*destination,120,3,1);
+			wait(240);
+		}
+	}
+
+	task SadFaceProcedure{
+		let diff_type = [BALL_MAGENTA,NOTE_MAGENTA][max(0,diff-2)]; //notes on Lunatic only
+
+		let enemy = ObjEnemy_Create(OBJ_ENEMY);
+		ObjEnemy_Regist(enemy);
+		FaceClouds(enemy,300,120);
+		TransferDamage(enemy);
+		ObjPrim_SetTexture(enemy,"script/main/img/enemy/stage/yinyang.png");
+		ObjSprite2D_SetSourceRect(enemy,64,0,96,32);
+		ObjSprite2D_SetDestCenter(enemy);
+		ObjMove_SetPosition(enemy,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss));
+		ObjMove_SetDestAtWeight(enemy,84,120,6,3);
+		wait(120);
+		let destination = -1;
+		let n;
+		let a = 360/diff_spamcount;
+		let dir = rand_sign();
+		while(!shotdown){
+			SakkaCloud(ObjMove_GetX(enemy),ObjMove_GetY(enemy)-50,300,1.0,255);
+			wait(60);
+			n = rand(0,360);
+			ascent(i in 0..diff_spamcount){
+				shot = SPShotA1(ObjMove_GetX(enemy),ObjMove_GetY(enemy)-50,2,n+i*a,BBALL_MAGENTA,20);
+				SadFaceShotProcedure(shot,dir);
+			}
+			dir = -dir;
+			wait(20);
+			destination = -destination;
+			ObjMove_SetDestAtWeight(enemy,192+rand(30,150)*destination,120,3,1);
+			wait(240);
+		}
+
+		task SadFaceShotProcedure(obj,direction){
+			let a = ObjMove_GetAngle(obj);
+			ObjMove_SetAngularVelocity(obj,2*direction);
+			ObjShot_SetDeleteFrame(obj,180);
+			while(!Obj_IsDeleted(obj)){
+				a += 30*direction;
+				ascent(i in 0..diff_spamcount2){
+					shot = SPShotA1(ObjMove_GetX(obj),ObjMove_GetY(obj),1.25+i/2,a+rand(-5,5),diff_type,10);
+					ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+				}
+				wait(10);
+			}
+		}
+	}
+
+	task FaceClouds(obj,x,y){
+		wait(5);
+		while(!Obj_IsDeleted(obj)){
+			SakkaCloud(ObjMove_GetX(obj)+rand(-10,10),ObjMove_GetY(obj)+rand(-10,10),10,0.3,128);
+			wait(30);
+		}
+	}
+
+	//Boss takes 50% of the amount of damage inflicted on obj
+	task TransferDamage(obj){
+		ObjEnemy_SetLife(obj,1000);
+		let life;
+		while(!shotdown && !Obj_IsDeleted(obj)){
+			ObjEnemy_SetIntersectionCircleToShot(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 24);
+			ObjEnemy_SetIntersectionCircleToPlayer(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 16);
+			life = ObjEnemy_GetInfo(obj,INFO_LIFE);
+			if(life < 1000){
+				ObjEnemy_SetLife(objBoss,ObjEnemy_GetInfo(objBoss,INFO_LIFE)-(1000-life)/2);
+			}
+			ObjEnemy_SetLife(obj,1000);
+			yield;
+		}
+		ObjMove_SetDestAtWeight(obj,ObjMove_GetX(obj),ObjMove_GetY(obj),1,1);
+		ascent(i in 0..8){
+			SakkaCloud(ObjMove_GetX(obj)+rand(-30,30),ObjMove_GetY(obj)+rand(-30,30),30-i*2,0.5,255);
+			wait(2);
+		}
+		wait(10);
+		Obj_Delete(obj);
+	}
+}
+
+
+task NeoDelayBullet(x,y,speed,angle,graphic,delay,delay2){
+	let obj;
+	wait(delay2);
+	if(!shotdown){
+		obj = SPShotA1(x,y,speed,angle,graphic,delay);
+		ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
+	}
+}
+
+task TEnd
+{
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0)
+	{
+		yield;
+	}
+
+	DramaticBossDeath(objBoss);
+	shotdown = true;
+	wait(180);
+
+	CloseScript(GetOwnScriptID());
+
+}

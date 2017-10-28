@@ -29,6 +29,7 @@ task Plural_Main() {
 	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "BossNon2.txt");
 	ObjEnemyBossScene_Add(obj, 1, GetCurrentScriptDirectory() ~ "BossSpell2.txt");
 	ObjEnemyBossScene_Add(obj, 2, GetCurrentScriptDirectory() ~ "BossNon3.txt");
+	ObjEnemyBossScene_Add(obj, 2, GetCurrentScriptDirectory() ~ "BossSpell3.txt");
 	ObjEnemyBossScene_LoadInThread(obj);
 	ObjEnemyBossScene_Regist(obj);
 

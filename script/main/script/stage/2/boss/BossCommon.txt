@@ -29,7 +29,7 @@ task SakkaCloud(x,y,duration,scale,alpha){
 
 	task MoveCloud{
 		let angle = rand(0,360);
-		let move = [cos(angle)/10,sin(angle)/10];
+		let move = [cos(angle)/15,sin(angle)/15];
 		while(!Obj_IsDeleted(cloud)){
 			ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
 			yield;
