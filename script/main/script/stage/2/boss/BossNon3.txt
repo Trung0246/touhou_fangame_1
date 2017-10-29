@@ -99,7 +99,6 @@ task TWork
 
 	task CloudBullet(obj){
 		ObjShot_SetSpellResist(obj,true);
-		yield;
 		ObjShot_SetIntersectionEnable(obj,false);
 		ObjRender_SetAlpha(obj,0);
 		while(!Obj_IsDeleted(obj)){

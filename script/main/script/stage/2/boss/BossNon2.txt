@@ -52,7 +52,7 @@ task TWork
 	ObjMove_SetDestAtWeight(objBoss,192,140,8,5);
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
 	let diff_pinkspawn = [5,4,3,3][diff];
-	let diff_redspawn = [6,5,4,3][diff];
+	let diff_redspawn = [6,5,4,4][diff];
 	let diff_redspeed = [1,1.5,1.5,1.8][diff];
 	let diff_curvetime = [250,450,600,900][diff];
 	wait(120);
@@ -69,7 +69,6 @@ task TWork
 
 	task CloudBullet(obj){
 		ObjShot_SetSpellResist(obj,true);
-		yield;
 		GetMeSomeDanmaku;
 		PlusSomeSpam;
 		ObjShot_SetIntersectionEnable(obj,false);

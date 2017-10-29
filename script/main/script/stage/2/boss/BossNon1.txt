@@ -72,7 +72,6 @@ task TWork
 
 	task CloudBullet(obj){
 		ObjShot_SetSpellResist(obj,true);
-		yield;
 		GetMeSomeDanmaku;
 		PlusSomeSpam;
 		ObjShot_SetIntersectionEnable(obj,false);

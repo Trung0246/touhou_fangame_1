@@ -40,7 +40,7 @@ let objBoss;
 	alternative(GetEventType())
 	case(EV_REQUEST_LIFE)
 	{
-		SetScriptResult(2250);
+		SetScriptResult(2850);
 	}
 	case(EV_REQUEST_TIMER)
 	{
@@ -53,9 +53,10 @@ task TWork
 {
 	ObjMove_SetDestAtWeight(objBoss,192,80,8,5);
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	let diff_lanecount = [5,6,6,8][diff];
-	let diff_spamcount = [3,4,6,5][diff];
+	let diff_lanecount = [4,6,8,10][diff];
+	let diff_spamcount = [5,4,7,8][diff];
 	let diff_spamcount2 = [2,3,3,4][diff];
+	let diff_spamdelay = [6,6,6,9][diff];
 	wait(30);
 	SpellCast(23+diff);
 	wait(120);
@@ -70,8 +71,6 @@ task TWork
 	}
 
 	task HappyFaceProcedure{
-		let diff_type = [RBALL_MAGENTA,NOTE_MAGENTA][max(0,diff-2)]; //notes on Lunatic only
-
 		let enemy = ObjEnemy_Create(OBJ_ENEMY);
 		ObjEnemy_Regist(enemy);
 		FaceClouds(enemy,300,120);
@@ -97,16 +96,15 @@ task TWork
 					position = [ObjMove_GetX(enemy)+cos(i*a+n)*(50+k*40),ObjMove_GetY(enemy)+sin(i*a+n)*(50+k*40)];
 					SakkaCloud(position[0],position[1],160,0.6,196);
 					ascent(j in 0..8){
-						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180+shift,diff_type,20,40+j*15);
-						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180-shift,diff_type,20,40+j*15);
+						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180+shift,RBALL_MAGENTA,20,40+j*15);
+						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180-shift,RBALL_MAGENTA,20,40+j*15);
 					}
 				}
 				wait(30);
 			}
-			wait(20);
 			destination = -destination;
-			ObjMove_SetDestAtWeight(enemy,192+rand(30,150)*destination,120,3,1);
-			wait(240);
+			ObjMove_SetDestAtWeight(enemy,192+rand(30,150)*destination,120,4,1);
+			wait(200);
 		}
 	}
 
@@ -147,12 +145,12 @@ task TWork
 			ObjMove_SetAngularVelocity(obj,2*direction);
 			ObjShot_SetDeleteFrame(obj,180);
 			while(!Obj_IsDeleted(obj)){
-				a += 30*direction;
+				a += 10*direction;
 				ascent(i in 0..diff_spamcount2){
 					shot = SPShotA1(ObjMove_GetX(obj),ObjMove_GetY(obj),1.25+i/2,a+rand(-5,5),diff_type,10);
 					ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
 				}
-				wait(10);
+				wait(diff_spamdelay);
 			}
 		}
 	}
@@ -165,7 +163,7 @@ task TWork
 		}
 	}
 
-	//Boss takes 50% of the amount of damage inflicted on obj
+	//Boss takes 75% of the amount of damage inflicted on obj
 	task TransferDamage(obj){
 		ObjEnemy_SetLife(obj,1000);
 		let life;
@@ -174,7 +172,7 @@ task TWork
 			ObjEnemy_SetIntersectionCircleToPlayer(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 16);
 			life = ObjEnemy_GetInfo(obj,INFO_LIFE);
 			if(life < 1000){
-				ObjEnemy_SetLife(objBoss,ObjEnemy_GetInfo(objBoss,INFO_LIFE)-(1000-life)/2);
+				ObjEnemy_SetLife(objBoss,ObjEnemy_GetInfo(objBoss,INFO_LIFE)-(1000-life)*0.75);
 			}
 			ObjEnemy_SetLife(obj,1000);
 			yield;

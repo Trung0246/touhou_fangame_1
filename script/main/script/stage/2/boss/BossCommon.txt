@@ -10,7 +10,7 @@ task SakkaCloud(x,y,duration,scale,alpha){
 	ObjRender_SetScaleXYZ(cloud,scale,scale,0);
 
 	MoveCloud;
-	ascent(i in 0..32){
+	ascent(i in 0..33){
 		if(Obj_IsDeleted(objBoss)){break;}
 		ObjRender_SetAlpha(cloud,i*(alpha/32));
 		yield;
