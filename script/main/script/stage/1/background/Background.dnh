@@ -18,6 +18,8 @@ let scrollSpeed = 8;
 let phase2now = false;
 let spellBG;
 
+let dim = GetAreaCommonData("Settings","BGDim",1);
+
 @Initialize{
 	CallStage;
 	VariableTest;
@@ -159,6 +161,7 @@ function MakeFogBG(X,Y,Z,R,G,B){
 	ObjRender_SetScaleXYZ(obj,1,1,0);
 	ObjRender_SetZWrite(obj,true);
 	ObjSprite3D_SetBillboard(obj, true);
+	ObjRender_SetAlpha(obj,255*dim);
 	
 	ObjRender_SetPosition(obj,X,Y,Z);
 	
@@ -195,6 +198,7 @@ task MakeFloor(X,Y,Z){
 	ObjSprite3D_SetSourceDestRect(obj,0,0,1536,1024);
 	ObjRender_SetScaleXYZ(obj,2,1,0);
 	ObjRender_SetZWrite(obj,true);
+	ObjRender_SetAlpha(obj,255*dim);
 	
 	ObjRender_SetAngleXYZ(obj,90,0,0);
 	
@@ -221,7 +225,7 @@ task MakeCloud(X,Y,Z,A){
 	let s = 0;
 	while(inc < 1024){
 		ObjRender_SetPosition(obj,X+20*cos(count+A),Y+20*sin(count+A),inc+Z+20*sin(count+A));
-		ObjRender_SetAlpha(obj, 26+4*sin(count+A));
+		ObjRender_SetAlpha(obj, (26+4*sin(count+A))*dim);
 		ObjRender_SetAngleZ(obj,-25+25*sin((count*scrollSpeed/10)/3));
 
 		if(inc >= 1024){
@@ -238,7 +242,7 @@ task MakeCloud(X,Y,Z,A){
 	inc = 0;
 	while(true){
 		ObjRender_SetPosition(obj,X+20*cos(count+A),Y+20*sin(count+A),inc+Z+20*sin(count+A));
-		ObjRender_SetAlpha(obj, 26+4*sin(count+A));
+		ObjRender_SetAlpha(obj, (26+4*sin(count+A))*dim);
 		ObjRender_SetAngleZ(obj,-25+25*sin((count*scrollSpeed/10)/3));
 
 		if(inc >= 1024){
@@ -254,7 +258,7 @@ task MakeRain{
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(obj,rainTex);
 	Obj_SetRenderPriority(obj,0.2);
-	ObjRender_SetAlpha(obj,128);
+	ObjRender_SetAlpha(obj,128*dim);
 	ObjSprite2D_SetSourceRect(obj,0,0,1024,1024);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetPosition(obj,GetStgFrameWidth/2,GetStgFrameHeight/2,0);
@@ -293,8 +297,8 @@ task SpellBG{
 	CheckDelete;
 
 	ascent(i in 0..65){
-		ObjRender_SetAlpha(back,i*4);
-		ObjRender_SetAlpha(wave,i);
+		ObjRender_SetAlpha(back,(i*4)*dim);
+		ObjRender_SetAlpha(wave,(i)*dim);
 		yield;
 	}
 
@@ -313,8 +317,8 @@ task SpellBG{
 	task CheckDelete{
 		while(!Obj_GetValue(back,"End")){yield;}
 		descent(i in 0..33){
-			ObjRender_SetAlpha(back,i*8);
-			ObjRender_SetAlpha(wave,i*2);
+			ObjRender_SetAlpha(back,(i*8)*dim);
+			ObjRender_SetAlpha(wave,(i*2)*dim);
 			yield;
 		}
 		Obj_Delete(wave);
