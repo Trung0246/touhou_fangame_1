@@ -206,6 +206,7 @@ task TEnd
 
 	DramaticBossDeath(objBoss);
 	shotdown = true;
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
 	wait(180);
 
 	CloseScript(GetOwnScriptID());

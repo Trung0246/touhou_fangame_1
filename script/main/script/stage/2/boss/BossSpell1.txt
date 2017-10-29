@@ -172,6 +172,7 @@ task TEnd
 	}
 
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
 	Obj_Delete(objBoss);
 
 	wait(30);
