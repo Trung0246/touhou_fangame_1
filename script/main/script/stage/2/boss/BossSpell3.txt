@@ -56,7 +56,7 @@ task TWork
 	let diff_lanecount = [4,6,8,10][diff];
 	let diff_spamcount = [5,4,7,8][diff];
 	let diff_spamcount2 = [2,3,3,4][diff];
-	let diff_spamdelay = [6,6,6,9][diff];
+	let diff_spamdelay = [6,6,7,9][diff];
 	wait(30);
 	SpellCast(23+diff);
 	wait(120);
@@ -94,7 +94,7 @@ task TWork
 			ascent(k in 0..3){
 				ascent(i in 0..diff_lanecount){
 					position = [ObjMove_GetX(enemy)+cos(i*a+n)*(50+k*40),ObjMove_GetY(enemy)+sin(i*a+n)*(50+k*40)];
-					SakkaCloud(position[0],position[1],160,0.6,196);
+					SakkaCloud(position[0],position[1],160,0.4,196);
 					ascent(j in 0..8){
 						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180+shift,RBALL_MAGENTA,20,40+j*15);
 						NeoDelayBullet(position[0],position[1],2.5,i*a+n+180-shift,RBALL_MAGENTA,20,40+j*15);
@@ -120,7 +120,7 @@ task TWork
 		ObjSprite2D_SetDestCenter(enemy);
 		ObjMove_SetPosition(enemy,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss));
 		ObjMove_SetDestAtWeight(enemy,84,120,6,3);
-		wait(120);
+		wait(150);
 		let destination = -1;
 		let n;
 		let a = 360/diff_spamcount;
@@ -206,8 +206,9 @@ task TEnd
 
 	DramaticBossDeath(objBoss);
 	shotdown = true;
+	wait(60);
 	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
-	wait(180);
+	wait(120);
 
 	CloseScript(GetOwnScriptID());
 

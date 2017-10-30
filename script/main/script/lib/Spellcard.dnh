@@ -95,7 +95,7 @@ task SpellCast(spellNum){
 
 	let objScene = GetEnemyBossSceneObjectID();
 	DecreaseSpellBonus;
-	while(!Obj_IsDeleted(bonus) && ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+	while(!Obj_IsDeleted(bonus) && !Obj_IsDeleted(objBoss)){
 		temp = floor(spellbonus);
 		temp -= temp%10;
 		number = [];
@@ -115,7 +115,7 @@ task SpellCast(spellNum){
 		yield;
 	}
 	
-	while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){yield;}
+	while(!Obj_IsDeleted(objBoss)){yield;}
 
 	//oh my god ancient code from my first script
 	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)

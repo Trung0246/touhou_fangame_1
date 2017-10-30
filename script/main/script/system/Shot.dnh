@@ -49,7 +49,7 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 
 	let obj = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(obj, path);
-	Obj_SetRenderPriorityI(obj, 20);
+	Obj_SetRenderPriorityI(obj, 30);
 	ObjSprite2D_SetSourceRect(obj, rect[0], rect[1], rect[2], rect[3]);
 	ObjSprite2D_SetDestCenter(obj);
 	ObjRender_SetX(obj, position[0]);
@@ -66,7 +66,7 @@ task DeleteBulletFX_ZoomFade(shot, position, rect) {
 task DeleteBulletFX_BreakFX(shot, position, color) {
 	let that = ObjPrim_Create(OBJ_SPRITE_2D);
 	ObjPrim_SetTexture(that, path2);
-	Obj_SetRenderPriorityI(that, 21);
+	Obj_SetRenderPriorityI(that, 31);
 	ObjSprite2D_SetSourceRect(that, 256, 784, 256 + 64, 748 + 64);
 	ObjSprite2D_SetDestCenter(that);
 	ObjRender_SetPosition(that, position[0], position[1], 0);

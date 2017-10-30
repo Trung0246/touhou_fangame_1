@@ -164,7 +164,9 @@ task TEnd
 	SetShotAutoDeleteClip(64,64,64,64);
 	DramaticBossDeath(objBoss);
 	shotdown = true;
-	wait(180);
+	wait(60);
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
+	wait(120);
 
 	CloseScript(GetOwnScriptID());
 

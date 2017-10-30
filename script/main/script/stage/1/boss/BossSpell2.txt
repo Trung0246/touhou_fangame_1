@@ -159,11 +159,11 @@ task TEnd
 	shotdown = true;
 
 	//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
-	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
 	//Obj_Delete(objBoss);
 	DramaticBossDeath(objBoss);
-
-	wait(180);
+	wait(60);
+	NotifyEventAll(EV_BACKGROUND_SPELLBREAK,0);
+	wait(120);
 
 	CloseScript(GetOwnScriptID());
 }
