@@ -1,0 +1,110 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Saga Nonspell 2"]
+#Text["idk what i'm even doing"]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+let objBoss;
+let objBossX;
+let objBossY;
+
+let CenterX = GetStgFrameWidth/2;
+let CenterY = GetStgFrameHeight/2;
+
+@Event { // Boss health and whatnot 
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(4000);
+	}
+	case(EV_REQUEST_TIMER){
+		SetScriptResult(30);
+	}
+	case(EV_REQUEST_SPELL_SCORE){
+		SetScriptResult(3000000);
+	}
+}
+
+@Initialize {
+	objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objBoss);
+	ObjEnemy_SetDamageRate(objBoss, 100, 100);
+	ObjMove_SetPosition(objBoss,CenterX,140);
+
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM); //Delete all items upon start of attack
+
+	TMain;
+	//TRender;
+	TEnd;
+}
+
+@MainLoop {
+	ObjEnemy_SetIntersectionCircleToShot(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),50);
+	ObjEnemy_SetIntersectionCircleToPlayer(objBoss,ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),40);
+	objBossX = ObjMove_GetX(objBoss);
+	objBossY = ObjMove_GetY(objBoss);
+	yield;
+}
+
+function wait(n){
+	loop(n){yield;}
+}
+
+function angleToPlayer(obj){
+	let toPlayer = atan2(GetPlayerY-ObjMove_GetY(obj),GetPlayerX-ObjMove_GetX(obj)); // Makes something aim towards the player
+	return toPlayer;
+}
+
+task TMain {
+	wait(1);
+	whirl;
+}
+
+task whirl {
+	let objBubble = CreateShotA1(CenterX,CenterY,0,0,170,60);
+	ObjShot_SetSpellResist(objBubble,true);
+	loop(200){
+		IReallyEnjoyTakingANiceColdShowerInTheMorningsBecauseTheyFillMeWithEnergySoICanProperlyBeginTheDayWithoutFeelingLikeIAmDying;
+	}
+	task IReallyEnjoyTakingANiceColdShowerInTheMorningsBecauseTheyFillMeWithEnergySoICanProperlyBeginTheDayWithoutFeelingLikeIAmDying {
+		SetShotAutoDeleteClip(128,128,128,128);
+		let rad = rand(36,360);
+		let angle = rand(0,360);
+		let objMini = CreateShotA1(ObjMove_GetX(objBubble)+rad*cos(angle),ObjMove_GetY(objBubble)+rad*sin(angle),0,angle,14,60);
+		ObjShot_SetSpellResist(objMini,true);
+		//increaseRad;
+		while(!Obj_IsDeleted(objBoss)){
+			angle += 0.5;
+			ObjMove_SetY(objMini,ObjMove_GetY(objBubble)+rad*cos(angle*2));
+			wait(1);
+		}
+		task increaseRad {
+				loop(60){
+					rad -= 0.4;
+					wait(1);
+				}
+			while(!Obj_IsDeleted(objBoss)){
+				loop(120){
+					rad += 0.75;
+					wait(1);
+				}	
+				loop(120){
+					rad -= 0.75;
+					wait(1);
+				}
+			}
+		}
+	}
+}
+
+task TEnd {
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+	TExplosionA(objBossX, objBossY, 10, 0.6);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+
+	wait(30);
+
+	CloseScript(GetOwnScriptID());
+}
