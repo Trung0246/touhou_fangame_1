@@ -55,3 +55,132 @@ task SPBulletDelay(obj,time){
 	}
 	ObjShot_SetIntersectionEnable(obj,true);
 }
+
+function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
+	let main = ObjShot_Create(OBJ_LOOSE_LASER);
+	ObjShot_SetGraphic(main,graphic%8+8);
+	ObjRender_SetAlpha(main,0);
+	ObjShot_SetIntersectionEnable(main,false);
+	ObjShot_Regist(main);
+	ObjShot_SetSpellResist(main,true);
+	ObjMove_SetPosition(main,x,y);
+	//ObjShot_SetDeleteFrame(main,delay+deltime);
+	ObjLaser_SetGrazeInvalidFrame(main,20);
+	ObjMove_SetAngle(main,angle);
+	DelayLine;
+	ActualLaser;
+	BaseFX;
+	DeleteMain;
+	return main;
+
+	task DeleteMain{
+		wait(delay+deltime);
+		Obj_Delete(main);
+	}
+
+	task BaseFX{
+		let color = GetShotDataInfoA1(graphic, TARGET_ENEMY, INFO_DELAY_COLOR);
+		let base = ObjPrim_Create(OBJ_SPRITE_2D);
+		Obj_SetRenderPriority(base,0.5);
+		ObjPrim_SetTexture(base,"script/main/img/bullet/laserbase.png");
+		ObjSprite2D_SetSourceRect(base,0,0,64,64);
+		ObjSprite2D_SetDestCenter(base);
+		ObjRender_SetColor(base,color[0],color[1],color[2]);
+		ObjRender_SetBlendType(base,BLEND_ADD_ARGB);
+		let shine = ObjPrim_Create(OBJ_SPRITE_2D);
+		Obj_SetRenderPriority(shine,0.5);
+		ObjPrim_SetTexture(shine,"script/main/img/bullet/laserbase.png");
+		ObjSprite2D_SetSourceRect(shine,0,0,64,64);
+		ObjSprite2D_SetDestCenter(shine);
+		ObjRender_SetScaleXYZ(shine,0.6,0.6,0.6);
+		ObjRender_SetBlendType(shine,BLEND_ADD_ARGB);
+		while(!Obj_IsDeleted(main)){
+			ObjRender_SetPosition(base,ObjMove_GetX(main),ObjMove_GetY(main),0);
+			ObjRender_SetAngleZ(base,ObjRender_GetAngleZ(base)-3);
+			ObjRender_SetPosition(shine,ObjMove_GetX(main),ObjMove_GetY(main),0);
+			ObjRender_SetAngleZ(shine,ObjRender_GetAngleZ(shine)+3);
+			yield;
+		}
+		descent(i in 0..16){
+			i /= 16;
+			ObjRender_SetScaleXYZ(base,i,i,1);
+			ObjRender_SetScaleXYZ(shine,i/2,i/2,1);
+			yield;
+		}
+		Obj_Delete(shine);
+		Obj_Delete(base);
+	}
+
+	task DelayLine{
+		let line = ObjPrim_Create(OBJ_SPRITE_2D);
+		Obj_SetRenderPriority(line,0.5);
+		ObjPrim_SetTexture(line,"script/main/img/system/white.png");
+		ObjSprite2D_SetSourceRect(line,0,0,32,32);
+		ObjSprite2D_SetDestRect(line,0,0,length,1);
+		ObjRender_SetPosition(line,x,y,0);
+		ObjRender_SetAngleZ(line,angle);
+		loop(delay){
+			if(Obj_IsDeleted(main)){break;}
+			ObjRender_SetPosition(line,ObjRender_GetX(main),ObjRender_GetY(main),0);
+			ObjRender_SetAngleZ(line,ObjMove_GetAngle(main));
+			yield;
+		}
+		Obj_Delete(line);
+	}
+
+	task ActualLaser{
+		let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		Obj_SetRenderPriority(obj,0.5);
+		wait(delay);
+		if(Obj_IsDeleted(main)){
+			Obj_Delete(obj);
+			return;
+		}
+		let rect = GetShotDataInfoA1(graphic, TARGET_ENEMY, INFO_RECT);
+		ObjPrim_SetTexture(obj,"script/main/img/bullet/shots.png");
+		ObjSprite2D_SetSourceRect(obj,rect[0],rect[1],rect[2],rect[3]);
+		angle -= 90;
+		ObjRender_SetAngleZ(obj,angle);
+		ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
+		ObjRender_SetPosition(obj,x,y,0);
+		let w = width/32;
+		let sines = [cos(angle),sin(angle)];
+		CheckRepositioning;
+		ascent(i in 0..17){
+			if(Obj_IsDeleted(main)){break;}
+			ObjSprite2D_SetDestRect(obj,-w*i,0,w*i,length);
+			ObjShot_SetIntersectionLine(main,x,y,x+sines[0]*length,y+sines[1]*length,w*i);
+			ObjRender_SetAngleZ(obj,angle);
+			ObjRender_SetPosition(obj,ObjRender_GetX(main),ObjRender_GetY(main),0);
+			yield;
+		}
+		w = width/2;
+		loop(deltime){
+			if(Obj_IsDeleted(main)){break;}
+			ObjShot_SetIntersectionLine(main,x,y,x+sines[0]*length,y+sines[1]*length,w);
+			ObjRender_SetPosition(obj,ObjRender_GetX(main),ObjRender_GetY(main),0);
+			ObjRender_SetAngleZ(obj,angle);
+			yield;
+		}
+		descent(i in 0..16){
+			ObjRender_SetAlpha(obj,i*16);
+			yield;
+		}
+		Obj_Delete(obj);
+
+		task CheckRepositioning{
+			let prevAngle = angle;
+			while(!Obj_IsDeleted(main)){
+				x = ObjMove_GetX(main);
+				y = ObjMove_GetY(main);
+				if(ObjMove_GetAngle(main) != prevAngle){
+					let a = ObjMove_GetAngle(main);
+					prevAngle = a;
+					angle = a-90;
+					sines = [cos(a),sin(a)];
+				}
+				yield;
+			}
+		}
+	}
+}

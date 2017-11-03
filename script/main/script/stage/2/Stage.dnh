@@ -59,13 +59,16 @@ task Stage_Main() {
 	StartScript(background);
 
 	//Init boss scripts
-	/*let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");*/
+	let midboss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/MidPlural.dnh");
 	let boss = LoadScriptInThread(GetCurrentScriptDirectory() ~ "./boss/BossPlural.dnh");
 
-	//Will have to be changed once the stage theme is no longer missing
-	NotifyEventAll(EV_BGM_PLAY,4);
-	StartScript(boss);
+	StartScript(midboss);
 	wait(90000);
+
+	//Will have to be changed once the stage theme is no longer missing
+	/*NotifyEventAll(EV_BGM_PLAY,4);
+	StartScript(boss);
+	wait(90000);*/
 
 	SetCommonData("StageWaitTime",0);
 	//Stage content
