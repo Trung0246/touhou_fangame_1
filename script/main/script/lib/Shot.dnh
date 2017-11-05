@@ -67,6 +67,7 @@ function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
 	//ObjShot_SetDeleteFrame(main,delay+deltime);
 	ObjLaser_SetGrazeInvalidFrame(main,20);
 	ObjMove_SetAngle(main,angle);
+	ObjLaser_SetLength(main,length);
 	DelayLine;
 	ActualLaser;
 	BaseFX;
@@ -123,6 +124,7 @@ function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
 			if(Obj_IsDeleted(main)){break;}
 			ObjRender_SetPosition(line,ObjRender_GetX(main),ObjRender_GetY(main),0);
 			ObjRender_SetAngleZ(line,ObjMove_GetAngle(main));
+			ObjSprite2D_SetDestRect(line,0,0,ObjLaser_GetLength(main),1);
 			yield;
 		}
 		Obj_Delete(line);
@@ -146,10 +148,10 @@ function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
 		let w = width/32;
 		let sines = [cos(angle),sin(angle)];
 		CheckRepositioning;
+		StartHitbox;
 		ascent(i in 0..17){
 			if(Obj_IsDeleted(main)){break;}
-			ObjSprite2D_SetDestRect(obj,-w*i,0,w*i,length);
-			ObjShot_SetIntersectionLine(main,x,y,x+sines[0]*length,y+sines[1]*length,w*i);
+			ObjSprite2D_SetDestRect(obj,-w*i,0,w*i,ObjLaser_GetLength(main));
 			ObjRender_SetAngleZ(obj,angle);
 			ObjRender_SetPosition(obj,ObjRender_GetX(main),ObjRender_GetY(main),0);
 			yield;
@@ -160,6 +162,7 @@ function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
 			ObjShot_SetIntersectionLine(main,x,y,x+sines[0]*length,y+sines[1]*length,w);
 			ObjRender_SetPosition(obj,ObjRender_GetX(main),ObjRender_GetY(main),0);
 			ObjRender_SetAngleZ(obj,angle);
+			ObjSprite2D_SetDestRect(obj,-w,0,w,ObjLaser_GetLength(main));
 			yield;
 		}
 		descent(i in 0..16){
@@ -167,6 +170,13 @@ function SPStraightLaser(x,y,angle,length,width,deltime,graphic,delay){
 			yield;
 		}
 		Obj_Delete(obj);
+
+		task StartHitbox{
+			wait(8);
+			ascent(i in 0..9){
+				ObjShot_SetIntersectionLine(main,x,y,x+sines[0]*length,y+sines[1]*length,w*i);
+			}
+		}
 
 		task CheckRepositioning{
 			let prevAngle = angle;

@@ -22,10 +22,10 @@ let spellBG;
 @Event{
 	alternative(GetEventType())
 		case(EV_BACKGROUND_SPELLCAST){
-			SpellBG;
+			if(GetAreaCommonData("GameState","CurrentBoss",1) == 2){SpellBG;}
 		}
 		case(EV_BACKGROUND_SPELLBREAK){
-			Obj_SetValue(spellBG,"End",true);
+			if(GetAreaCommonData("GameState","CurrentBoss",1) == 2){Obj_SetValue(spellBG,"End",true);}
 		}
 	
 }

@@ -565,7 +565,7 @@ task UpdateBossLife {
 
 		//Sprite list for those little divider things
 		let divisions = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
-		Obj_SetRenderPriority(divisions, 0.76);
+		Obj_SetRenderPriority(divisions, 0.75);
 		ObjPrim_SetTexture(divisions, lifeBarPath);
 		ObjSpriteList2D_SetSourceRect(divisions, 16, 0, 32, 16);
 		redrawDivisions();
@@ -586,7 +586,7 @@ task UpdateBossLife {
 
 		//This is the actual lifebar
 		let lifebar = ObjPrim_Create(OBJ_PRIMITIVE_2D);
-		Obj_SetRenderPriority(lifebar, 0.75);
+		Obj_SetRenderPriority(lifebar, 0.74);
 		ObjPrim_SetTexture(lifebar, lifeBarPath);
 		ObjPrim_SetPrimitiveType(lifebar, PRIMITIVE_TRIANGLESTRIP);
 		ObjPrim_SetVertexCount(lifebar, 62);
@@ -595,7 +595,7 @@ task UpdateBossLife {
 		ObjPrim_SetTexture(circle, lifeBarPath);
 		ObjPrim_SetPrimitiveType(circle, PRIMITIVE_TRIANGLESTRIP);
 		ObjPrim_SetVertexCount(circle, 62);
-		Obj_SetRenderPriority(circle, 0.74);
+		Obj_SetRenderPriority(circle, 0.73);
 
 		//Set up textures for all the circular parts
 		ascent(iVert in 0..32) {
@@ -1028,6 +1028,7 @@ task ShowSpellCap(bonus){
 		}
 		ascent(i in 0..length(numbers)){
 			let num = ObjPrim_Create(OBJ_SPRITE_2D);
+			Obj_SetRenderPriority(num,0.79);
 			ObjPrim_SetTexture(num,digitPath);
 			ObjSprite2D_SetSourceRect(num,numbers[i]*16,0,(numbers[i]+1)*16,24);
 			ObjSprite2D_SetDestCenter(num);

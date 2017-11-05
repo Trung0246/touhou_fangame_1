@@ -41,7 +41,7 @@ let objBoss;
 	}
 	case(EV_REQUEST_TIMER)
 	{
-		SetScriptResult(40);
+		SetScriptResult(30);
 	}
 }
 
@@ -53,7 +53,6 @@ task TWork
 	let diff_height = [170,180,200,200][diff];
 	ObjMove_SetDestAtWeight(objBoss,192,diff_height,8,5);
 	wait(120);
-	//UltraCloud;
 	let angle;
 	let shot;
 	let n = 0;
@@ -63,6 +62,7 @@ task TWork
 	MoveBoss;
 	while(!Obj_IsDeleted(objBoss)){
 		m = rand(0,360);
+		PlaySFX(SFX_SHOT1);
 		ascent(i in 0..diff_maincount){
 			i *= split;
 			SPShotA2(ObjMove_GetX(objBoss)+cos(i+m)*40,ObjMove_GetY(objBoss)+sin(i+m)*40,0,i+m,0.04,1.8,RICE_GREY,30);
@@ -82,6 +82,7 @@ task TWork
 		wait(60);
 		if(Obj_IsDeleted(obj)){return;}
 		ObjMove_SetSpeed(obj,0);
+		PlaySFX(SFX_SHOT2);
 		ascent(i in 0..diff_splitcount){
 			i *= split2;
 			SPShotA2(ObjMove_GetX(obj)+cos(i+a)*40,ObjMove_GetY(obj)+sin(i+a)*40,0,i+a,0.04,2,RICE_YELLOW,30);
@@ -110,51 +111,6 @@ task TWork
 				yield;	
 			}
 			dir = -dir;
-		}
-	}
-
-	task UltraCloud{
-		let a;
-		while(!Obj_IsDeleted(objBoss)){
-			a = rand(0,180);
-			JiririCloud(192+cos(a)*200,sin(a)*rand(10,200),a+90+rand(-10,10),floor(rand(30,90)));
-			wait(2);
-		}
-	}
-}
-
-task JiririCloud(x,y,angle,duration){
-	let type = floor(rand(2,4));
-	let cloud = ObjPrim_Create(OBJ_SPRITE_2D);
-	ObjPrim_SetTexture(cloud,"script/main/img/stage/2/Cloud" ~ itoa(type)  ~ ".png");
-	ObjSprite2D_SetSourceRect(cloud,0,0,200,200);
-	ObjSprite2D_SetDestCenter(cloud);
-	ObjRender_SetColor(cloud,128,128,128);
-	Obj_SetRenderPriority(cloud,0.6);
-	ObjRender_SetPosition(cloud,x,y,0);
-	MoveCloud;
-	ascent(i in 0..33){
-		if(Obj_IsDeleted(objBoss)){break;}
-		ObjRender_SetAlpha(cloud,i*8);
-		yield;
-	}
-
-	loop(duration){
-		if(Obj_IsDeleted(objBoss)){break;}
-		yield;
-	}
-
-	descent(i in 0..16){
-		ObjRender_SetAlpha(cloud,i*16);
-		yield;
-	}
-	Obj_Delete(cloud);
-
-	task MoveCloud{
-		let move = [cos(angle)/2,sin(angle)/2];
-		while(!Obj_IsDeleted(cloud)){
-			ObjRender_SetPosition(cloud,ObjRender_GetX(cloud)+move[0],ObjRender_GetY(cloud)+move[1],0);
-			yield;
 		}
 	}
 }

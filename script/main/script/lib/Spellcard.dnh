@@ -118,8 +118,7 @@ task SpellCast(spellNum){
 	while(!Obj_IsDeleted(objBoss)){yield;}
 
 	//oh my god ancient code from my first script
-	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
-        	+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
+	if(spellbonus > 0){
 		SetAreaCommonData("SpellHistory",historyString ~ "C",caps+1);
 		SaveCommonDataAreaA2("SpellHistory", "script/main/save/History.dat");
 		NotifyEventAll(EV_SPELL_CAPTURE,spellbonus - spellbonus%10);
@@ -151,12 +150,13 @@ task SpellCast(spellNum){
 			yield;
 		}
 		while(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
-        		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0){
+        		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0 && !Obj_IsDeleted(objBoss)){
 			spellbonus -= decrease;
 			wait(2);
 		}
 		if(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 			Obj_Delete(bonus);
+			spellbonus = 0;
 			yield;
 			bonus = ObjPrim_Create(OBJ_SPRITE_2D);
 			ObjPrim_SetTexture(bonus,"script/main/img/system/spellname.png");
