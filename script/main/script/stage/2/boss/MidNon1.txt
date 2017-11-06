@@ -55,7 +55,7 @@ task TWork
 	wait(120);
 	let angle;
 	let shot;
-	let n = 0;
+	let n = 45;
 	let m;
 	let split = 360/diff_maincount;
 	let split2 = 360/diff_splitcount;

@@ -25,3 +25,4 @@
 25|Grief Sign "Godhead Effigy"
 26|Grief Sign "Bodhicitta Gisant"
 27|Bodhiscitta "Primal Vow"
+28|Prediction "Eclipse of Thales"

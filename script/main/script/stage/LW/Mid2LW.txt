@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Midboss spell #1"]
-#Text["What? Two stages and still no lasers??"]
+#Title["Last Word of Jiriri"]
+#Text["Always keep a cloud youkai between you and the sun"]
 #System["script/main/script/system/Gui.dnh"]
 
 #include "script/main/script/lib/Utils.dnh"
@@ -38,11 +38,11 @@ let objBoss;
 	alternative(GetEventType())
 	case(EV_REQUEST_LIFE)
 	{
-		SetScriptResult(1450);
+		SetScriptResult(2450);
 	}
 	case(EV_REQUEST_TIMER)
 	{
-		SetScriptResult(30);
+		SetScriptResult(60);
 	}
 }
 
@@ -51,94 +51,69 @@ let shotdown = false;
 task TWork
 {
 	let diff = GetAreaCommonData("GameState","Difficulty",1);
-	//That is entirely too many of these thiiiiiiings
-	let diff_greydelay = [4,3,2,2][diff];
-	let diff_greycount = [2,3,3,4][diff];
-	let diff_greyspeed = [1.5,2,2.4,2.8][diff];
-	let diff_greysplit = [20,15,12,10][diff];
-	let diff_orangewaves = [4,4,6,7][diff];
-	let diff_orangedelay = [10,14,16,14][diff];
-	let diff_orangecount = [16,20,24,30][diff];
-	let diff_laserwaves = [1,2,3,3][diff];
-	let diff_lasersplit = [80,70,60,60][diff];
-	ObjMove_SetDestAtWeight(objBoss,192,150,8,5);
-	wait(30);
-	SpellCast(11+diff);
-	wait(90);
+	ObjMove_SetPosition(objBoss,-100,-100);
 	UltraCloud;
-	let shot;
+	wait(30);
+	SpellCast(28);
+	wait(30);
+	ObjMove_SetPosition(objBoss,192,90);
+	ObjMove_SetDestAtWeight(objBoss,192,250,8,5);
+	wait(60);
 	let dir = rand_sign();
+	let shot;
 	let n;
 	while(!shotdown){
-		ObjMove_SetDestAtFrame(objBoss,192+rand(50,120)*dir,rand(120,180),120);
-		UseLasers;
-		dir = -dir;
-		Obj_SetValue(objBoss,"Anim",0);
-		yield;
-		Obj_SetValue(objBoss,"Anim",2-(dir+1)/2);
-		ascent(i in 0..diff_orangewaves){
-			ascent(k in 0..diff_orangedelay){
-				PlaySFX(SFX_SHOT1);
-				if(shotdown){break;}
-				k = i*diff_greysplit*diff_orangedelay+k*diff_greysplit;
-				ascent(j in 0..diff_greycount){
-					SPShotA1(ObjMove_GetX(objBoss)+cos(k)*j*10,ObjMove_GetY(objBoss)+sin(k)*j*10,diff_greyspeed+j*0.2,k,RBALL_GREY,10);
-				}
-				wait(diff_greydelay);
-			}
-			if(shotdown){break;}
-			n = rand(0,360);
-			let s = 360/diff_orangecount;
-			PlaySFX(SFX_SHOT2);
-			ascent(k in 0..36){
-				SPShotA2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),0.5,k*s+n,0.015,3,RBALL_ORANGE,20);
-			}
-		}
-		wait(150);
-	}
-
-	task UseLasers{
-		wait(120);
-		let d = dir;
 		Obj_SetValue(objBoss,"Anim",3);
-		let height = 200/diff_laserwaves;
-		LaserWave(30,d);
-		ascent(i in 1..diff_laserwaves){
-			wait(70);
-			d = -d;
-			LaserWave(30+height*i,d);
+		wait(30);
+		ascent(i in 1..31){
+			if(shotdown){break;}
+			PlaySFX(SFX_LASER);
+			ascent(j in 0..2){
+				j = j*2-1;
+				SPStraightLaser(ObjMove_GetX(objBoss),i*5,90+i*11*j+10*j,512,8,60,SLASER_YELLOW+i%3,0);
+				SPShotA1(ObjMove_GetX(objBoss),i*5,6,90+i*11*j+5*j,ORB_YELLOW+i%2,20);
+				ascent(k in -2..3){
+					shot = SPShotA2(ObjMove_GetX(objBoss),i*5,1,90+i*10*j+12*j+k*20,0.02,4,RBALL_ORANGE,20);
+					ObjRender_SetBlendType(shot,BLEND_ADD_ARGB);
+				}
+			}
+			yield;
 		}
 		Obj_SetValue(objBoss,"Anim",0);
+		wait(120);
+		yield;
+		Obj_SetValue(objBoss,"Anim",1+(dir+1)/2);
+		n = rand(0,15);
+		ObjMove_SetDestAtFrame(objBoss,192+rand(50,100)*dir,250,80);
+		RegularShots;
+		wait(50);
+		RegularShots;
+		dir = -dir;
 	}
 
-	task LaserWave(y,direc){
-		let m = rand(0,48);
-		descent(i in -1..10){
+	task RegularShots{
+		ascent(j in 0..3){
 			if(shotdown){break;}
-			shot = SPStraightLaser(i*diff_lasersplit+m,y+sin(i*22)*25,90+10*direc,512,8,35,SLASER_ORANGE,60);
-			MoveLaser(shot,0.2*direc);
-			LaserSound;
-			wait(4);
-		}
-
-		task LaserSound{
-			wait(60);
-			if(!Obj_IsDeleted(objBoss)){PlaySFX(SFX_LASER);}
-		}
-
-		task MoveLaser(obj,move){
-			while(!Obj_IsDeleted(obj)){
-				ObjMove_SetX(obj,ObjMove_GetX(obj)+move);
-				yield;
+			PlaySFX(SFX_SHOT1);
+			ascent(i in 0..24){
+				ascent(k in 0..3){
+					SPShotA2(ObjMove_GetX(objBoss),ObjMove_GetY(objBoss),1,i*15+n,0.1,3-j/2-k*0.9,RBALL_GREY-j*8,10);
+				}
 			}
+			wait(5);
 		}
 	}
 
 	task UltraCloud{
 		let a;
+		loop(30){
+			a = rand(0,180);
+			JiririCloud(192+cos(a)*200,sin(a)*rand(30,180),a+90+rand(-10,10),floor(rand(40,90)));
+			yield;
+		}
 		while(!shotdown){
 			a = rand(0,180);
-			JiririCloud(192+cos(a)*200,sin(a)*rand(30,240),a+90+rand(-10,10),floor(rand(40,90)));
+			JiririCloud(192+cos(a)*200,sin(a)*rand(30,180),a+90+rand(-10,10),floor(rand(40,90)));
 			wait(2);
 		}
 	}
